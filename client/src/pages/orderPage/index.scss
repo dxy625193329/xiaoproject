@@ -1,0 +1,39 @@
+.order {
+  min-height: 100vh;
+  background: #F8F8F8;
+  box-sizing: border-box;
+  padding: 20px 40px;
+
+  .order--tabs {
+    display: flex;
+    align-items: flex-end;
+
+    .mg--l {
+      margin-left: 24px;
+    }
+
+    .mg--r {
+      margin-right: 24px;
+    }
+
+    .title {
+      font-size: 66px;
+      line-height: 66px;
+      color: #303030;
+      font-weight: 700;
+    }
+
+    .sm-title {
+      line-height: 40px;
+      font-size: 40px;
+      font-weight: 700;
+      color: #919191;
+    }
+  }
+
+  .order--content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 60px;
+  }
+}

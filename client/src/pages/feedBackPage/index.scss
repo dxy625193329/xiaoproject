@@ -1,0 +1,47 @@
+.feed__back {
+  display         : flex;
+  flex-direction  : column;
+  min-height      : 100vh;
+  box-sizing      : border-box;
+  padding         : 20px 40px 40px 40px;
+  background-color: #F8F8F8;
+
+  .feed__back--title {
+    line-height: 66px;
+    font-size  : 66px;
+    color      : #303030;
+    font-weight: 700;
+  }
+
+  .feed__back--info {
+    margin-top   : 32px;
+    font-size    : 26px;
+    color        : #919191;
+    margin-bottom: 40px;
+  }
+
+  .feed__back--input {
+    width        : 100%;
+    box-sizing   : border-box;
+    background   : #fefefe;
+    min-height   : 400px;
+    padding      : 30px 32px;
+    font-size    : 32px;
+    color        : #303030;
+    border-radius: 12px;
+    margin-bottom: 60px;
+  }
+
+  .feed__back--btn {
+    width          : 100%;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    padding        : 24px 0;
+    line-height    : normal;
+    border-radius  : 12px;
+    font-size      : 34px;
+    color          : #fff;
+    background     : #72c9aa;
+  }
+}

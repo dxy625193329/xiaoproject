@@ -1,0 +1,87 @@
+@import "../../assets/fonts/font";
+
+.service {
+  display         : flex;
+  flex-direction  : column;
+  min-height      : 100vh;
+  box-sizing      : border-box;
+  padding         : 20px 40px 40px 40px;
+  background-color: #F8F8F8;
+
+  .service--title {
+    line-height: 66px;
+    font-size  : 66px;
+    color      : #303030;
+    font-weight: 700;
+  }
+
+  .service--info {
+    margin-top   : 32px;
+    font-size    : 26px;
+    color        : #919191;
+    margin-bottom: 40px;
+  }
+
+  .service--content {
+    display       : flex;
+    flex-direction: column;
+
+    .service--card {
+      width         : 100%;
+      display       : flex;
+      flex-direction: column;
+      margin-bottom : 32px;
+
+      .top {
+        display                : flex;
+        align-items            : center;
+        padding                : 24px 32px;
+        border-top-right-radius: 12px;
+        border-top-left-radius : 12px;
+
+        .title {
+          font-size  : 38px;
+          font-weight: 700;
+          color      : #72c9aa;
+        }
+
+        .time {
+          font-size  : 26px;
+          font-weight: 700;
+          color      : #919191;
+          margin-left: auto;
+          font-family: "DIN";
+        }
+      }
+
+      .content {
+        display       : flex;
+        flex-direction: column;
+        padding       : 0px 32px;
+
+        .desc {
+          margin-bottom: 8px;
+          font-size    : 32px;
+          font-weight  : 700;
+          color        : #303030;
+        }
+      }
+
+      .top,
+      .content {
+        background-color: #fff;
+      }
+
+      .divider--bottom {
+        width                     : 100%;
+        height                    : 20px;
+        background-image          : radial-gradient(transparent 0, transparent 10px, #fff 10px);
+        background-size           : 30px 38px;
+        background-position       : 10px 6px;
+        position                  : relative;
+        border-bottom-left-radius : 8px;
+        border-bottom-right-radius: 8px;
+      }
+    }
+  }
+}

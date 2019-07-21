@@ -1,0 +1,45 @@
+.rank {
+  min-height: 100vh;
+  background: #F8F8F8;
+  box-sizing: border-box;
+  padding: 20px 40px 40px 40px;
+
+  .rank--tabs {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .mg--l {
+    margin-left: 24px;
+  }
+
+  .mg--r {
+    margin-right: 24px;
+  }
+
+  .title {
+    line-height: 66px;
+    font-size: 66px;
+    color: #303030;
+    font-weight: 700;
+  }
+
+  .sm-title {
+    line-height: 40px;
+    font-size: 40px;
+    font-weight: 700;
+    color: #919191;
+  }
+
+  .rank--info {
+    margin-top: 32px;
+    font-size: 26px;
+    color: #919191;
+  }
+
+  .rank--content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+  }
+}

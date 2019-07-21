@@ -1,0 +1,132 @@
+.be__hunter {
+  display         : flex;
+  flex-direction  : column;
+  min-height      : 100vh;
+  box-sizing      : border-box;
+  padding         : 20px 40px 40px 40px;
+  background-color: #f8f8f8;
+
+  .be__hunter--title {
+    line-height: 66px;
+    font-size  : 66px;
+    color      : #303030;
+    font-weight: 700;
+  }
+
+  .be__hunter--info {
+    margin-top   : 32px;
+    font-size    : 26px;
+    color        : #919191;
+    margin-bottom: 40px;
+  }
+
+  .cancel {
+    font-size  : 40px;
+    font-weight: 700;
+    color      : #303030;
+    margin     : 40px 0;
+  }
+
+  .desc {
+    font-size  : 32px;
+    color      : #ff4b14;
+    font-weight: 700;
+  }
+
+  .cancel--btn {
+    width          : 100%;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    padding        : 24px 0;
+    line-height    : normal;
+    border-radius  : 12px;
+    font-size      : 34px;
+    color          : #fff;
+    background     : #ff4b14;
+    margin-top  : 60px;
+  }
+
+  .be__hunter--input-wrapper {
+    width        : 100%;
+    background   : #fff;
+    padding      : 20px 32px;
+    box-sizing   : border-box;
+    border-radius: 12px;
+    font-size    : 32px;
+    color        : #303030;
+    margin-bottom: 40px;
+  }
+
+  .be__hunter--upload {
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    width           : 100%;
+    height          : 380px;
+    background-color: #fff;
+    border-radius   : 12px;
+    border          : 2px dashed rgba(0, 0, 0, 0.3);
+    margin-bottom   : 40px;
+
+    .text {
+      font-size  : 32px;
+      font-weight: 700;
+      color      : #303030;
+    }
+
+    .image {
+      width : 100%;
+      height: 100%;
+    }
+  }
+
+  .check {
+    margin   : 20px 0 40px 0;
+    font-size: 32px;
+    color    : #303030;
+
+    .check--auth {
+      color      : #72c9aa;
+      font-weight: 700;
+    }
+
+    checkbox .wx-checkbox-input {
+      width     : 44px;
+      height    : 44px;
+      border    : none;
+      background: #fff;
+      border    : 1px solid #f1f1f1;
+    }
+
+    checkbox .wx-checkbox-input.wx-checkbox-input-checked {
+      background: #72c9aa;
+    }
+
+    checkbox .wx-checkbox-input.wx-checkbox-input-checked::before {
+      width            : 28rpx;
+      height           : 28rpx;
+      line-height      : 28rpx;
+      text-align       : center;
+      font-size        : 22rpx;
+      color            : #fff;
+      background       : transparent;
+      transform        : translate(-50%, -50%) scale(1);
+      -webkit-transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .be__hunter--btn {
+    width          : 100%;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    padding        : 24px 0;
+    line-height    : normal;
+    border-radius  : 12px;
+    font-size      : 34px;
+    color          : #fff;
+    background     : #72c9aa;
+    margin-bottom  : 60px;
+  }
+}

@@ -1,0 +1,181 @@
+@import "../../assets/fonts/font";
+
+.wallet {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 20px 40px 40px 40px;
+  background-color: #f8f8f8;
+
+  .mask {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    z-index: 2333;
+  }
+
+  .mask--wrapper {
+    width: 100%;
+    height: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -250px;
+    margin-left: -50%;
+    padding: 0 40px;
+    box-sizing: border-box;
+    z-index: 2334;
+
+    .mask--content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 12px;
+      box-sizing: border-box;
+      padding: 40px;
+
+      .title {
+        font-size: 52px;
+        font-weight: 700;
+        color: #72c9aa;
+      }
+
+      .desc {
+        margin-top: 40px;
+        font-size: 30px;
+        color: #303030;
+      }
+
+      .input--wrapper {
+        display: flex;
+        align-items: flex-start;
+        margin-top: 20px;
+
+        .prefix {
+          font-size: 58px;
+          font-weight: 700;
+          color: #303030;
+          margin-right: 10px;
+        }
+
+        .input {
+          height: fit-content;
+          font-size: 66px;
+          color: 303030;
+          font-weight: 700;
+          padding: 12px;
+          border-bottom: 1px solid #d1d1d1;
+        }
+      }
+
+      .info {
+        font-size: 24px;
+        margin-top: 8px;
+        color: #229c8f;
+      }
+
+      .check {
+        margin-top: auto;
+        display: flex;
+        background: #72c9aa;
+        border-radius: 12px;
+        padding: 20px;
+        justify-content: center;
+        align-items: center;
+        font-size: 32px;
+        color: #fff;
+      }
+    }
+  }
+
+  .wallet--title {
+    line-height: 66px;
+    font-size: 66px;
+    color: #303030;
+    font-weight: 700;
+  }
+
+  .wallet--info {
+    margin-top: 32px;
+    font-size: 26px;
+    color: #919191;
+    margin-bottom: 40px;
+  }
+
+  .wallet--item {
+    width: 100%;
+    min-height: 400px;
+    box-sizing: border-box;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+
+    .title {
+      font-size: 40px;
+      color: #72c9aa;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .desc {
+      font-size: 26px;
+      color: #919191;
+    }
+
+    .money {
+      display: flex;
+      flex-direction: column;
+      margin-top: auto;
+      align-self: flex-end;
+
+      .wrapper {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+
+        .singal {
+          font-size: 32px;
+          color: #919191;
+          font-family: "DIN";
+          margin-right: 8px;
+        }
+
+        .num {
+          font-size: 60px;
+          line-height: 60px;
+          color: #72c9aa;
+          font-family: "DIN";
+        }
+      }
+
+      .btns {
+        display: flex;
+
+        .get {
+          min-width: 160px;
+          margin: 20px 0 0 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 12px 0;
+          line-height: normal;
+          border-radius: 12px;
+          font-size: 30px;
+          color: #fff;
+          background: #72c9aa;
+        }
+      }
+    }
+  }
+}

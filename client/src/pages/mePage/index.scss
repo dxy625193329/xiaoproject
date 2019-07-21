@@ -1,0 +1,190 @@
+@import "../../assets/fonts/font";
+
+.me {
+  min-height      : 100vh;
+  box-sizing      : border-box;
+  padding         : 20px 0 40px 0;
+  background-color: #F8F8F8;
+
+  .top {
+    display        : flex;
+    justify-content: space-between;
+    align-items    : center;
+    box-sizing     : border-box;
+    padding        : 0 40px;
+
+    .left {
+      display       : flex;
+      flex-direction: column;
+
+      .name {
+        font-size  : 52px;
+        font-weight: 700;
+        color      : #303030;
+      }
+
+      .phone {
+        font-size  : 36px;
+        margin-top : 16px;
+        color      : #303030;
+        font-family: "DIN";
+      }
+
+      .auth-phone {
+        color        : #303030;
+        font-size    : 32px;
+        font-weight  : 700;
+        background   : #fff;
+        line-height  : normal;
+        border-radius: 12px;
+        padding      : 20px 30px;
+        margin       : 16px 0;
+
+        &::after {
+          border: none;
+        }
+      }
+    }
+
+    .right {
+      width        : 144px;
+      height       : 144px;
+      border-radius: 50%;
+    }
+  }
+
+  .middle {
+    box-sizing: border-box;
+    padding   : 0 0 0 40px;
+    margin-top: 60px;
+
+    .card {
+      position                 : relative;
+      overflow                 : hidden;
+      box-sizing               : border-box;
+      padding                  : 40px;
+      background-color         : #fff;
+      border-top-left-radius   : 12px;
+      border-bottom-left-radius: 12px;
+
+      .title {
+        position : absolute;
+        width    : 200px;
+        right    : -70px;
+        top      : -110px;
+        transform: scale(0.8)
+      }
+
+      .level {
+        font-size  : 36px;
+        font-weight: 700;
+        color      : #303030;
+      }
+
+      .exp {
+        display    : flex;
+        align-items: flex-end;
+        margin-top : 8px;
+
+        .num {
+          font-family: "DIN";
+          font-size  : 96px;
+          line-height: 96px;
+          color      : #72c9aa;
+        }
+
+        .singal {
+          font-family: "DIN";
+          margin-left: 4px;
+          font-size  : 32px;
+          color      : #919191;
+        }
+      }
+
+      .dots {
+        width      : 100%;
+        display    : flex;
+        align-items: center;
+        margin-top : 24px;
+
+        .exp-dot {
+          width        : 20px;
+          height       : 20px;
+          border-radius: 50%;
+          margin-right : 10px;
+        }
+
+        .full {
+          background: #72c9aa;
+        }
+
+        .empty {
+          background: #eaeaea;
+        }
+      }
+
+      .number {
+        font-family: "DIN";
+        margin-top : 24px;
+        font-size  : 32px;
+        color      : #919191;
+      }
+    }
+  }
+
+  .bottom {
+    display       : flex;
+    flex-direction: column;
+    box-sizing    : border-box;
+    margin-top    : 60px;
+    padding       : 0 0 0 40px;
+    background    : #F8F8F8;
+
+    .item {
+      display      : flex;
+      align-items  : center;
+      box-sizing   : border-box;
+      padding      : 24px 12px 24px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+      .text {
+        font-size  : 32px;
+        color      : #444;
+        margin-left: 20px;
+      }
+
+      .icon {
+        width : 58px;
+        height: 58px;
+      }
+
+      .right {
+        display    : flex;
+        align-items: center;
+        margin-left: auto;
+
+        .no-read {
+          display        : flex;
+          align-items    : center;
+          justify-content: center;
+          margin-right   : 20px;
+          font-size      : 28px;
+          color          : #fff;
+          background     : #72c9aa;
+          border-radius  : 8px;
+          width          : 40px;
+          height         : 40px;
+          font-family    : "DIN";
+        }
+
+        .arrow {
+          width : 32px;
+          height: 32px;
+
+        }
+      }
+
+
+    }
+  }
+}

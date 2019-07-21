@@ -1,0 +1,287 @@
+@import "../../assets/fonts/font";
+
+.ordertype {
+  min-height: 100vh;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  padding: 0 0 80px 0;
+  background: #f8f8f8;
+
+  .error-info {
+    font-size: 24px;
+    color: #fc4242;
+  }
+
+  .top {
+    height: 440px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    box-sizing: border-box;
+    padding: 40px;
+    background-image: url("http://cdn.xwuyou.com/order_1.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    .rank {
+      width: fit-content;
+      padding: 8px 20px;
+      background: #229c8f;
+      border-radius: 100px;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .name {
+      font-size: 66px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .desc {
+      line-height: 1.1rem;
+      font-size: 28px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  .middle {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: -12px 40px 0 40px;
+    background: #fefefe;
+    padding: 20px 40px;
+    border-radius: 12px;
+
+    .locate {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 20px 0;
+
+      input {
+        margin-left: 16px;
+        font-size: 32px;
+        color: #303030;
+        font-weight: 700;
+      }
+
+      .icon {
+        width: 44px;
+        height: 44px;
+      }
+
+      .locate--text {
+        display: flex;
+        align-items: center;
+
+        .text {
+          margin-left: 16px;
+          font-size: 32px;
+          color: #303030;
+          font-weight: 700;
+        }
+
+        .time {
+          margin-left: 16px;
+          font-size: 32px;
+          color: #303030;
+          font-weight: 700;
+          font-family: "DIN";
+        }
+      }
+
+      .arrow {
+        margin-left: auto;
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  .order--info {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: 20px 40px 0 40px;
+    background: #fefefe;
+    padding: 20px 40px;
+    border-radius: 12px;
+
+    .title {
+      font-size: 44px;
+      color: #303030;
+      font-weight: 700;
+    }
+
+    .content {
+      margin-top: 32px;
+      width: 100%;
+      height: fit-content;
+      min-height: 160px;
+      color: #303030;
+      font-size: 32px;
+    }
+  }
+
+  .order--locate {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: 20px 40px 0 40px;
+    background: #fefefe;
+    padding: 20px 40px;
+    border-radius: 12px;
+
+    .input--locate {
+      margin-top: 12px;
+      width: fit-content;
+      font-size: 32px;
+      color: #303030;
+    }
+
+    .locate--top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .title {
+        font-size: 32px;
+        font-weight: 700;
+      }
+
+      .right {
+        display: flex;
+        align-items: center;
+
+        .right--title {
+          margin-right: 12px;
+          font-size: 32px;
+          color: #303030;
+        }
+
+        .arrow {
+          margin-left: 8px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+
+  .bottom {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: 20px 40px 160px 40px;
+    background: #fefefe;
+    padding: 20px 40px;
+    border-radius: 12px;
+
+    .local--bottom {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+
+    .bottom--item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .bottom--title {
+        font-size: 32px;
+        font-weight: 700;
+      }
+
+      .bottom--text {
+        display: flex;
+        align-items: center;
+        font-family: "DIN";
+        font-size: 32px;
+        color: #919191;
+
+        .singal {
+          font-size: 24px;
+          margin-right: 6px;
+        }
+      }
+    }
+
+    .bottom--item:last-child {
+      margin-top: 20px;
+    }
+  }
+
+  .order--price {
+    display: flex;
+    position: fixed;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    margin: 0 40px;
+    background: #72c9aa;
+    border-radius: 12px;
+    padding: 32px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1024;
+
+    .order--comfirm {
+      color: #fff;
+      flex: 1;
+      font-size: 36px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+    }
+
+    .right {
+      margin-left: auto;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .singal {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 30px;
+        margin-right: 6px;
+      }
+
+      .price {
+        font-family: "DIN";
+        color: #fff;
+        font-size: 36px;
+      }
+    }
+  }
+
+  .local--bottom {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .input {
+      margin-top: 12px;
+      width: fit-content;
+      font-size: 32px;
+      color: #303030;
+      font-family: "DIN";
+    }
+
+    .info {
+      font-size: 24px;
+      margin-top: 8px;
+      color: #229c8f;
+    }
+  }
+}
