@@ -40,20 +40,14 @@ export default class SplashPage extends Component {
   }
 
   onGotUserInfo = res => {
-    Taro.cloud.callFunction({
-      name: 'login',
-      data: {}
-    }).then(res => {
-      if (res.result.openid) {
-        const { openid } = res.result
+    Taro.clearStorage()
+    Taro.login().then(res => {
+      const { code } = res
+      getOpenId({ code }).then(res => {
+        const { openid, session_key } = res.data
         Taro.getUserInfo({ lang: 'zh_CN' }).then(res => {
           const { userInfo } = res
-          if (
-            userInfo.nickName &&
-            userInfo.avatarUrl &&
-            userInfo.gender &&
-            userInfo.city
-          ) {
+          if (userInfo) {
             const user = {
               openId: openid,
               userName: userInfo.nickName,
@@ -70,12 +64,13 @@ export default class SplashPage extends Component {
             }
             addUser({ user }).then(res => {
               if (res.data.code === 200) {
+                set('openid', openid)
+                set('session', session_key)
+                Taro.setStorageSync('openid', openid)
+                Taro.setStorageSync('serviceReaded', 0)
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
                 })
-                set('openid', openid)
-                Taro.setStorageSync('openid', openid)
-                Taro.setStorageSync('serviceReaded', 0)
               } else if (res.data.code === 201) {
                 const { phoneNumber } = res.data.data
                 set('user', res.data.data)
@@ -87,71 +82,21 @@ export default class SplashPage extends Component {
                   url: '/pages/indexPage/index'
                 })
               } else {
-                toast('请检查您的网络状态后重试', 'none')
+                toast('服务器无法添加用户', 'none')
               }
             }).catch(err => {
-              toast('请检查您的网络状态后重试', 'none')
+              toast(err, 'none')
             })
-          } else {
-            toast('请检查您的网络状态后重试', 'none')
           }
+        }).catch(err => {
+          toast('微信服务器无法获取用户信息', 'none')
         })
-      }
+      }).catch(err => {
+        toast(err, 'none')
+      })
+    }).catch(err => {
+      toast(err, 'none')
     })
-    // Taro.login().then(res => {
-    //   const { code } = res
-    //   getOpenId({ code }).then(res => {
-    //     const { openid, session_key } = res.data
-    //     Taro.setStorageSync('openid', openid)
-    //     Taro.setStorageSync('auth', true)
-    //     Taro.setStorageSync('serviceReaded', 0)
-    //     set('openid', openid)
-    //     Taro.getUserInfo({ lang: 'zh_CN' }).then(res => {
-    //       const { userInfo } = res
-    //       if (
-    //         userInfo.nickName &&
-    //         userInfo.avatarUrl &&
-    //         userInfo.gender &&
-    //         userInfo.city
-    //       ) {
-    //         const user = {
-    //           openId: openid,
-    //           userName: userInfo.nickName,
-    //           userAvatar: userInfo.avatarUrl,
-    //           userGender: userInfo.gender,
-    //           userCity: userInfo.city,
-    //           dayQuest: [{
-    //             date: getNowDay(),
-    //             order: [],
-    //             quest1: false,
-    //             quest2: false,
-    //             quest3: false
-    //           }]
-    //         }
-    //         addUser({ user }).then(res => {
-    //           if (res.data.code === 200) {
-    //             Taro.switchTab({
-    //               url: '/pages/indexPage/index'
-    //             })
-    //           } else if (res.data.code === 201) {
-    //             const { phoneNumber } = res.data.data
-    //             set('user', res.data.data)
-    //             Taro.setStorageSync('phone', phoneNumber)
-    //             Taro.switchTab({
-    //               url: '/pages/indexPage/index'
-    //             })
-    //           } else {
-    //             toast('请检查您的网络状态', 'none')
-    //           }
-    //         }).catch(err => {
-    //           toast('请检查您的网络状态', 'none')
-    //         })
-    //       } else {
-    //         toast('请检查您的网络状态', 'none')
-    //       }
-    //     })
-    //   }).catch(err => toast('请检查您的网络状态', 'none'))
-    // }).catch(err => toast('请检查您的网络状态', 'none'))
   }
 
   routeToAgreePage = () => {

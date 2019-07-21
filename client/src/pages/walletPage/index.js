@@ -143,7 +143,7 @@ export default class WalletPage extends Component {
   }
 
   showCashOutMask = () => {
-    toast('因微信支付平台未完善的缘故，10月7日之后才可提现。对您带来的不便，我们感到十分抱歉。', 'none', 4000)
+    toast('因微信支付平台未完善的缘故，10月7日之后才可提现。给您带来的不便，我们感到十分抱歉。', 'none', 4000)
     // this.setState({ showCashOutMask: true })
   }
 

@@ -15,6 +15,7 @@ import {
   getPhoneNumber
 } from '../../api'
 import { toast } from '../../lib/utils'
+import WXBizDataCrypt from '../../lib/auth'
 
 import './index.scss'
 
@@ -105,29 +106,36 @@ export default class MePage extends Component {
   }
 
   onGotPhoneNumber = res => {
+    // 对没有绑定手机号的情况做手动输入的兼容处理
     const response = res
-    const user = get('user')
-    Taro.login().then(res => {
-      const { code } = res
-      getOpenId({ code }).then(res => {
-        const { session_key } = res.data
-        getPhoneNumber({
-          sessionKey: session_key,
-          encryptedData: response.detail.encryptedData,
-          iv: response.detail.iv
-        }).then(res => {
-          if (res.data.code === 200) {
-            const { phoneNumber } = res.data.data
-            Taro.setStorageSync('phone', phoneNumber)
-            user.phoneNumber = phoneNumber
-            this.setState({ phoneNumber })
-            set('user', user)
-            updateUser({ user })
-          } else {
-            toast('微信服务器异常，请稍后再试', 'none')
-          }
+    Taro.checkSession({
+      success: () => {
+        const session_key = get('session')
+        this.getPhoneNumber(session_key, response)
+      }, fail: () => {
+        Taro.login().then(res => {
+          const { code } = res
+          getOpenId({ code }).then(res => {
+            const { session_key } = res.data
+            this.getPhoneNumber(session_key, response)
+          })
         })
-      })
+      }
+    })
+  }
+
+  getPhoneNumber = (session, response) => {
+    const user = get('user')
+    const pc = new WXBizDataCrypt('wx8c162ea3a4ffdeb1', session)
+    pc.decryptData(response.detail.encryptedData, response.detail.iv).then(res => {
+      const { phoneNumber } = res
+      Taro.setStorageSync('phone', phoneNumber)
+      user.phoneNumber = phoneNumber
+      this.setState({ phoneNumber })
+      set('user', user)
+      updateUser({ user })
+    }).catch(err => {
+      toast('微信服务器异常，请重试或稍后再试', 'none')
     })
   }
 

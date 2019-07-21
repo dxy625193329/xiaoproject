@@ -61,7 +61,7 @@ export default class BeHunterPage extends Component {
     const openId = get('openid')
     if (name && idCardNumber && tempImageUrl1 && tempImageUrl2 && tempImageUrl3 && checked) {
       const orderId = parseInt(Date.now() * Math.random())
-      const price = 100
+      const price = 0.01
       getPay({ orderId, price, openId }).then(res => {
         const { timeStamp, nonceStr, signType, paySign } = res.data
         const payPackage = res.data.package

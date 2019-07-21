@@ -45,11 +45,19 @@ export default class IndexPage extends Component {
   }
 
   routeToChildPage = id => {
-    let phoneNumber
-    if (Taro.getStorageSync('phone')) {
-      phoneNumber = Taro.getStorageSync('phone')
-    }
-    if (phoneNumber === '' || phoneNumber === undefined) {
+    const localPhoneNumber = Taro.getStorageSync('phone')
+    let phoneNumber = localPhoneNumber ? localPhoneNumber : ''
+    if (phoneNumber) {
+      if (id === 0) {
+        Taro.navigateTo({
+          url: '/pages/orderTypePage/index'
+        })
+      } else {
+        Taro.navigateTo({
+          url: '/pages/taskHallPage/index'
+        })
+      }
+    } else {
       Taro.showModal({
         title: '提示',
         content: '发单或者接单都需要授权手机号码',
@@ -61,21 +69,13 @@ export default class IndexPage extends Component {
           })
         }
       })
-    } else {
-      if (id === 0) {
-        Taro.navigateTo({
-          url: '/pages/orderTypePage/index'
-        })
-      } else {
-        Taro.navigateTo({
-          url: '/pages/taskHallPage/index'
-        })
-      }
     }
   }
 
   fetchData = () => {
-    getBanner().then(res => this.setState({ banners: res.data.data.eventList })).catch(err => {
+    getBanner().then(res => this.setState({
+      banners: res.data.data.eventList
+    })).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
     if (!get('user')) {
