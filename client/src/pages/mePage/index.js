@@ -37,6 +37,8 @@ export default class MePage extends Component {
     serviceListLength: 0,
     serviceReaded: 0,
     phoneNumber: '',
+    showPhoneMask: false,
+    value: ''
   }
 
   componentDidShow() {
@@ -135,9 +137,27 @@ export default class MePage extends Component {
       set('user', user)
       updateUser({ user })
     }).catch(err => {
-      console.log(err)
-      toast('微信服务器异常，请重试或稍后再试', 'none')
+      this.setState({ showPhoneMask: true })
     })
+  }
+
+  hideMask = () => {
+    this.setState({ showPhoneMask: false })
+  }
+
+  handleInputChange = e => {
+    this.setState({ value: e.target.value })
+  }
+
+  handleBind = () => {
+    const user = get('user')
+    const phoneNumber = this.state.value
+    Taro.setStorageSync('phone', phoneNumber)
+    user.phoneNumber = phoneNumber
+    this.setState({ phoneNumber, showPhoneMask: false })
+    set('user', user)
+    updateUser({ user })
+    toast('手机号码绑定成功', 'none')
   }
 
   render() {
@@ -163,6 +183,26 @@ export default class MePage extends Component {
 
     return (
       <View className='me'>
+        {
+          showPhoneMask ? <View catchtouchmove={this.preventTouchMove}>
+            <View className='mask' onClick={() => this.hideMask()}></View>
+            <View className='mask--wrapper'>
+              <View className='mask--content'>
+                <View className='title'>您的微信可能没有绑定手机号码</View>
+                <Input
+                  className='input'
+                  cursor-spacing='100px'
+                  value={value}
+                  placeholder='输入您的手机号码'
+                  type='digit'
+                  maxLength='11'
+                  onInput={this.handleInputChange}
+                />
+                <View className='check' onClick={this.handleBind}>绑定</View>
+              </View>
+            </View>
+          </View> : null
+        }
         <View className='top'>
           <View className='left'>
             <View className='name'>{wxName}</View>
