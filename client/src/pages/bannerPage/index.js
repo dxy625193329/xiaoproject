@@ -15,7 +15,7 @@ export default class BannerPage extends Component {
   }
 
   componentDidMount() {
-    this.setState({ content: get('banner').content })
+    this.setState({ content: get('banner') })
   }
 
   render() {

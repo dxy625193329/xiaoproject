@@ -110,7 +110,7 @@ export default class MePage extends Component {
     const response = res
     Taro.checkSession({
       success: () => {
-        const session_key = get('session')
+        const session_key = Taro.getStorageSync('session')
         this.getPhoneNumber(session_key, response)
       }, fail: () => {
         Taro.login().then(res => {
@@ -135,6 +135,7 @@ export default class MePage extends Component {
       set('user', user)
       updateUser({ user })
     }).catch(err => {
+      console.log(err)
       toast('微信服务器异常，请重试或稍后再试', 'none')
     })
   }

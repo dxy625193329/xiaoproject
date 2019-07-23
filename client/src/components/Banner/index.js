@@ -45,7 +45,7 @@ export default class Banner extends Component {
   }
 
   handleBannerClick = item => {
-    set('banner', item)
+    set('banner', item.content)
     Taro.navigateTo({
       url: '/pages/bannerPage/index'
     })

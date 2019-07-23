@@ -4,6 +4,7 @@ import './index.scss'
 import { addHunter, addService, getPay, updateUser, refundPay } from '../../api'
 import { get } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
+import { toast } from '../../lib/utils';
 
 export default class BeHunterPage extends Component {
 
@@ -111,14 +112,11 @@ export default class BeHunterPage extends Component {
             }
             addService({ service })
           }).catch(err => {
+            toast('上传文件失败，请检查您的网络环境后再试', 'none')
             Taro.hideLoading()
           })
         }).catch(err => {
-          Taro.showToast({
-            title: '支付失败',
-            icon: 'none',
-            duration: 2000
-          })
+          toast('支付失败，请稍后再试', 'none')
         })
       })
     }

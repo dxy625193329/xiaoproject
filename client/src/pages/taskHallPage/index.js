@@ -2,16 +2,9 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Image } from '@tarojs/components'
 import TaskCard from '../../components/TaskCard'
 import './index.scss'
-import { getNowDay } from '../../lib/time'
-import { get } from '../../lib/global'
-import { getOrderListForHunt, getUserByOpenId, updateUser } from '../../api'
+import { getOrderListForHunt } from '../../api'
 
 export default class TaskHallPage extends Component {
-
-  config = {
-    enablePullDownRefresh: true,
-    backgroundTextStyle: "dark"
-  }
 
   state = {
     taskList: [],
@@ -19,11 +12,6 @@ export default class TaskHallPage extends Component {
     sortedTimeList: [],
     sortedTypeList: [],
     timer: null
-  }
-
-  onPullDownRefresh() {
-    this.fetchData()
-    Taro.stopPullDownRefresh()
   }
 
   componentDidMount() {
@@ -35,40 +23,21 @@ export default class TaskHallPage extends Component {
     })
   }
 
-  componentWillUnmount(){
+  componentDidHide() {
     clearInterval(this.state.timer)
   }
 
   fetchData = () => {
-    const openId = get('openid')
-    Taro.showNavigationBarLoading()
     getOrderListForHunt().then(res => {
-      Taro.hideNavigationBarLoading()
-      this.setState({
-        taskList: res.data.data.orderList.reverse(),
-        sortedPriceList: this.sortList(res.data.data.orderList, 'price'),
-        sortedTimeList: this.sortList(res.data.data.orderList, 'orderStamp'),
-        sortedTypeList: this.sortList(res.data.data.orderList, 'type')
-      })
-    })
-    getUserByOpenId({ openId }).then(res => {
-      const { user } = res.data.data
-      let quest = user.dayQuest
-      if (quest.length > 0) {
-        for (let i = 0; i < quest.length; i++) {
-          if (quest[i].time == getNowDay()) {
-            return
-          } else {
-            quest.push({ time: getNowDay(), order: [] })
-          }
-        }
-      } else {
-        quest.push({ time: getNowDay(), order: [] })
+      if (res.data.code === 200) {
+        this.setState({
+          taskList: res.data.data.orderList.reverse(),
+          sortedPriceList: this.sortList(res.data.data.orderList, 'price'),
+          sortedTimeList: this.sortList(res.data.data.orderList, 'orderStamp'),
+          sortedTypeList: this.sortList(res.data.data.orderList, 'type')
+        })
       }
-      user.dayQuest = quest
-      updateUser({ user })
     })
-
   }
 
   sortByTime = () => {

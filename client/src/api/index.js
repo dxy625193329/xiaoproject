@@ -238,3 +238,39 @@ export const cashOut = data => {
     })
   })
 }
+
+export const createOrderForRest = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/order/createOrderForRest`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}
+
+export const cancelOrderForRest = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/order/cancelOrderForRest`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}
+
+export const hunterGetOrder = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/order/hunterGetOrder`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}

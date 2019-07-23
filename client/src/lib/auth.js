@@ -1,4 +1,4 @@
-import { Crypto } from 'cryptojs'
+import { Crypto } from './cryptojs'
 
 class RdWXBizDataCrypt {
 

@@ -32,6 +32,7 @@ export default class SplashPage extends Component {
     getUserByOpenId({ openId: openid }).then(res => {
       if (res.data.code === 200) {
         set('openid', openid)
+        Taro.setStorageSync('phone', res.data.data.user.phoneNumber)
         Taro.switchTab({
           url: '/pages/indexPage/index'
         })
@@ -65,7 +66,7 @@ export default class SplashPage extends Component {
             addUser({ user }).then(res => {
               if (res.data.code === 200) {
                 set('openid', openid)
-                set('session', session_key)
+                Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
                 Taro.switchTab({

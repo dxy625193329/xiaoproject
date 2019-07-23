@@ -5,6 +5,7 @@ import { get } from '../../lib/global'
 import { resolveCountQuest, resolveLevelQuest } from '../../lib/quest'
 import { getNowDay } from '../../lib/time'
 import { updateUser } from '../../api'
+import { toast } from '../../lib/utils'
 
 export default class QuestPage extends Component {
 
@@ -82,6 +83,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 2) {
       if (this.calcQuestStatus(tag)) {
@@ -95,6 +98,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 3) {
       if (this.calcQuestStatus(tag)) {
@@ -108,6 +113,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 4) {
       if (this.calcQuestStatus(tag)) {
@@ -121,6 +128,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 5) {
       if (this.calcQuestStatus(tag)) {
@@ -134,6 +143,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 6) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -146,6 +157,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 7) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -158,6 +171,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 8) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -170,6 +185,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
     if (tag === 9) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -182,6 +199,8 @@ export default class QuestPage extends Component {
           })
         }
       }
+    } else {
+      toast('您还未完成任务，无法领取奖励', 'none')
     }
   }
 
@@ -193,40 +212,56 @@ export default class QuestPage extends Component {
     }
   }
 
-  handleDayQuest = (tag, flag) => {
-    if (flag) {
-      return
-    }
-    let { userInfo } = this.state
-    if (tag === 1) {
-      userInfo.hunterOrderCount += 1
-      for (let i = 0; i < userInfo.dayQuest.length; i++) {
-        if (userInfo.dayQuest[i].date === getNowDay()) {
-          userInfo.dayQuest[i].quest1 = true
+  handleDayQuest = tag => {
+    const { userInfo } = this.state
+    if (userInfo.isHunter) {
+      if (tag === 1) {
+        for (let i = 0; i < userInfo.dayQuest.length; i++) {
+          if (userInfo.dayQuest[i].date === getNowDay()) {
+            if (userInfo.dayQuest[i].order.length > 0) {
+              userInfo.hunterOrderCount += 1
+              userInfo.dayQuest[i].quest1 = true
+              updateUser({ user: userInfo })
+              this.setState({ dayQuest1: true })
+              return
+            } else {
+              toast('您还未完成任务，无法领取奖励', 'none')
+            }
+          }
         }
       }
-      updateUser({ user: userInfo })
-      this.setState({ dayQuest1: true })
-    }
-    if (tag === 2) {
-      userInfo.wallet += 4
-      for (let i = 0; i < userInfo.dayQuest.length; i++) {
-        if (userInfo.dayQuest[i].date === getNowDay()) {
-          userInfo.dayQuest[i].quest2 = true
+      if (tag === 2) {
+        for (let i = 0; i < userInfo.dayQuest.length; i++) {
+          if (userInfo.dayQuest[i].date === getNowDay()) {
+            if (userInfo.dayQuest[i].order.length >= 10) {
+              userInfo.wallet += 4
+              userInfo.dayQuest[i].quest2 = true
+              updateUser({ user: userInfo })
+              this.setState({ dayQuest2: true })
+              return
+            } else {
+              toast('您还未完成任务，无法领取奖励', 'none')
+            }
+          }
         }
       }
-      updateUser({ user: userInfo })
-      this.setState({ dayQuest2: true })
-    }
-    if (tag === 3) {
-      userInfo.wallet += 5
-      for (let i = 0; i < userInfo.dayQuest.length; i++) {
-        if (userInfo.dayQuest[i].date === getNowDay()) {
-          userInfo.dayQuest[i].quest3 = true
+      if (tag === 3) {
+        for (let i = 0; i < userInfo.dayQuest.length; i++) {
+          if (userInfo.dayQuest[i].date === getNowDay()) {
+            if (userInfo.dayQuest[i].order.filter(item => item.type === 2).length >= 4) {
+              userInfo.wallet += 5
+              userInfo.dayQuest[i].quest3 = true
+              updateUser({ user: userInfo })
+              this.setState({ dayQuest3: true })
+              return
+            } else {
+              toast('您还未完成任务，无法领取奖励', 'none')
+            }
+          }
         }
       }
-      updateUser({ user: userInfo })
-      this.setState({ dayQuest3: true })
+    } else {
+      toast('您不是猎人，无法完成任务', 'none')
     }
   }
 
@@ -244,7 +279,7 @@ export default class QuestPage extends Component {
               <View className='info'>目标：完成1单任务({dayQuestList.length >= 1 ? 1 : 0}/1)</View>
               <View className='info'>奖励：总单数奖励1单</View>
             </View>
-            <View className='right' onClick={() => this.handleDayQuest(1, dayQuest1)}>
+            <View className='right' onClick={() => this.handleDayQuest(1)}>
               {dayQuest1 ? '已完成' : dayQuestList.length >= 1 ? '领取奖励' : '未完成'}
             </View>
           </View>
@@ -254,7 +289,7 @@ export default class QuestPage extends Component {
               <View className='info'>目标：完成10单任务({dayQuestList.length >= 10 ? 10 : dayQuestList.length}/10)</View>
               <View className='info'>奖励：奖励4元</View>
             </View>
-            <View className='right' onClick={() => this.handleDayQuest(2, dayQuest2)}>
+            <View className='right' onClick={() => this.handleDayQuest(2)}>
               {dayQuest2 ? '已完成' : dayQuestList.length >= 10 ? '领取奖励' : '未完成'}
             </View>
           </View>
@@ -264,7 +299,7 @@ export default class QuestPage extends Component {
               <View className='info'>目标：完成4单影分身任务({this.calcShadowOrder() >= 4 ? 4 : this.calcShadowOrder()}/4)</View>
               <View className='info'>奖励：奖励5元</View>
             </View>
-            <View className='right' onClick={() => this.handleDayQuest(3, dayQuest3)}>
+            <View className='right' onClick={() => this.handleDayQuest(3)}>
               {dayQuest3 ? '已完成' : this.calcShadowOrder() >= 4 ? '领取奖励' : '未完成'}
             </View>
           </View>

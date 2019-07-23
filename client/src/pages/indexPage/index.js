@@ -78,29 +78,27 @@ export default class IndexPage extends Component {
     })).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
-    if (!get('user')) {
-      getUserByOpenId({ openId: get('openid') }).then(res => {
-        const { user } = res.data.data
-        const { isHunter, dayQuest } = res.data.data.user
-        set('user', user)
-        set('isHunter', isHunter)
-        if (dayQuest) {
-          if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
-            dayQuest.push({
-              date: getNowDay(),
-              order: [],
-              quest1: false,
-              quest2: false,
-              quest3: false
-            })
-            user.dayQuest = dayQuest
-            updateUser({ user })
-          }
+    getUserByOpenId({ openId: get('openid') }).then(res => {
+      const { user } = res.data.data
+      const { isHunter, dayQuest } = res.data.data.user
+      set('user', user)
+      set('isHunter', isHunter)
+      if (dayQuest) {
+        if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
+          dayQuest.push({
+            date: getNowDay(),
+            order: [],
+            quest1: false,
+            quest2: false,
+            quest3: false
+          })
+          user.dayQuest = dayQuest
+          updateUser({ user })
         }
-      }).catch(err => {
-        toast('请检查您的网络状态', 'none')
-      })
-    }
+      }
+    }).catch(err => {
+      toast('请检查您的网络状态', 'none')
+    })
   }
 
   render() {

@@ -14,23 +14,26 @@ export default class OrderPage extends Component {
 
   config = {
     navigationBarTitleText: '订单',
-    enablePullDownRefresh: true,
-    backgroundTextStyle: "dark"
   }
 
   state = {
     currentIndex: 0,
     userOrderList: [],
-    hunterOrderList: []
-  }
-
-  onPullDownRefresh() {
-    this.fetchData()
-    Taro.stopPullDownRefresh()
+    hunterOrderList: [],
+    timer: null
   }
 
   componentDidShow() {
     this.fetchData()
+    this.setState({
+      timer: setInterval(() => {
+        this.fetchData()
+      }, 5000)
+    })
+  }
+
+  componentDidHide() {
+    clearInterval(this.state.timer)
   }
 
   handleSelectTab = index => {
@@ -40,14 +43,14 @@ export default class OrderPage extends Component {
 
   fetchData = () => {
     const openId = get('openid')
-    Taro.showNavigationBarLoading()
     getUserByOpenId({ openId }).then(res => {
-      Taro.hideNavigationBarLoading()
-      this.setState({
-        userOrderList: res.data.data.user.userOrder.reverse(),
-        hunterOrderList: res.data.data.user.hunterOrder.reverse()
-      })
-      set('user', res.data.data.user)
+      if (res.data.code === 200) {
+        this.setState({
+          userOrderList: res.data.data.user.userOrder.reverse(),
+          hunterOrderList: res.data.data.user.hunterOrder.reverse()
+        })
+        set('user', res.data.data.user)
+      }
     })
   }
 

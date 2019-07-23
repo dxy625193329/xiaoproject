@@ -3,8 +3,13 @@ import { View, Image, Button } from '@tarojs/components'
 import './index.scss'
 import { get } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
-import { checkOrderStatus, calcLevel } from '../../lib/utils'
-import { addOrder, updateUser, updateOrder, getUserByOpenId, delOrder, getPay, refundPay } from '../../api'
+import { checkOrderStatus, calcLevel, toast } from '../../lib/utils'
+import {
+  addOrder, updateUser, updateOrder, getUserByOpenId, delOrder, getPay, refundPay,
+  createOrderForRest,
+  cancelOrderForRest,
+  hunterGetOrder
+} from '../../api'
 
 export class OrderDetailPage extends Component {
 
@@ -97,13 +102,16 @@ export class OrderDetailPage extends Component {
       order.pay = 'rest'
       order.statusText = '订单等待接单'
       order.status = 'wait'
-      addOrder({ order })
       user.wallet = wallet
       user.userOrder.push(order)
-      updateUser({ user }).then(res => {
-        Taro.switchTab({
-          url: '/pages/orderPage/index'
-        })
+      createOrderForRest({ user, order }).then(res => {
+        if (res.data.code === 200) {
+          Taro.switchTab({
+            url: '/pages/orderPage/index'
+          })
+        } else {
+          toast('创建订单失败，请检查您的网络状态后重试', 'none')
+        }
       })
     } else {
       let nowPrice
@@ -129,16 +137,26 @@ export class OrderDetailPage extends Component {
           order.pay = 'wx'
           order.statusText = '订单等待接单'
           order.status = 'wait'
-          addOrder({ order })
           user.userOrder.push(order)
-          updateUser({ user }).then(res => {
-            Taro.switchTab({
-              url: '/pages/orderPage/index'
-            })
+          Promise.all([
+            updateUser({ user }),
+            addOrder({ order })
+          ]).then(res => {
+            if (res[0].data.code === 200 && res[1].data.code === 200) {
+              Taro.switchTab({
+                url: '/pages/orderPage/index'
+              })
+            } else {
+              toast('创建订单失败，请检查您的网络环境后重试', 'none')
+            }
+          }).catch(err => {
+            toast('创建订单失败，请检查您的网络环境后重试', 'none')
           })
         }).catch(err => {
-          console.log(err)
+          toast('支付失败或取消支付，请重试', 'none')
         })
+      }).catch(err => {
+        toast('支付失败，请检查您的网络环境后重试', 'none')
       })
     }
   }
@@ -165,18 +183,17 @@ export class OrderDetailPage extends Component {
                 user.userOrder.splice(index, 1)
               }
             })
-            updateUser({ user }).then(res => {
-              console.log('订单的用户orderList更新成功')
-            })
-            delOrder({ orderId: order.orderId }).then(res => {
-              Taro.switchTab({
-                url: '/pages/orderPage/index'
-              })
-              Taro.showToast({
-                title: '订单取消成功',
-                icon: 'success',
-                duration: 2000
-              })
+            cancelOrderForRest({ user, orderId: order.orderId }).then(res => {
+              if (res.data.code === 200) {
+                Taro.switchTab({
+                  url: '/pages/orderPage/index'
+                })
+                toast('订单取消成功', 'success')
+              } else {
+                toast('订单取消失败，请检查您的网络状态后重试', 'none')
+              }
+            }).catch(err => {
+              toast('订单取消失败，请检查您的网络状态后重试', 'none')
             })
           } else {
             let price = 0
@@ -197,18 +214,22 @@ export class OrderDetailPage extends Component {
                   }
                 })
                 updateUser({ user }).then(res => {
-                  console.log('订单的用户orderList更新成功')
+                  if (res.data.code === 200) {
+                    delOrder({ orderId: order.orderId }).then(res => {
+                      if (res.data.code == 200) {
+                        Taro.switchTab({
+                          url: '/pages/orderPage/index'
+                        })
+                      } else {
+                        toast('订单取消失败，请检查您的网络状态后重试')
+                      }
+                    })
+                  } else {
+                    toast('订单取消失败，请检查您的网络状态后重试')
+                  }
                 })
-                delOrder({ orderId: order.orderId }).then(res => {
-                  Taro.switchTab({
-                    url: '/pages/orderPage/index'
-                  })
-                  Taro.showToast({
-                    title: '订单取消成功',
-                    icon: 'success',
-                    duration: 2000
-                  })
-                })
+              } else {
+                toast('订单取消失败，请检查您的网络状态后重试')
               }
             })
           }
@@ -230,25 +251,18 @@ export class OrderDetailPage extends Component {
       count: user.hunterOrderCount,
       phoneNumber: user.phoneNumber
     }
-    updateOrder({ order }).then(res => {
-      console.log('订单信息修改成功')
-    })
-    getUserByOpenId({ openId: order.openId }).then(res => {
-      let { user } = res.data.data
-      for (let i = 0; i < user.userOrder.length; i++) {
-        if (user.userOrder[i].orderId === order.orderId) {
-          user.userOrder[i] = order
-        }
-      }
-      updateUser({ user }).then(res => {
-        console.log('订单的用户orderList更新成功')
-      })
-    })
     user.hunterOrder.push(order)
-    updateUser({ user }).then(res => {
-      Taro.switchTab({
-        url: '/pages/orderPage/index'
-      })
+    hunterGetOrder({ hunter: user, order }).then(res => {
+      if (res.data.code === 200) {
+        toast('接单成功', 'success')
+        Taro.switchTab({
+          url: '/pages/orderPage/index'
+        })
+      } else {
+        toast('接单失败，请检查您的网络状态后重试')
+      }
+    }).catch(err => {
+      toast('接单失败，请检查您的网络状态后重试')
     })
   }
 
