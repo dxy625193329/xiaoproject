@@ -7,7 +7,7 @@ import { checkOrderStatus, calcLevel, toast } from '../../lib/utils'
 import {
   addOrder, updateUser, updateOrder, getUserByOpenId, delOrder, getPay, refundPay,
   createOrder,
-  cancelOrderForRest,
+  cancelOrder,
   hunterGetOrder,
   hunterCompleteOrder,
   userConfirmOrder
@@ -108,10 +108,10 @@ export class OrderDetailPage extends Component {
       user.userOrder.push(order)
       createOrder({ user, order }).then(res => {
         if (res.data.code === 200) {
+          toast('发单成功', 'success')
           Taro.switchTab({
             url: '/pages/orderPage/index'
           })
-          toast('发单成功', 'success')
         } else {
           toast('创建订单失败，请检查您的网络状态后重试', 'none')
         }
@@ -145,10 +145,10 @@ export class OrderDetailPage extends Component {
           user.userOrder.push(order)
           createOrder({ user, order }).then(res => {
             if (res.data.code === 200) {
+              toast('发单成功', 'success')
               Taro.switchTab({
                 url: '/pages/orderPage/index'
               })
-              toast('发单成功', 'success')
             } else {
               toast('创建订单失败，请检查您的网络状态后重试', 'none')
             }
@@ -186,12 +186,12 @@ export class OrderDetailPage extends Component {
                 user.userOrder.splice(index, 1)
               }
             })
-            cancelOrderForRest({ user, orderId: order.orderId }).then(res => {
+            cancelOrder({ user, orderId: order.orderId }).then(res => {
               if (res.data.code === 200) {
+                toast('订单取消成功', 'success')
                 Taro.switchTab({
                   url: '/pages/orderPage/index'
                 })
-                toast('订单取消成功', 'success')
               } else {
                 toast('订单取消失败，请检查您的网络状态后重试', 'none')
               }
@@ -220,19 +220,20 @@ export class OrderDetailPage extends Component {
                   if (res.data.code === 200) {
                     delOrder({ orderId: order.orderId }).then(res => {
                       if (res.data.code == 200) {
+                        toast('订单取消成功', 'success')
                         Taro.switchTab({
                           url: '/pages/orderPage/index'
                         })
                       } else {
-                        toast('订单取消失败，请检查您的网络状态后重试')
+                        toast('订单取消失败，请检查您的网络状态后重试','none')
                       }
                     })
                   } else {
-                    toast('订单取消失败，请检查您的网络状态后重试')
+                    toast('订单取消失败，请检查您的网络状态后重试','none')
                   }
                 })
               } else {
-                toast('订单取消失败，请检查您的网络状态后重试')
+                toast('订单取消失败，请检查您的网络状态后重试','none')
               }
             })
           }
@@ -257,15 +258,15 @@ export class OrderDetailPage extends Component {
     user.hunterOrder.push(order)
     hunterGetOrder({ hunter: user, order }).then(res => {
       if (res.data.code === 200) {
+        toast('接单成功', 'success')
         Taro.switchTab({
           url: '/pages/orderPage/index'
         })
-        toast('接单成功', 'success')
       } else {
-        toast('接单失败，请检查您的网络状态后重试')
+        toast('接单失败，请检查您的网络状态后重试','none')
       }
     }).catch(err => {
-      toast('接单失败，请检查您的网络状态后重试')
+      toast('接单失败，请检查您的网络状态后重试','none')
     })
   }
 
@@ -275,15 +276,15 @@ export class OrderDetailPage extends Component {
     order.status = 'confirm'
     hunterCompleteOrder({ order }).then(res => {
       if (res.data.code === 200) {
+        toast('完成订单成功', 'success')
         Taro.switchTab({
           url: '/pages/orderPage/index'
         })
-        toast('完成订单成功', 'success')
       } else {
-        toast('完成订单失败，请检查您的网络状态后重试')
+        toast('完成订单失败，请检查您的网络状态后重试','none')
       }
     }).catch(err => {
-      toast('完成订单失败，请检查您的网络状态后重试')
+      toast('完成订单失败，请检查您的网络状态后重试','none')
     })
   }
 
@@ -293,15 +294,15 @@ export class OrderDetailPage extends Component {
     order.status = 'complete'
     userConfirmOrder({ order, nowTime: getNowDay() }).then(res => {
       if (res.data.code === 200) {
+        toast('确认订单成功', 'success')
         Taro.switchTab({
           url: '/pages/orderPage/index'
         })
-        toast('确认订单成功', 'success')
       } else {
-        toast('完成订单失败，请检查您的网络状态后重试')
+        toast('确认订单失败，请检查您的网络状态后重试', 'none')
       }
     }).catch(err => {
-      toast('确认订单失败，请检查您的网络状态后重试')
+      toast('确认订单失败，请检查您的网络状态后重试', 'none')
     })
   }
 
@@ -552,7 +553,8 @@ export class OrderDetailPage extends Component {
             </View> : null
         }
         {
-          status === 'confirm' && openId === savedOpenid ?
+          // status === 'confirm' && openId === savedOpenid
+          true ?
             <View className='order--price' onClick={this.handleConfirmOrder}>
               <View style={{ flex: 1 }}></View>
               <View className='order--comfirm'>确认完成</View>

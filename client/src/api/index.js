@@ -239,10 +239,10 @@ export const cashOut = data => {
   })
 }
 
-export const createOrderForRest = data => {
+export const createOrder = data => {
   return new Promise((resolve, reject) => {
     Taro.request({
-      url: `${BASE_URL}/order/createOrderForRest`,
+      url: `${BASE_URL}/order/createOrder`,
       method: 'POST',
       data,
       success: res => resolve(res),

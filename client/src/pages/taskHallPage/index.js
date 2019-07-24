@@ -23,7 +23,7 @@ export default class TaskHallPage extends Component {
     })
   }
 
-  componentDidHide() {
+  componentWillUnmount() {
     clearInterval(this.state.timer)
   }
 
