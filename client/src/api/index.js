@@ -251,7 +251,7 @@ export const createOrderForRest = data => {
   })
 }
 
-export const cancelOrderForRest = data => {
+export const cancelOrder = data => {
   return new Promise((resolve, reject) => {
     Taro.request({
       url: `${BASE_URL}/order/cancelOrderForRest`,
@@ -267,6 +267,30 @@ export const hunterGetOrder = data => {
   return new Promise((resolve, reject) => {
     Taro.request({
       url: `${BASE_URL}/order/hunterGetOrder`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}
+
+export const hunterCompleteOrder = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/order/hunterCompleteOrder`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}
+
+export const userConfirmOrder = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/order/userConfirmOrder`,
       method: 'POST',
       data,
       success: res => resolve(res),

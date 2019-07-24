@@ -21,7 +21,7 @@ import './index.scss'
 
 export default class SplashPage extends Component {
 
-  componentWillMount() {
+  componentDidMount() {
     const openid = Taro.getStorageSync('openid')
     if (openid) {
       this.checkUserExist(openid)
@@ -93,10 +93,10 @@ export default class SplashPage extends Component {
           toast('微信服务器无法获取用户信息', 'none')
         })
       }).catch(err => {
-        toast(err, 'none')
+        toast('请检查您的网络状态后重试', 'none')
       })
     }).catch(err => {
-      toast(err, 'none')
+      toast('请检查您的网络状态后重试', 'none')
     })
   }
 

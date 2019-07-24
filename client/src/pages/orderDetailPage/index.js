@@ -6,9 +6,11 @@ import { getNowDay } from '../../lib/time'
 import { checkOrderStatus, calcLevel, toast } from '../../lib/utils'
 import {
   addOrder, updateUser, updateOrder, getUserByOpenId, delOrder, getPay, refundPay,
-  createOrderForRest,
+  createOrder,
   cancelOrderForRest,
-  hunterGetOrder
+  hunterGetOrder,
+  hunterCompleteOrder,
+  userConfirmOrder
 } from '../../api'
 
 export class OrderDetailPage extends Component {
@@ -86,8 +88,8 @@ export class OrderDetailPage extends Component {
   }
 
   handleOrderPay = () => {
-    let order = { ...this.state.orderInfo }
-    let user = { ...this.state.userInfo }
+    const order = { ...this.state.orderInfo }
+    const user = { ...this.state.userInfo }
     if (this.state.restPay) {
       let { wallet } = user
       if (order.pool > 0) {
@@ -104,14 +106,17 @@ export class OrderDetailPage extends Component {
       order.status = 'wait'
       user.wallet = wallet
       user.userOrder.push(order)
-      createOrderForRest({ user, order }).then(res => {
+      createOrder({ user, order }).then(res => {
         if (res.data.code === 200) {
           Taro.switchTab({
             url: '/pages/orderPage/index'
           })
+          toast('发单成功', 'success')
         } else {
           toast('创建订单失败，请检查您的网络状态后重试', 'none')
         }
+      }).catch(err => {
+        toast('创建订单失败，请检查您的网络状态后重试', 'none')
       })
     } else {
       let nowPrice
@@ -138,19 +143,17 @@ export class OrderDetailPage extends Component {
           order.statusText = '订单等待接单'
           order.status = 'wait'
           user.userOrder.push(order)
-          Promise.all([
-            updateUser({ user }),
-            addOrder({ order })
-          ]).then(res => {
-            if (res[0].data.code === 200 && res[1].data.code === 200) {
+          createOrder({ user, order }).then(res => {
+            if (res.data.code === 200) {
               Taro.switchTab({
                 url: '/pages/orderPage/index'
               })
+              toast('发单成功', 'success')
             } else {
-              toast('创建订单失败，请检查您的网络环境后重试', 'none')
+              toast('创建订单失败，请检查您的网络状态后重试', 'none')
             }
           }).catch(err => {
-            toast('创建订单失败，请检查您的网络环境后重试', 'none')
+            toast('创建订单失败，请检查您的网络状态后重试', 'none')
           })
         }).catch(err => {
           toast('支付失败或取消支付，请重试', 'none')
@@ -166,8 +169,8 @@ export class OrderDetailPage extends Component {
       title: '确定取消订单？',
       success: res => {
         if (res.confirm) {
-          let order = { ...this.state.orderInfo }
-          let user = { ...this.state.userInfo }
+          const order = { ...this.state.orderInfo }
+          const user = { ...this.state.userInfo }
           if (order.pay === 'rest') {
             if (order.pool > 0) {
               user.wallet += (order.price - order.pool)
@@ -239,8 +242,8 @@ export class OrderDetailPage extends Component {
   }
 
   handleOrderHunt = () => {
-    let order = { ...this.state.orderInfo }
-    let user = { ...this.state.userInfo }
+    const order = { ...this.state.orderInfo }
+    const user = { ...this.state.userInfo }
     order.statusText = '订单进行中'
     order.status = 'process'
     order.hunter = {
@@ -254,10 +257,10 @@ export class OrderDetailPage extends Component {
     user.hunterOrder.push(order)
     hunterGetOrder({ hunter: user, order }).then(res => {
       if (res.data.code === 200) {
-        toast('接单成功', 'success')
         Taro.switchTab({
           url: '/pages/orderPage/index'
         })
+        toast('接单成功', 'success')
       } else {
         toast('接单失败，请检查您的网络状态后重试')
       }
@@ -267,87 +270,38 @@ export class OrderDetailPage extends Component {
   }
 
   handleOrderComplete = () => {
-    let order = { ...this.state.orderInfo }
+    const order = { ...this.state.orderInfo }
     order.statusText = '订单等待确认完成'
     order.status = 'confirm'
-    updateOrder({ order }).then(res => {
-      console.log('订单信息修改成功')
-    })
-    getUserByOpenId({ openId: order.openId }).then(res => {
-      let { user } = res.data.data
-      for (let i = 0; i < user.userOrder.length; i++) {
-        if (user.userOrder[i].orderId === order.orderId) {
-          user.userOrder[i] = order
-        }
-      }
-      updateUser({ user }).then(res => {
-        console.log('订单的用户orderList更新成功')
-      })
-    })
-    getUserByOpenId({ openId: order.hunter.openId }).then(res => {
-      let { user } = res.data.data
-      for (let i = 0; i < user.hunterOrder.length; i++) {
-        if (user.hunterOrder[i].orderId === order.orderId) {
-          user.hunterOrder[i] = order
-        }
-      }
-      updateUser({ user }).then(res => {
-        console.log('订单的猎人hunterList更新成功')
+    hunterCompleteOrder({ order }).then(res => {
+      if (res.data.code === 200) {
         Taro.switchTab({
           url: '/pages/orderPage/index'
         })
-      })
+        toast('完成订单成功', 'success')
+      } else {
+        toast('完成订单失败，请检查您的网络状态后重试')
+      }
+    }).catch(err => {
+      toast('完成订单失败，请检查您的网络状态后重试')
     })
   }
 
   handleConfirmOrder = () => {
-    let order = { ...this.state.orderInfo }
+    const order = { ...this.state.orderInfo }
     order.statusText = '订单已完成'
     order.status = 'complete'
-    updateOrder({ order }).then(res => {
-      console.log('订单信息修改成功')
-    })
-    getUserByOpenId({ openId: order.openId }).then(res => {
-      let { user } = res.data.data
-      for (let i = 0; i < user.userOrder.length; i++) {
-        if (user.userOrder[i].orderId === order.orderId) {
-          user.userOrder[i] = order
-        }
-      }
-      user.userOrderCount += 1
-      user.userLevel.exp += 1
-      let levelObj = calcLevel(2, user.userOrderCount, user.userLevel)
-      user.userLevel = levelObj
-      updateUser({ user }).then(res => {
-        console.log('订单的用户orderList更新成功')
-      })
-    })
-    getUserByOpenId({ openId: order.hunter.openId }).then(res => {
-      let { user } = res.data.data
-      for (let i = 0; i < user.hunterOrder.length; i++) {
-        if (user.hunterOrder[i].orderId === order.orderId) {
-          user.hunterOrder[i] = order
-        }
-      }
-      user.wallet += (order.price) * 0.9
-      user.pool += (order.price) * 0.1
-      user.hunterOrderCount += 1
-      user.hunterLevel.exp += 1
-      let levelObj = calcLevel(1, user.hunterOrderCount, user.hunterLevel)
-      user.hunterLevel = levelObj
-      let dayQuest = user.dayQuest
-      for (let i = 0; i < dayQuest.length; i++) {
-        if (dayQuest[i].date === getNowDay()) {
-          dayQuest[i].order.push(order)
-        }
-      }
-      user.dayQuest = dayQuest
-      updateUser({ user }).then(res => {
-        console.log('订单的猎人hunterList更新成功')
+    userConfirmOrder({ order, nowTime: getNowDay() }).then(res => {
+      if (res.data.code === 200) {
         Taro.switchTab({
           url: '/pages/orderPage/index'
         })
-      })
+        toast('确认订单成功', 'success')
+      } else {
+        toast('完成订单失败，请检查您的网络状态后重试')
+      }
+    }).catch(err => {
+      toast('确认订单失败，请检查您的网络状态后重试')
     })
   }
 
