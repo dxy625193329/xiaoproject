@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import './index.scss'
 
-export default class RankPage extends Component {
+export default class ImListPage extends Component {
 
   config = {
     navigationBarTitleText: '信息列表'

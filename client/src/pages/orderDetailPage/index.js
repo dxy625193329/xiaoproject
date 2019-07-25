@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Image, Button } from '@tarojs/components'
 import './index.scss'
-import { get } from '../../lib/global'
+import { get, set } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
 import { checkOrderStatus, calcLevel, toast } from '../../lib/utils'
 import {
@@ -320,6 +320,20 @@ export class OrderDetailPage extends Component {
     })
   }
 
+  makeMessage = () => {
+    const from = get('openid')
+    let to, toName, toAvatar
+    if (this.state.orderInfo.hunter) {
+      to = this.state.orderInfo.hunter.openId
+      toName = this.state.orderInfo.hunter.name
+      toAvatar = this.state.orderInfo.hunter.avatar
+      set('messageObj', { from, to, toName,toAvatar })
+    }
+    Taro.redirectTo({
+      url: '/pages/messagePage/index'
+    })
+  }
+
   preventTouchMove = () => { }
 
   render() {
@@ -338,9 +352,7 @@ export class OrderDetailPage extends Component {
       time,
       status,
       pool,
-      showAppraise,
       pay,
-      phoneNumber
     } = this.state.orderInfo
     const { wallet } = this.state.userInfo
     const {
@@ -351,7 +363,6 @@ export class OrderDetailPage extends Component {
       restPay,
       wxPay,
       disabledRestPay,
-      showAppraiseMask,
       isHunter
     } = this.state
 
@@ -429,7 +440,7 @@ export class OrderDetailPage extends Component {
                 <View className='bottom-item'>
                   <Button
                     className='message'
-                    onClick={this.makePhoneCall}
+                    onClick={this.makeMessage}
                   ></Button>
                   <View className='desc'>发送信息</View>
                 </View>

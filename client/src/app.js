@@ -23,7 +23,8 @@ class App extends Component {
       'pages/servicePage/index',
       'pages/agreePage/index',
       'pages/hunterAgreePage/index',
-      'pages/imListPage/index'
+      'pages/imListPage/index',
+      'pages/messagePage/index'
     ],
     window: {
       backgroundTextStyle: 'light',
