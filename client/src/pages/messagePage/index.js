@@ -38,36 +38,24 @@ export default class MessagePage extends Component {
     this.setState({ message: '', messageList: [...this.state.messageList, messageItem] })
   }
 
-  renderMessage = () => {
-    const { messageList, user } = this.state
-    let msgView
-    if (messageList.length > 0) {
-      messageList.map((item, index) => {
-        if (item.from === user.openId) {
-          msgView = (
-            <View className='me' key={index}>
-              {item.message}
-            </View>
-          )
-        } else {
-          msgView = (
-            <View className='me' key={index}>
-              {item.message}
-            </View>
-          )
-        }
-      })
-    }
-    return msgView
-  }
-
   render() {
+
+    const { messageList, user } = this.state
 
     return (
       <View className='message'>
         <View className='message-wrapper'>
           {
-            this.renderMessage()
+            messageList.length > 0 && messageList.map((item, index) => {
+              if (item.from === user.openId) {
+                return <View className='me' key={index}>
+                  {item.message}
+                </View>
+              }
+              return <View className='other' key={index}>
+                {item.message}
+              </View>
+            })
           }
         </View>
         <View className='input-wrapper'>
