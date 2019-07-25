@@ -12,7 +12,6 @@ import {
   getServiceByOpenId,
   updateUser,
   getOpenId,
-  getPhoneNumber
 } from '../../api'
 import { toast } from '../../lib/utils'
 import WXBizDataCrypt from '../../lib/auth'
@@ -60,8 +59,8 @@ export default class MePage extends Component {
         wxName: user.userName,
         wxAvatar: user.userAvatar,
       })
-      this.getService(openId)
     })
+    this.getService(openId)
   }
 
   getService = openId => {
@@ -113,8 +112,13 @@ export default class MePage extends Component {
     Taro.checkSession({
       success: () => {
         const session_key = Taro.getStorageSync('session')
-        this.getPhoneNumber(session_key, response)
-      }, fail: () => {
+        if (session_key) {
+          this.getPhoneNumber(session_key, response)
+        } else {
+          this.setState({ showPhoneMask: true })
+        }
+      },
+      fail: () => {
         Taro.login().then(res => {
           const { code } = res
           getOpenId({ code }).then(res => {
@@ -156,6 +160,7 @@ export default class MePage extends Component {
     user.phoneNumber = phoneNumber
     this.setState({ phoneNumber, showPhoneMask: false })
     set('user', user)
+    Taro.setStorageSync('phone', phoneNumber)
     updateUser({ user })
     toast('手机号码绑定成功', 'none')
   }

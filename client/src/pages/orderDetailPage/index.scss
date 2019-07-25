@@ -188,16 +188,51 @@
           color: #919191;
         }
       }
+    }
+  }
+
+  .hunter-bottom {
+    display: flex;
+    margin-top: 20px;
+    align-items: center;
+
+    .bottom-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-right: 32px;
+
+      .desc {
+        font-size: 24px;
+        color: #919191;
+      }
 
       .phone {
         display: flex;
         align-items: center;
         justify-content: center;
         line-height: normal;
-        margin: 0 0;
+        margin: 0 0 8px 0;
         width: 60px;
         height: 60px;
         background: url("../../assets/image/ic_feedback.png");
+        background-size: 100%;
+
+        &::after {
+          border: none;
+        }
+      }
+
+      .message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: normal;
+        margin: 0 0 8px 0;
+        width: 60px;
+        height: 60px;
+        background: url("../../assets/image/ic_message.png");
         background-size: 100%;
 
         &::after {
@@ -273,6 +308,57 @@
         font-size: 32px;
         color: #919191;
         font-family: "DIN";
+      }
+
+      .contact {
+        display: flex;
+        margin-top: 20px;
+        align-items: center;
+
+        .item {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-right: 32px;
+
+          .desc {
+            font-size: 24px;
+            color: #919191;
+          }
+
+          .phone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: normal;
+            margin: 0 0 8px 0;
+            width: 60px;
+            height: 60px;
+            background: url("../../assets/image/ic_feedback.png");
+            background-size: 100%;
+
+            &::after {
+              border: none;
+            }
+          }
+
+          .message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: normal;
+            margin: 0 0 8px 0;
+            width: 60px;
+            height: 60px;
+            background: url("../../assets/image/ic_message.png");
+            background-size: 100%;
+
+            &::after {
+              border: none;
+            }
+          }
+        }
       }
     }
   }

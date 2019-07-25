@@ -225,15 +225,15 @@ export class OrderDetailPage extends Component {
                           url: '/pages/orderPage/index'
                         })
                       } else {
-                        toast('订单取消失败，请检查您的网络状态后重试','none')
+                        toast('订单取消失败，请检查您的网络状态后重试', 'none')
                       }
                     })
                   } else {
-                    toast('订单取消失败，请检查您的网络状态后重试','none')
+                    toast('订单取消失败，请检查您的网络状态后重试', 'none')
                   }
                 })
               } else {
-                toast('订单取消失败，请检查您的网络状态后重试','none')
+                toast('订单取消失败，请检查您的网络状态后重试', 'none')
               }
             })
           }
@@ -263,10 +263,10 @@ export class OrderDetailPage extends Component {
           url: '/pages/orderPage/index'
         })
       } else {
-        toast('接单失败，请检查您的网络状态后重试','none')
+        toast('接单失败，请检查您的网络状态后重试', 'none')
       }
     }).catch(err => {
-      toast('接单失败，请检查您的网络状态后重试','none')
+      toast('接单失败，请检查您的网络状态后重试', 'none')
     })
   }
 
@@ -281,10 +281,10 @@ export class OrderDetailPage extends Component {
           url: '/pages/orderPage/index'
         })
       } else {
-        toast('完成订单失败，请检查您的网络状态后重试','none')
+        toast('完成订单失败，请检查您的网络状态后重试', 'none')
       }
     }).catch(err => {
-      toast('完成订单失败，请检查您的网络状态后重试','none')
+      toast('完成订单失败，请检查您的网络状态后重试', 'none')
     })
   }
 
@@ -417,10 +417,22 @@ export class OrderDetailPage extends Component {
                   <View className='count'>{hunter.count}</View>
                   <View className='desc'>已完成订单</View>
                 </View>
-                <Button
-                  className='phone'
-                  onClick={this.makePhoneCall}
-                ></Button>
+              </View>
+              <View className='hunter-bottom'>
+                <View className='bottom-item'>
+                  <Button
+                    className='phone'
+                    onClick={this.makePhoneCall}
+                  ></Button>
+                  <View className='desc'>电话联系</View>
+                </View>
+                <View className='bottom-item'>
+                  <Button
+                    className='message'
+                    onClick={this.makePhoneCall}
+                  ></Button>
+                  <View className='desc'>发送信息</View>
+                </View>
               </View>
             </View> : null
         }
@@ -440,8 +452,23 @@ export class OrderDetailPage extends Component {
           {
             ['waitpay', 'process', 'confirm', 'complete'].includes(status) &&
             <View className='info--desc'>
-              <View className='title'>联系电话</View>
-              <View className='text' onClick={this.makeUserPhoneCall}>{phoneNumber}</View>
+              <View className='title'>联系方式</View>
+              <View className='contact'>
+                <View className='item'>
+                  <Button
+                    className='phone'
+                    onClick={this.makeUserPhoneCall}
+                  ></Button>
+                  <View className='desc'>电话联系</View>
+                </View>
+                <View className='item'>
+                  <Button
+                    className='message'
+                    onClick={this.makeUserPhoneCall}
+                  ></Button>
+                  <View className='desc'>发送信息</View>
+                </View>
+              </View>
             </View>
           }
 
@@ -553,8 +580,7 @@ export class OrderDetailPage extends Component {
             </View> : null
         }
         {
-          // status === 'confirm' && openId === savedOpenid
-          true ?
+          status === 'confirm' && openId === savedOpenid ?
             <View className='order--price' onClick={this.handleConfirmOrder}>
               <View style={{ flex: 1 }}></View>
               <View className='order--comfirm'>确认完成</View>

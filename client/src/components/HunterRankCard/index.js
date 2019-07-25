@@ -2,7 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Image } from '@tarojs/components'
 import './index.scss'
 
-export default class RankCard extends Component {
+export default class HunterRankCard extends Component {
 
   state = {
     userInfo: {},
@@ -39,7 +39,7 @@ export default class RankCard extends Component {
         <Image src={userInfo.userAvatar} className='avatar' />
         <View className='name'>{userInfo.userName}</View>
         <View className='level'>{userInfo.userLevel.name}</View>
-        <View className='number'>{userInfo.userOrderCount}单</View>
+        <View className='number'>{userInfo.hunterOrderCount}单</View>
       </View>
     )
   }

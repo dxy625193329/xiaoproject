@@ -72,6 +72,12 @@ export default class IndexPage extends Component {
     }
   }
 
+  routeToImList = () => {
+    Taro.navigateTo({
+      url: '/pages/imListPage/index'
+    })
+  }
+
   fetchData = () => {
     getBanner().then(res => this.setState({
       banners: res.data.data.eventList
@@ -107,6 +113,10 @@ export default class IndexPage extends Component {
         <View>
           <View className='top'>
             <View className='time'>{getTime()}</View>
+            <View className='right' onClick={() => this.routeToImList()}>
+              <Image src={require('../../assets/image/ic_message.png')} className='icon' />
+              <View className='dot'></View>
+            </View>
           </View>
           <View className='title--wrapper'>
             <Text className='title'>{getDay()}好。</Text>

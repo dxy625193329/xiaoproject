@@ -22,7 +22,8 @@ class App extends Component {
       'pages/questPage/index',
       'pages/servicePage/index',
       'pages/agreePage/index',
-      'pages/hunterAgreePage/index'
+      'pages/hunterAgreePage/index',
+      'pages/imListPage/index'
     ],
     window: {
       backgroundTextStyle: 'light',

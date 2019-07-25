@@ -12,7 +12,6 @@ class RdWXBizDataCrypt {
       encryptedData = Crypto.util.base64ToBytes(encryptedData)
       const key = Crypto.util.base64ToBytes(this.sessionKey)
       iv = Crypto.util.base64ToBytes(iv)
-
       const mode = new Crypto.mode.CBC(Crypto.pad.pkcs7);
 
       let decryptResult

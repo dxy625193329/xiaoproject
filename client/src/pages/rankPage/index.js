@@ -7,6 +7,7 @@ import {
 import { getRankList } from '../../api'
 
 import RankCard from '../../components/RankCard'
+import HunterRankCard from '../../components/HunterRankCard'
 import './index.scss'
 
 export default class RankPage extends Component {
@@ -80,7 +81,6 @@ export default class RankPage extends Component {
                   user={user}
                   key={user._id}
                   index={index}
-                  flag={1}
                 />
               )
             }
@@ -90,11 +90,10 @@ export default class RankPage extends Component {
           >
             {
               hunterList.map((user, index) =>
-                <RankCard
+                <HunterRankCard
                   user={user}
                   key={user._id}
                   index={index}
-                  flag={2}
                 />
               )
             }

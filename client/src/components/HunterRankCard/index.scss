@@ -1,0 +1,54 @@
+@import "../../assets/fonts/font";
+
+.rank--card {
+  display        : flex;
+  justify-content: space-between;
+  align-items    : center;
+  box-sizing     : border-box;
+  margin-top     : 32px;
+  padding        : 28px 20px;
+  border-radius  : 12px;
+  background     : #fff;
+
+  .cup,
+  .block {
+    width : 52px;
+    height: 52px;
+  }
+
+  .rank {
+    width      : 50px;
+    color      : #303030;
+    font-size  : 36px;
+    font-weight: 700;
+    font-family: "DIN";
+  }
+
+  .avatar {
+    width        : 88px;
+    height       : 88px;
+    border-radius: 50%;
+  }
+
+  .level {
+    color    : #303030;
+    font-size: 30px;
+  }
+
+  .name {
+    color        : #303030;
+    font-size    : 32px;
+    font-weight  : 700;
+    width        : 100px;
+    overflow     : hidden;
+    text-overflow: ellipsis;
+    white-space  : nowrap;
+  }
+
+  .number {
+    color      : #303030;
+    font-size  : 30px;
+    font-weight: 700;
+    font-family: "DIN";
+  }
+}

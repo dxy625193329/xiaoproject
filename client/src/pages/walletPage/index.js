@@ -180,7 +180,7 @@ export default class WalletPage extends Component {
           <View className='money'>
             <View className='wrapper'>
               <View className='singal'>¥</View>
-              <View className='num'>{pool}</View>
+              <View className='num'>{Number(pool.toFixed(2))}</View>
             </View>
           </View>
         </View>
