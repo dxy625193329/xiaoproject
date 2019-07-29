@@ -23,6 +23,7 @@ export class OrderDetailPage extends Component {
     isHunter: false,
     animation: {},
     showMask: false,
+    showDontTouch: false,
     showAppraiseMask: false,
     wxPay: false,
     restPay: false,
@@ -105,13 +106,16 @@ export class OrderDetailPage extends Component {
       order.statusText = '订单等待接单'
       order.status = 'wait'
       user.wallet = wallet
-      user.userOrder.push(order)
-      createOrder({ user, order }).then(res => {
+      createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
         if (res.data.code === 200) {
+          set('user', user)
+          this.setState({ showMask: false, showDontTouch: true })
           toast('发单成功', 'success')
-          Taro.switchTab({
-            url: '/pages/orderPage/index'
-          })
+          setTimeout(() => {
+            Taro.switchTab({
+              url: '/pages/orderPage/index'
+            })
+          }, 1000)
         } else {
           toast('创建订单失败，请检查您的网络状态后重试', 'none')
         }
@@ -142,13 +146,15 @@ export class OrderDetailPage extends Component {
           order.pay = 'wx'
           order.statusText = '订单等待接单'
           order.status = 'wait'
-          user.userOrder.push(order)
-          createOrder({ user, order }).then(res => {
+          createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
             if (res.data.code === 200) {
+              this.setState({ showMask: false, showDontTouch: true })
               toast('发单成功', 'success')
-              Taro.switchTab({
-                url: '/pages/orderPage/index'
-              })
+              setTimeout(() => {
+                Taro.switchTab({
+                  url: '/pages/orderPage/index'
+                })
+              }, 1000)
             } else {
               toast('创建订单失败，请检查您的网络状态后重试', 'none')
             }
@@ -181,17 +187,16 @@ export class OrderDetailPage extends Component {
               user.wallet += order.price
               user.wallet = parseFloat((user.wallet).toFixed(2))
             }
-            user.userOrder.map((item, index) => {
-              if (item.orderId === order.orderId) {
-                user.userOrder.splice(index, 1)
-              }
-            })
-            cancelOrder({ user, orderId: order.orderId }).then(res => {
+            cancelOrder({ user: { openId: user.openId, wallet: user.wallet, pool: user.pool }, orderId: order.orderId }).then(res => {
               if (res.data.code === 200) {
+                set('user', user)
+                this.setState({ showDontTouch: true })
                 toast('订单取消成功', 'success')
-                Taro.switchTab({
-                  url: '/pages/orderPage/index'
-                })
+                setTimeout(() => {
+                  Taro.switchTab({
+                    url: '/pages/orderPage/index'
+                  })
+                }, 1000)
               } else {
                 toast('订单取消失败，请检查您的网络状态后重试', 'none')
               }
@@ -220,10 +225,13 @@ export class OrderDetailPage extends Component {
                   if (res.data.code === 200) {
                     delOrder({ orderId: order.orderId }).then(res => {
                       if (res.data.code == 200) {
+                        this.setState({ showDontTouch: true })
                         toast('订单取消成功', 'success')
-                        Taro.switchTab({
-                          url: '/pages/orderPage/index'
-                        })
+                        setTimeout(() => {
+                          Taro.switchTab({
+                            url: '/pages/orderPage/index'
+                          })
+                        }, 1000)
                       } else {
                         toast('订单取消失败，请检查您的网络状态后重试', 'none')
                       }
@@ -247,6 +255,7 @@ export class OrderDetailPage extends Component {
     const user = { ...this.state.userInfo }
     order.statusText = '订单进行中'
     order.status = 'process'
+    order.hunterOpenId = user.openId
     order.hunter = {
       name: user.userName,
       openId: user.openId,
@@ -255,13 +264,15 @@ export class OrderDetailPage extends Component {
       count: user.hunterOrderCount,
       phoneNumber: user.phoneNumber
     }
-    user.hunterOrder.push(order)
-    hunterGetOrder({ hunter: user, order }).then(res => {
+    hunterGetOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status, hunterOpenId: order.hunterOpenId, hunter: order.hunter } }).then(res => {
       if (res.data.code === 200) {
+        this.setState({ showMask: false, showDontTouch: true })
         toast('接单成功', 'success')
-        Taro.switchTab({
-          url: '/pages/orderPage/index'
-        })
+        setTimeout(() => {
+          Taro.switchTab({
+            url: '/pages/orderPage/index'
+          })
+        }, 1000)
       } else {
         toast('接单失败，请检查您的网络状态后重试', 'none')
       }
@@ -274,12 +285,15 @@ export class OrderDetailPage extends Component {
     const order = { ...this.state.orderInfo }
     order.statusText = '订单等待确认完成'
     order.status = 'confirm'
-    hunterCompleteOrder({ order }).then(res => {
+    hunterCompleteOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status } }).then(res => {
       if (res.data.code === 200) {
+        this.setState({ showDontTouch: true })
         toast('完成订单成功', 'success')
-        Taro.switchTab({
-          url: '/pages/orderPage/index'
-        })
+        setTimeout(() => {
+          Taro.switchTab({
+            url: '/pages/orderPage/index'
+          })
+        }, 1000)
       } else {
         toast('完成订单失败，请检查您的网络状态后重试', 'none')
       }
@@ -292,12 +306,15 @@ export class OrderDetailPage extends Component {
     const order = { ...this.state.orderInfo }
     order.statusText = '订单已完成'
     order.status = 'complete'
-    userConfirmOrder({ order, nowTime: getNowDay() }).then(res => {
+    userConfirmOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status, price: order.price }, nowTime: getNowDay() }).then(res => {
       if (res.data.code === 200) {
+        this.setState({ showDontTouch: true })
         toast('确认订单成功', 'success')
-        Taro.switchTab({
-          url: '/pages/orderPage/index'
-        })
+        setTimeout(() => {
+          Taro.switchTab({
+            url: '/pages/orderPage/index'
+          })
+        }, 1000)
       } else {
         toast('确认订单失败，请检查您的网络状态后重试', 'none')
       }
@@ -321,17 +338,18 @@ export class OrderDetailPage extends Component {
   }
 
   makeMessage = () => {
-    const from = get('openid')
-    let to, toName, toAvatar
-    if (this.state.orderInfo.hunter) {
-      to = this.state.orderInfo.hunter.openId
-      toName = this.state.orderInfo.hunter.name
-      toAvatar = this.state.orderInfo.hunter.avatar
-      set('messageObj', { from, to, toName,toAvatar })
-    }
-    Taro.redirectTo({
-      url: '/pages/messagePage/index'
-    })
+    toast('IM功能暂时不能使用(`・ω・´)', 'none')
+    // const from = get('openid')
+    // let to, toName, toAvatar
+    // if (this.state.orderInfo.hunter) {
+    //   to = this.state.orderInfo.hunter.openId
+    //   toName = this.state.orderInfo.hunter.name
+    //   toAvatar = this.state.orderInfo.hunter.avatar
+    //   set('messageObj', { from, to, toName,toAvatar })
+    // }
+    // Taro.redirectTo({
+    //   url: '/pages/messagePage/index'
+    // })
   }
 
   preventTouchMove = () => { }
@@ -353,6 +371,7 @@ export class OrderDetailPage extends Component {
       status,
       pool,
       pay,
+      hunterOpenId
     } = this.state.orderInfo
     const { wallet } = this.state.userInfo
     const {
@@ -368,6 +387,9 @@ export class OrderDetailPage extends Component {
 
     return (
       <View className='orderconfirm'>
+        {
+          showDontTouch && <View className='mask' catchtouchmove={this.preventTouchMove}></View>
+        }
         {
           showMask ?
             <View catchtouchmove={this.preventTouchMove}>
@@ -461,7 +483,7 @@ export class OrderDetailPage extends Component {
               </View> : null
           }
           {
-            ['waitpay', 'process', 'confirm', 'complete'].includes(status) &&
+            ['process', 'confirm', 'complete'].includes(status) &&
             <View className='info--desc'>
               <View className='title'>联系方式</View>
               <View className='contact'>
@@ -475,7 +497,7 @@ export class OrderDetailPage extends Component {
                 <View className='item'>
                   <Button
                     className='message'
-                    onClick={this.makeUserPhoneCall}
+                    onClick={this.makeMessage}
                   ></Button>
                   <View className='desc'>发送信息</View>
                 </View>
@@ -607,7 +629,7 @@ export class OrderDetailPage extends Component {
             </View> : null
         }
         {
-          status === 'process' && openId !== savedOpenid && isHunter && hunter.openId === savedOpenid ?
+          status === 'process' && openId !== savedOpenid && isHunter && hunterOpenId === savedOpenid ?
             <View className='order--price' onClick={this.handleOrderComplete}>
               <View style={{ flex: 1 }}></View>
               <View className='order--comfirm'>完成订单</View>

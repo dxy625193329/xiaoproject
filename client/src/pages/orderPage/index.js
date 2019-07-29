@@ -1,11 +1,12 @@
 import Taro, { Component } from '@tarojs/taro'
 import {
   View,
-  Text
+  Text,
+  Picker
 } from '@tarojs/components'
 
-import { get, set } from '../../lib/global'
-import { getUserByOpenId } from '../../api'
+import { get } from '../../lib/global'
+import { getOrderListByOpenId } from '../../api'
 
 import TaskCard from '../../components/TaskCard'
 import './index.scss'
@@ -20,7 +21,7 @@ export default class OrderPage extends Component {
     currentIndex: 0,
     userOrderList: [],
     hunterOrderList: [],
-    timer: null
+    timer: null,
   }
 
   componentDidShow() {
@@ -43,13 +44,12 @@ export default class OrderPage extends Component {
 
   fetchData = () => {
     const openId = get('openid')
-    getUserByOpenId({ openId }).then(res => {
+    getOrderListByOpenId({ openId: openId }).then(res => {
       if (res.data.code === 200) {
         this.setState({
-          userOrderList: res.data.data.user.userOrder.reverse(),
-          hunterOrderList: res.data.data.user.hunterOrder.reverse()
+          userOrderList: res.data.data.userOrderList.reverse(),
+          hunterOrderList: res.data.data.hunterOrderList.reverse()
         })
-        set('user', res.data.data.user)
       }
     })
   }
@@ -59,7 +59,7 @@ export default class OrderPage extends Component {
     const {
       currentIndex,
       userOrderList,
-      hunterOrderList
+      hunterOrderList,
     } = this.state
 
     return (

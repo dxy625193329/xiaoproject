@@ -298,3 +298,15 @@ export const userConfirmOrder = data => {
     })
   })
 }
+
+export const getOrderListByOpenId = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/order/getOrderListByOpenId`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}

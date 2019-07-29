@@ -73,9 +73,10 @@ export default class IndexPage extends Component {
   }
 
   routeToImList = () => {
-    Taro.navigateTo({
-      url: '/pages/imListPage/index'
-    })
+    toast('IM功能暂时不能使用(`・ω・´)', 'none')
+    // Taro.navigateTo({
+    //   url: '/pages/imListPage/index'
+    // })
   }
 
   fetchData = () => {

@@ -53,8 +53,6 @@ export default class SplashPage extends Component {
               openId: openid,
               userName: userInfo.nickName,
               userAvatar: userInfo.avatarUrl,
-              userGender: userInfo.gender,
-              userCity: userInfo.city,
               dayQuest: [{
                 date: getNowDay(),
                 order: [],
@@ -82,11 +80,9 @@ export default class SplashPage extends Component {
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
                 })
-              } else {
-                toast('服务器无法添加用户', 'none')
               }
             }).catch(err => {
-              toast(err, 'none')
+              toast('请检查您的网络状态后重试', 'none')
             })
           }
         }).catch(err => {

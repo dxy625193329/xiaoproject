@@ -9,7 +9,7 @@ export default class RankCard extends Component {
     rankIndex: 0,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.setState({
       userInfo: this.props.user,
       rankIndex: this.props.index,
