@@ -78,6 +78,7 @@ export class OrderShadowPage extends Component {
     const order = {
       openId: openid,
       userName: username,
+      userAvatar: user.userAvatar,
       type: typeInfo.type,
       typeText: typeInfo.type === 1 ? '大众类需求' : '影分身',
       rank: typeInfo.rank,

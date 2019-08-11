@@ -15,7 +15,8 @@ import { toast } from '../../lib/utils'
 import {
   getUserByOpenId,
   getBanner,
-  updateUser
+  updateUser,
+  getMessageList
 } from '../../api'
 
 import Banner from '../../components/Banner'
@@ -73,10 +74,9 @@ export default class IndexPage extends Component {
   }
 
   routeToImList = () => {
-    toast('IM功能暂时不能使用(`・ω・´)', 'none')
-    // Taro.navigateTo({
-    //   url: '/pages/imListPage/index'
-    // })
+    Taro.navigateTo({
+      url: '/pages/imListPage/index'
+    })
   }
 
   fetchData = () => {
@@ -105,6 +105,11 @@ export default class IndexPage extends Component {
       }
     }).catch(err => {
       toast('请检查您的网络状态', 'none')
+    })
+    getMessageList({ openId: get('openid') }).then(res => {
+      if (res.data.code === 200) {
+        set('message', res.data.messageList)
+      }
     })
   }
 

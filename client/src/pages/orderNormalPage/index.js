@@ -79,6 +79,7 @@ export class OrderNormalPage extends Component {
     const openid = get('openid')
     const order = {
       openId: openid,
+      userAvatar: user.userAvatar,
       userName: username,
       type: typeInfo.type,
       typeText: typeInfo.type === 1 ? '大众类需求' : '影分身',

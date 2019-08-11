@@ -27,7 +27,8 @@ export class OrderDetailPage extends Component {
     showAppraiseMask: false,
     wxPay: false,
     restPay: false,
-    disabledRestPay: false
+    disabledRestPay: false,
+    message: []
   }
 
   componentWillMount() {
@@ -36,7 +37,8 @@ export class OrderDetailPage extends Component {
       userInfo: get('user'),
       isHunter: get('user').isHunter,
       savedOpenid: get('openid'),
-      statusInfo: checkOrderStatus(get('order').status)
+      statusInfo: checkOrderStatus(get('order').status),
+      message: Taro.getStorageSync('message') || []
     })
   }
 
@@ -337,19 +339,56 @@ export class OrderDetailPage extends Component {
     })
   }
 
-  makeMessage = () => {
-    toast('IM功能暂时不能使用(`・ω・´)', 'none')
-    // const from = get('openid')
-    // let to, toName, toAvatar
-    // if (this.state.orderInfo.hunter) {
-    //   to = this.state.orderInfo.hunter.openId
-    //   toName = this.state.orderInfo.hunter.name
-    //   toAvatar = this.state.orderInfo.hunter.avatar
-    //   set('messageObj', { from, to, toName,toAvatar })
-    // }
-    // Taro.redirectTo({
-    //   url: '/pages/messagePage/index'
-    // })
+  makeMessageToHunter = () => {
+    if (this.state.orderInfo.hunterOpenId === this.state.savedOpenid) {
+      toast('无法给自己留言', 'none')
+    } else {
+      if (this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId)) {
+        Taro.navigateTo({
+          url: '/pages/imListPage/index'
+        })
+      } else {
+        set('messageItem', {
+          toName: this.state.orderInfo.hunter.name,
+          toId: this.state.orderInfo.hunterOpenId,
+          fromName: this.state.userInfo.userName,
+          fromId: this.state.savedOpenid,
+          fromAvatar: this.state.orderInfo.userAvatar,
+          toAvatar: this.state.orderInfo.hunter.avatar,
+          hunterId: this.state.orderInfo.hunterOpenId,
+          byId: this.state.savedOpenid
+        })
+        Taro.navigateTo({
+          url: '/pages/messagePage/index'
+        })
+      }
+    }
+  }
+
+  makeMessageToUser = () => {
+    if (this.state.orderInfo.openId === this.state.savedOpenid) {
+      toast('无法给自己留言', 'none')
+    } else {
+      if (this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId)) {
+        Taro.navigateTo({
+          url: '/pages/imListPage/index'
+        })
+      } else {
+        set('messageItem', {
+          toName: this.state.orderInfo.hunter.name,
+          toId: this.state.orderInfo.hunterOpenId,
+          fromName: this.state.userInfo.userName,
+          fromId: this.state.savedOpenid,
+          fromAvatar: this.state.userInfo.userAvatar,
+          toAvatar: this.state.orderInfo.userAvatar,
+          hunterId: this.state.orderInfo.hunterOpenId,
+          byId: this.state.savedOpenid
+        })
+        Taro.navigateTo({
+          url: '/pages/messagePage/index'
+        })
+      }
+    }
   }
 
   preventTouchMove = () => { }
@@ -462,9 +501,9 @@ export class OrderDetailPage extends Component {
                 <View className='bottom-item'>
                   <Button
                     className='message'
-                    onClick={this.makeMessage}
+                    onClick={this.makeMessageToHunter}
                   ></Button>
-                  <View className='desc'>发送信息</View>
+                  <View className='desc'>留言</View>
                 </View>
               </View>
             </View> : null
@@ -497,9 +536,9 @@ export class OrderDetailPage extends Component {
                 <View className='item'>
                   <Button
                     className='message'
-                    onClick={this.makeMessage}
+                    onClick={this.makeMessageToUser}
                   ></Button>
-                  <View className='desc'>发送信息</View>
+                  <View className='desc'>留言</View>
                 </View>
               </View>
             </View>

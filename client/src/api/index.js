@@ -310,3 +310,27 @@ export const getOrderListByOpenId = data => {
     })
   })
 }
+
+export const addAndUpdateMessage = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/message/add`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}
+
+export const getMessageList = data => {
+  return new Promise((resolve, reject) => {
+    Taro.request({
+      url: `${BASE_URL}/message/getMessageList`,
+      method: 'POST',
+      data,
+      success: res => resolve(res),
+      fail: err => reject(err)
+    })
+  })
+}
