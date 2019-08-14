@@ -50,7 +50,7 @@ export default class IndexPage extends Component {
             set('message', res.data.messageList)
           }
         })
-      }, 8000)
+      }, 5000)
     })
   }
 
