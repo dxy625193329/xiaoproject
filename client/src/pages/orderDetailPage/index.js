@@ -375,8 +375,8 @@ export class OrderDetailPage extends Component {
         })
       } else {
         set('messageItem', {
-          toName: this.state.orderInfo.hunter.name,
-          toId: this.state.orderInfo.hunterOpenId,
+          toName: this.state.orderInfo.wxName,
+          toId: this.state.orderInfo.openId,
           fromName: this.state.userInfo.userName,
           fromId: this.state.savedOpenid,
           fromAvatar: this.state.userInfo.userAvatar,

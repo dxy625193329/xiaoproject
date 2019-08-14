@@ -39,6 +39,19 @@ export default class IndexPage extends Component {
 
   state = {
     banners: [],
+    timer: null
+  }
+
+  componentDidMount() {
+    this.setState({
+      timer: setInterval(() => {
+        getMessageList({ openId: get('openid') }).then(res => {
+          if (res.data.code === 200) {
+            set('message', res.data.messageList)
+          }
+        })
+      }, 8000)
+    })
   }
 
   componentDidShow() {

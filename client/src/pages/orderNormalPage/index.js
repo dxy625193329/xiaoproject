@@ -80,6 +80,7 @@ export class OrderNormalPage extends Component {
     const order = {
       openId: openid,
       userAvatar: user.userAvatar,
+      wxName: user.userName,
       userName: username,
       type: typeInfo.type,
       typeText: typeInfo.type === 1 ? '大众类需求' : '影分身',
@@ -123,7 +124,7 @@ export class OrderNormalPage extends Component {
     } else {
       this.setState({ checkNeed: false })
     }
-    if (isNaN(totalPrice) || totalPrice < 1 || totalPrice === '') {
+    if (isNaN(totalPrice) || totalPrice < 2 || totalPrice === '') {
       this.setState({ checkPrice: true })
     } else {
       this.setState({ checkPrice: false })
@@ -133,7 +134,7 @@ export class OrderNormalPage extends Component {
     } else {
       this.setState({ checkPool: false })
     }
-    if (!isNaN(totalPrice) && totalPrice >= 1 && !!username && !!addressText && !!locateText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
+    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && !!locateText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
       set('order', order)
       Taro.navigateTo({
         url: '/pages/orderDetailPage/index'
@@ -260,7 +261,7 @@ export class OrderNormalPage extends Component {
             <View className='info'>根据实际情况填写，可增加被猎人接取的概率</View>
           </View>
           {
-            checkPrice && <View className='error-info'>大众类需求最低价格1元，并且小数不能超过3位</View>
+            checkPrice && <View className='error-info'>大众类需求最低价格2元，并且小数不能超过3位</View>
           }
         </View>
         <View className='bottom'>
@@ -272,7 +273,7 @@ export class OrderNormalPage extends Component {
             </View>
           </View>
           {
-            user.pool >= 0.1 ?
+            user.pool >= 0.2 ?
               <View className='local--bottom'>
                 <View className='title'>
                   折扣
