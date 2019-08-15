@@ -343,6 +343,7 @@ export class OrderDetailPage extends Component {
     if (this.state.orderInfo.hunterOpenId === this.state.savedOpenid) {
       toast('无法给自己留言', 'none')
     } else {
+
       if (this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId)) {
         Taro.navigateTo({
           url: '/pages/imListPage/index'

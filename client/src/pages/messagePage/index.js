@@ -1,9 +1,9 @@
-import Taro, { Component } from '@tarojs/taro'
-import { View, Input } from '@tarojs/components'
+import Taro, { Component, getCurrentPages } from '@tarojs/taro'
+import { View, Input, ScrollView } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global';
 import { getFullTime } from '../../lib/time';
-import { addAndUpdateMessage } from '../../api'
+import { addAndUpdateMessage, getMessageList } from '../../api'
 import { toast } from '../../lib/utils';
 
 export default class MessagePage extends Component {
@@ -16,35 +16,38 @@ export default class MessagePage extends Component {
     openId: '',
     user: {},
     uploadImageUrl: '',
-    timer: null
+    fromPage: '',
+    timer: null,
   }
 
   componentDidMount() {
-    this.pageScrollToBottom()
+    Taro.setNavigationBarTitle({
+      title: get('messageItem').byId === get('openid') ? get('messageItem').toName : get('messageItem').fromName
+    })
+    const pages = getCurrentPages()
     this.setState({
       messageObj: get('messageItem'),
       messageLocalList: Taro.getStorageSync('message') || [],
       openId: get('openid'),
       messageList: get('messageItem').message || [],
       user: get('user'),
-      timer: setInterval(this.getOnlineMessage, 10000)
+      timer: setInterval(this.getOnlineMessage, 5000),
+      fromPage: pages[pages.length - 2].route,
     })
-    Taro.setNavigationBarTitle({
-      title: get('messageItem').byId === get('openid') ? get('messageItem').toName : get('messageItem').fromName
-    })
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.state.timer)
+    this.pageScrollToBottom()
   }
 
   getOnlineMessage = () => {
-    const messageListRemote = get('message')
-    const nowMessage = messageListRemote.filter(item => {
-      return item.byId === get('messageItem').byId && item.toId === get('messageItem').toId
-    })
-    this.setState({
-      messageList: nowMessage[0].message
+    getMessageList({ openId: get('openid') }).then(res => {
+      if (res.code === 200) {
+        const { messageList } = res.data
+        const nowMessage = messageList.filter(item => {
+          return item.byId === get('messageItem').byId && item.toId === get('messageItem').toId
+        })
+        this.setState({
+          messageList: nowMessage.length > 0 ? nowMessage[0].message : []
+        })
+      }
     })
   }
 
@@ -61,9 +64,12 @@ export default class MessagePage extends Component {
   }
 
   componentWillUnmount() {
-    Taro.switchTab({
-      url: '/pages/indexPage/index'
-    })
+    clearInterval(this.state.timer)
+    if (this.state.fromPage !== 'pages/imListPage/index') {
+      Taro.switchTab({
+        url: '/pages/indexPage/index'
+      })
+    }
   }
 
   handleMessageSubmit = e => {
@@ -94,10 +100,6 @@ export default class MessagePage extends Component {
         if (messageObj.byId === this.state.openId) {
           if (!this.state.messageLocalList.includes(messageObj.toId)) {
             tempList.push(messageObj.toId)
-          }
-        } else {
-          if (!this.state.messageLocalList.includes(messageObj.fromId)) {
-            tempList.push(messageObj.fromId)
           }
         }
         Taro.setStorageSync('message', tempList)
@@ -184,8 +186,8 @@ export default class MessagePage extends Component {
     const { messageList, openId, messageObj } = this.state
 
     return (
-      <View className='message' id='message'>
-        <View className='message-wrapper'>
+      <View className='message'>
+        <View className='message-wrapper' id='message'>
           {
             messageList.length > 0 && messageList.map((item, index) => {
               return openId !== item.fromId ?

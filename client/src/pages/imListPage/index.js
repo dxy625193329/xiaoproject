@@ -2,6 +2,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global';
+import { getMessageList } from '../../api'
 
 export default class ImListPage extends Component {
 
@@ -15,6 +16,23 @@ export default class ImListPage extends Component {
 
   componentDidMount() {
     this.setState({ messageList: get('message') })
+  }
+
+  componentDidShow() {
+    const messageLocalList = Taro.getStorageSync('message') || []
+    getMessageList({ openId: get('openid') }).then(res => {
+      if (res.data.code === 200) {
+        set('message', res.data.messageList)
+        const { messageList } = res.data
+        messageList.map(item => {
+          if (!messageLocalList.includes(item.fromId) && get('openid') !== item.fromId) {
+            messageLocalList.push(item.fromId)
+            Taro.setStorageSync('message', messageLocalList)
+          }
+        })
+        this.setState({ messageList: messageList.reverse() })
+      }
+    })
   }
 
   goMessage = item => {

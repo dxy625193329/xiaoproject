@@ -39,18 +39,14 @@ export default class IndexPage extends Component {
 
   state = {
     banners: [],
-    timer: null
+    timer: null,
   }
 
   componentDidMount() {
     this.setState({
       timer: setInterval(() => {
-        getMessageList({ openId: get('openid') }).then(res => {
-          if (res.data.code === 200) {
-            set('message', res.data.messageList)
-          }
-        })
-      }, 5000)
+
+      }, 1000)
     })
   }
 
@@ -119,9 +115,17 @@ export default class IndexPage extends Component {
     }).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
+    const messageLocalList = Taro.getStorageSync('message') || []
     getMessageList({ openId: get('openid') }).then(res => {
       if (res.data.code === 200) {
         set('message', res.data.messageList)
+        const { messageList } = res.data
+        messageList.map(item => {
+          if (!messageLocalList.includes(item.fromId) && get('openid') !== item.fromId) {
+            messageLocalList.push(item.fromId)
+            Taro.setStorageSync('message', messageLocalList)
+          }
+        })
       }
     })
   }
