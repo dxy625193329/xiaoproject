@@ -66,6 +66,7 @@ export class OrderNormalPage extends Component {
       username,
       addressText,
       locateText,
+      locate,
       needText,
       selectorChecked,
       ticket,
@@ -134,7 +135,7 @@ export class OrderNormalPage extends Component {
     } else {
       this.setState({ checkPool: false })
     }
-    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && !!locateText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
+    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && (!!locateText||selectorChecked==='就近目标') && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
       set('order', order)
       Taro.navigateTo({
         url: '/pages/orderDetailPage/index'

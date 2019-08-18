@@ -1,5 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Image, Button } from '@tarojs/components'
+import { View, Image, Button, Form } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
@@ -55,7 +55,8 @@ export class OrderDetailPage extends Component {
     }
   }
 
-  handleOrderCheck = () => {
+  handleOrderCheck = (e) => {
+    console.log(e)
     this.maskAnimation('show')
   }
 
@@ -625,14 +626,17 @@ export class OrderDetailPage extends Component {
         </View>
         {
           status === 'waitpay' && openId === savedOpenid ?
-            <View className='order--price' onClick={this.handleOrderCheck}>
-              <View style={{ flex: 1 }}></View>
-              <View className='order--comfirm'>立即支付</View>
-              <View className='right'>
-                <View className='singal'>¥</View>
-                <View className='price'>{price - pool}</View>
-              </View>
-            </View> : null
+            <Form reportSubmit onSubmit={this.handleOrderCheck}>
+              <Button className='order--price' formType='submit'>
+                <View style={{ flex: 1 }}></View>
+                <View className='order--comfirm'>立即支付</View>
+                <View className='right'>
+                  <View className='singal'>¥</View>
+                  <View className='price'>{price - pool}</View>
+                </View>
+              </Button>
+            </Form>
+            : null
         }
         {
           status === 'wait' && openId === savedOpenid ?

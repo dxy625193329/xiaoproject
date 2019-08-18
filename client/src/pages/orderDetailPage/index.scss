@@ -1,222 +1,222 @@
 @import "../../assets/fonts/font";
 
 .orderconfirm {
-  min-height: 100vh;
-  display: flex;
-  box-sizing: border-box;
+  min-height    : 100vh;
+  display       : flex;
+  box-sizing    : border-box;
   flex-direction: column;
-  padding: 0 0 80px 0;
-  background: #f8f8f8;
+  padding       : 0 0 80px 0;
+  background    : #f8f8f8;
 
   .payment {
     background: #f1f1f1;
   }
 
   .mask {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    width     : 100%;
+    position  : fixed;
+    top       : 0;
+    left      : 0;
+    right     : 0;
+    bottom    : 0;
     background: rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    z-index: 2333;
+    overflow  : hidden;
+    z-index   : 2333;
   }
 
   .mask--wrapper {
-    width: 100%;
-    height: 500px;
-    position: fixed;
-    bottom: 80px;
-    padding: 0 40px;
+    width     : 100%;
+    height    : 500px;
+    position  : fixed;
+    bottom    : 80px;
+    padding   : 0 40px;
     box-sizing: border-box;
-    z-index: 2334;
+    z-index   : 2334;
 
     .mask--content {
-      display: flex;
+      display       : flex;
       flex-direction: column;
-      width: 100%;
-      height: 100%;
-      background: #fff;
-      border-radius: 12px;
-      box-sizing: border-box;
-      padding: 40px;
+      width         : 100%;
+      height        : 100%;
+      background    : #fff;
+      border-radius : 12px;
+      box-sizing    : border-box;
+      padding       : 40px;
 
       .title {
-        font-size: 52px;
+        font-size  : 52px;
         font-weight: 700;
       }
 
       .pay {
-        display: flex;
+        display       : flex;
         flex-direction: column;
-        margin-top: 20px;
+        margin-top    : 20px;
 
         .pay--disabled {
           color: #919191 !important;
         }
 
         .item {
-          display: flex;
+          display        : flex;
           justify-content: space-between;
-          align-items: center;
-          margin-bottom: 32px;
-          box-sizing: border-box;
-          padding: 20px;
-          border-radius: 12px;
-          color: #303030;
+          align-items    : center;
+          margin-bottom  : 32px;
+          box-sizing     : border-box;
+          padding        : 20px;
+          border-radius  : 12px;
+          color          : #303030;
 
           .left {
-            display: flex;
+            display    : flex;
             align-items: center;
-            font-size: 32px;
+            font-size  : 32px;
             font-weight: 700;
 
             .icon {
-              width: 52px;
-              height: 52px;
+              width       : 52px;
+              height      : 52px;
               margin-right: 16px;
             }
           }
 
           .right {
-            display: flex;
+            display    : flex;
             align-items: center;
-            font-size: 32px;
+            font-size  : 32px;
             font-family: "DIN";
           }
         }
       }
 
       .check {
-        display: flex;
-        background: #72c9aa;
-        border-radius: 12px;
-        padding: 20px;
+        display        : flex;
+        background     : #72c9aa;
+        border-radius  : 12px;
+        padding        : 20px;
         justify-content: center;
-        align-items: center;
-        font-size: 32px;
-        color: #fff;
+        align-items    : center;
+        font-size      : 32px;
+        color          : #fff;
       }
     }
   }
 
   .top {
-    height: 440px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    box-sizing: border-box;
-    padding: 40px;
-    background-image: url("http://cdn.xwuyou.com/confirm.jpg");
+    height             : 440px;
+    display            : flex;
+    flex-direction     : column;
+    justify-content    : space-around;
+    box-sizing         : border-box;
+    padding            : 40px;
+    background-image   : url("http://cdn.xwuyou.com/confirm.jpg");
     background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-repeat  : no-repeat;
+    background-size    : cover;
 
     .name {
-      font-size: 66px;
+      font-size  : 66px;
       font-weight: 700;
-      color: #fff;
+      color      : #fff;
     }
 
     .desc {
       line-height: 1.1rem;
-      font-size: 28px;
-      color: rgba(255, 255, 255, 0.7);
+      font-size  : 28px;
+      color      : rgba(255, 255, 255, 0.7);
     }
   }
 
   .hunter {
-    display: flex;
+    display       : flex;
     flex-direction: column;
-    box-sizing: border-box;
-    margin: 0 40px 20px 40px;
-    background: #fff;
-    padding: 32px 40px;
-    border-radius: 12px;
+    box-sizing    : border-box;
+    margin        : 0 40px 20px 40px;
+    background    : #fff;
+    padding       : 32px 40px;
+    border-radius : 12px;
 
     .hunter-top {
-      display: flex;
+      display        : flex;
       justify-content: space-between;
-      align-items: center;
+      align-items    : center;
 
       .left {
-        display: flex;
+        display    : flex;
         align-items: center;
 
         .avatar {
-          width: 100px;
-          height: 100px;
+          width        : 100px;
+          height       : 100px;
           border-radius: 50%;
-          margin-right: 20px;
+          margin-right : 20px;
         }
 
         .info {
-          display: flex;
+          display       : flex;
           flex-direction: column;
 
           .name {
-            font-size: 32px;
-            font-weight: 700;
-            color: #303030;
+            font-size    : 32px;
+            font-weight  : 700;
+            color        : #303030;
             margin-bottom: 8px;
           }
 
           .level {
             font-size: 24px;
-            color: #919191;
+            color    : #919191;
           }
         }
       }
 
       .right {
-        display: flex;
+        display       : flex;
         flex-direction: column;
-        align-items: center;
+        align-items   : center;
 
         .count {
-          font-size: 32px;
-          font-weight: 700;
-          color: #303030;
+          font-size    : 32px;
+          font-weight  : 700;
+          color        : #303030;
           margin-bottom: 8px;
-          font-family: "DIN";
+          font-family  : "DIN";
         }
 
         .desc {
           font-size: 24px;
-          color: #919191;
+          color    : #919191;
         }
       }
     }
   }
 
   .hunter-bottom {
-    display: flex;
-    margin-top: 20px;
+    display    : flex;
+    margin-top : 20px;
     align-items: center;
 
     .bottom-item {
-      display: flex;
-      flex-direction: column;
+      display        : flex;
+      flex-direction : column;
       justify-content: center;
-      align-items: center;
-      margin-right: 32px;
+      align-items    : center;
+      margin-right   : 32px;
 
       .desc {
         font-size: 24px;
-        color: #919191;
+        color    : #919191;
       }
 
       .phone {
-        display: flex;
-        align-items: center;
+        display        : flex;
+        align-items    : center;
         justify-content: center;
-        line-height: normal;
-        margin: 0 0 8px 0;
-        width: 60px;
-        height: 60px;
-        background: url("../../assets/image/ic_feedback.png");
+        line-height    : normal;
+        margin         : 0 0 8px 0;
+        width          : 60px;
+        height         : 60px;
+        background     : url("../../assets/image/ic_feedback.png");
         background-size: 100%;
 
         &::after {
@@ -225,14 +225,14 @@
       }
 
       .message {
-        display: flex;
-        align-items: center;
+        display        : flex;
+        align-items    : center;
         justify-content: center;
-        line-height: normal;
-        margin: 0 0 8px 0;
-        width: 60px;
-        height: 60px;
-        background: url("../../assets/image/ic_message.png");
+        line-height    : normal;
+        margin         : 0 0 8px 0;
+        width          : 60px;
+        height         : 60px;
+        background     : url("../../assets/image/ic_message.png");
         background-size: 100%;
 
         &::after {
@@ -242,100 +242,100 @@
     }
 
     .hunter--btn {
-      margin-top: 40px;
-      width: 100%;
-      display: flex;
-      align-items: center;
+      margin-top     : 40px;
+      width          : 100%;
+      display        : flex;
+      align-items    : center;
       justify-content: center;
-      padding: 20px 0;
-      line-height: normal;
-      border-radius: 12px;
-      font-size: 34px;
-      color: #fff;
-      background: #72c9aa;
+      padding        : 20px 0;
+      line-height    : normal;
+      border-radius  : 12px;
+      font-size      : 34px;
+      color          : #fff;
+      background     : #72c9aa;
     }
   }
 
   .middle {
-    display: flex;
+    display       : flex;
     flex-direction: column;
-    box-sizing: border-box;
-    margin: 0 40px;
-    background: #fff;
-    padding: 20px 40px;
-    border-radius: 12px;
+    box-sizing    : border-box;
+    margin        : 0 40px;
+    background    : #fff;
+    padding       : 20px 40px;
+    border-radius : 12px;
 
     .title {
-      font-size: 44px;
-      color: #303030;
+      font-size  : 44px;
+      color      : #303030;
       font-weight: 700;
     }
 
     .info--type {
-      display: flex;
-      align-items: center;
+      display        : flex;
+      align-items    : center;
       justify-content: space-between;
-      margin-top: 24px;
+      margin-top     : 24px;
 
       .info--title {
-        font-size: 32px;
+        font-size  : 32px;
         font-weight: 700;
       }
 
       .info--text {
-        display: flex;
+        display    : flex;
         align-items: center;
-        font-size: 32px;
-        color: #919191;
+        font-size  : 32px;
+        color      : #919191;
         font-family: "DIN";
       }
     }
 
     .info--desc {
-      display: flex;
+      display       : flex;
       flex-direction: column;
-      margin-top: 24px;
+      margin-top    : 24px;
 
       .title {
-        font-size: 32px;
-        font-weight: 700;
+        font-size    : 32px;
+        font-weight  : 700;
         margin-bottom: 12px;
       }
 
       .text {
-        display: flex;
+        display    : flex;
         align-items: center;
-        font-size: 32px;
-        color: #919191;
+        font-size  : 32px;
+        color      : #919191;
         font-family: "DIN";
       }
 
       .contact {
-        display: flex;
-        margin-top: 20px;
+        display    : flex;
+        margin-top : 20px;
         align-items: center;
 
         .item {
-          display: flex;
-          flex-direction: column;
+          display        : flex;
+          flex-direction : column;
           justify-content: center;
-          align-items: center;
-          margin-right: 32px;
+          align-items    : center;
+          margin-right   : 32px;
 
           .desc {
             font-size: 24px;
-            color: #919191;
+            color    : #919191;
           }
 
           .phone {
-            display: flex;
-            align-items: center;
+            display        : flex;
+            align-items    : center;
             justify-content: center;
-            line-height: normal;
-            margin: 0 0 8px 0;
-            width: 60px;
-            height: 60px;
-            background: url("../../assets/image/ic_feedback.png");
+            line-height    : normal;
+            margin         : 0 0 8px 0;
+            width          : 60px;
+            height         : 60px;
+            background     : url("../../assets/image/ic_feedback.png");
             background-size: 100%;
 
             &::after {
@@ -344,14 +344,14 @@
           }
 
           .message {
-            display: flex;
-            align-items: center;
+            display        : flex;
+            align-items    : center;
             justify-content: center;
-            line-height: normal;
-            margin: 0 0 8px 0;
-            width: 60px;
-            height: 60px;
-            background: url("../../assets/image/ic_message.png");
+            line-height    : normal;
+            margin         : 0 0 8px 0;
+            width          : 60px;
+            height         : 60px;
+            background     : url("../../assets/image/ic_message.png");
             background-size: 100%;
 
             &::after {
@@ -364,96 +364,96 @@
   }
 
   .order--info {
-    display: flex;
+    display       : flex;
     flex-direction: column;
-    box-sizing: border-box;
-    margin: 20px 40px 0 40px;
-    background: #fff;
-    padding: 20px 40px;
-    border-radius: 12px;
+    box-sizing    : border-box;
+    margin        : 20px 40px 0 40px;
+    background    : #fff;
+    padding       : 20px 40px;
+    border-radius : 12px;
 
     .title {
-      font-size: 44px;
-      color: #303030;
+      font-size  : 44px;
+      color      : #303030;
       font-weight: 700;
     }
 
     .info--type {
-      display: flex;
-      align-items: center;
+      display        : flex;
+      align-items    : center;
       justify-content: space-between;
-      margin-top: 24px;
+      margin-top     : 24px;
 
       .info--title {
-        font-size: 32px;
+        font-size  : 32px;
         font-weight: 700;
       }
 
       .info--text {
-        display: flex;
+        display    : flex;
         align-items: center;
-        font-size: 32px;
-        color: #919191;
+        font-size  : 32px;
+        color      : #919191;
         font-family: "DIN";
       }
     }
 
     .info--desc {
-      display: flex;
+      display       : flex;
       flex-direction: column;
-      margin-top: 24px;
+      margin-top    : 24px;
 
       .title {
-        font-size: 32px;
-        font-weight: 700;
+        font-size    : 32px;
+        font-weight  : 700;
         margin-bottom: 12px;
       }
 
       .text {
-        display: flex;
+        display    : flex;
         align-items: center;
-        font-size: 32px;
-        color: #919191;
+        font-size  : 32px;
+        color      : #919191;
         font-family: "DIN";
       }
     }
   }
 
   .bottom {
-    display: flex;
+    display       : flex;
     flex-direction: column;
-    box-sizing: border-box;
-    margin: 20px 40px 0 40px;
-    background: #fff;
-    padding: 20px 40px;
-    border-radius: 12px;
+    box-sizing    : border-box;
+    margin        : 20px 40px 0 40px;
+    background    : #fff;
+    padding       : 20px 40px;
+    border-radius : 12px;
 
     .title {
-      font-size: 44px;
-      color: #303030;
+      font-size  : 44px;
+      color      : #303030;
       font-weight: 700;
     }
 
     .bottom--item {
-      display: flex;
+      display        : flex;
       justify-content: space-between;
-      align-items: center;
-      margin-top: 24px;
+      align-items    : center;
+      margin-top     : 24px;
 
       .bottom--title {
-        font-size: 32px;
+        font-size  : 32px;
         font-weight: 700;
       }
 
       .bottom--text {
-        display: flex;
+        display    : flex;
         align-items: center;
         font-family: "DIN";
-        font-size: 32px;
-        color: #919191;
+        font-size  : 32px;
+        color      : #919191;
 
         .singal {
-          font-size: 24px;
+          font-size   : 24px;
           margin-right: 6px;
         }
       }
@@ -473,44 +473,45 @@
   }
 
   .order--price {
-    display: flex;
-    position: fixed;
-    bottom: 80px;
-    left: 0;
-    right: 0;
-    margin: 0 40px;
-    background: #72c9aa;
-    border-radius: 12px;
-    padding: 32px;
+    display        : flex;
+    position       : fixed;
+    bottom         : 80px;
+    left           : 0;
+    right          : 0;
+    margin         : 0 40px;
+    background     : #72c9aa;
+    border-radius  : 12px;
+    padding        : 32px;
     justify-content: center;
-    align-items: center;
+    align-items    : center;
+    line-height    : normal;
 
     .order--comfirm {
-      color: #fff;
-      flex: 1;
-      font-size: 36px;
-      font-weight: 700;
-      display: flex;
+      color          : #fff;
+      flex           : 1;
+      font-size      : 36px;
+      font-weight    : 700;
+      display        : flex;
       justify-content: center;
     }
 
     .right {
-      margin-left: auto;
-      flex: 1;
-      display: flex;
-      align-items: center;
+      margin-left    : auto;
+      flex           : 1;
+      display        : flex;
+      align-items    : center;
       justify-content: flex-end;
 
       .singal {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 30px;
+        color       : rgba(255, 255, 255, 0.7);
+        font-size   : 30px;
         margin-right: 6px;
       }
 
       .price {
         font-family: "DIN";
-        color: #fff;
-        font-size: 36px;
+        color      : #fff;
+        font-size  : 36px;
       }
     }
   }

@@ -13,9 +13,9 @@ export default class TaskCard extends Component {
     this.setState({ taskInfo: this.props.info })
   }
 
-  componentDidUpdate() {
-    this.setState({ taskInfo: this.props.info })
-  }
+  // componentDidUpdate() {
+  //   this.setState({ taskInfo: this.props.info })
+  // }
 
   checkStatus = status => {
     switch (status) {
