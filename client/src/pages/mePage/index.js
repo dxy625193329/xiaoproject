@@ -1,18 +1,8 @@
 import Taro, { Component } from '@tarojs/taro'
-import {
-  View,
-  Image,
-  Button
-} from '@tarojs/components'
+import { View, Image, Button } from '@tarojs/components'
 
 import { set, get } from '../../lib/global'
-import {
-  getUserByOpenId,
-  getHunterReqByOpenId,
-  getServiceByOpenId,
-  updateUser,
-  getOpenId,
-} from '../../api'
+import { getUserByOpenId, getHunterReqByOpenId, getServiceByOpenId, updateUser, getOpenId } from '../../api'
 import { toast } from '../../lib/utils'
 import WXBizDataCrypt from '../../lib/auth'
 
@@ -81,7 +71,7 @@ export default class MePage extends Component {
 
   showExpView = () => {
     const { userLevel, hunterLevel, isHunter } = this.state
-    let expViewList = new Array(10).fill(0)
+    const expViewList = new Array(10).fill(0)
     let length
     if (isHunter) {
       length = parseInt((hunterLevel.exp / hunterLevel.levelUp) * 10)
@@ -94,11 +84,7 @@ export default class MePage extends Component {
 
   handleRouteItemPage = path => {
     if (path === 'beHunterPage/index' && this.state.hasPostHunterReq) {
-      Taro.showToast({
-        title: '你已提交审核，请耐心等待',
-        icon: 'none',
-        duration: 2000
-      })
+      toast('你已提交审核，请耐心等待')
     } else {
       Taro.navigateTo({
         url: `/pages/${path}`
@@ -160,9 +146,11 @@ export default class MePage extends Component {
     user.phoneNumber = phoneNumber
     this.setState({ phoneNumber, showPhoneMask: false })
     set('user', user)
-    Taro.setStorageSync('phone', phoneNumber)
-    updateUser({ user })
-    toast('手机号码绑定成功', 'none')
+    updateUser({ user }).then(res => {
+      if (res.data.code === 200) {
+        toast('手机号码绑定成功', 'none')
+      }
+    })
   }
 
   render() {

@@ -1,23 +1,11 @@
 import Taro, { Component } from '@tarojs/taro'
-import {
-  View,
-  Text,
-} from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 
-import {
-  getTime,
-  getDay,
-  getNowDay
-} from '../../lib/time'
+import { getTime, getDay, getNowDay } from '../../lib/time'
 import { set, get } from '../../lib/global'
 import { toast } from '../../lib/utils'
 
-import {
-  getUserByOpenId,
-  getBanner,
-  updateUser,
-  getMessageList
-} from '../../api'
+import { getUserByOpenId, getBanner, updateUser, getMessageList } from '../../api'
 
 import Banner from '../../components/Banner'
 import './index.scss'
@@ -39,14 +27,13 @@ export default class IndexPage extends Component {
 
   state = {
     banners: [],
-    timer: null,
   }
 
   componentDidMount() {
-    this.setState({
-      timer: setInterval(() => {
-
-      }, 1000)
+    getBanner().then(res => this.setState({
+      banners: res.data.data.eventList
+    })).catch(err => {
+      toast('请检查您的网络状态', 'none')
     })
   }
 
@@ -55,8 +42,7 @@ export default class IndexPage extends Component {
   }
 
   routeToChildPage = id => {
-    const localPhoneNumber = Taro.getStorageSync('phone')
-    let phoneNumber = localPhoneNumber ? localPhoneNumber : ''
+    const phoneNumber = Taro.getStorageSync('phone')
     if (phoneNumber) {
       if (id === 0) {
         Taro.navigateTo({
@@ -89,37 +75,31 @@ export default class IndexPage extends Component {
   }
 
   fetchData = () => {
-    getBanner().then(res => this.setState({
-      banners: res.data.data.eventList
-    })).catch(err => {
-      toast('请检查您的网络状态', 'none')
-    })
-    getUserByOpenId({ openId: get('openid') }).then(res => {
+    const openId = get('openid')
+    getUserByOpenId({ openId }).then(res => {
       const { user } = res.data.data
       const { isHunter, dayQuest } = res.data.data.user
       set('user', user)
       set('isHunter', isHunter)
-      if (dayQuest) {
-        if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
-          dayQuest.push({
-            date: getNowDay(),
-            order: [],
-            quest1: false,
-            quest2: false,
-            quest3: false
-          })
-          user.dayQuest = dayQuest
-          updateUser({ user })
-        }
+      if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
+        dayQuest.push({
+          date: getNowDay(),
+          order: [],
+          quest1: false,
+          quest2: false,
+          quest3: false
+        })
+        user.dayQuest = dayQuest
+        updateUser({ user })
       }
     }).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
-    const messageLocalList = Taro.getStorageSync('message') || []
-    getMessageList({ openId: get('openid') }).then(res => {
+    const messageLocalList = Taro.getStorageSync('message')
+    getMessageList({ openId }).then(res => {
       if (res.data.code === 200) {
-        set('message', res.data.messageList)
         const { messageList } = res.data
+        set('message', messageList)
         messageList.map(item => {
           if (!messageLocalList.includes(item.fromId) && get('openid') !== item.fromId) {
             messageLocalList.push(item.fromId)
@@ -133,38 +113,36 @@ export default class IndexPage extends Component {
   render() {
     return (
       <View className='index'>
-        <View>
-          <View className='top'>
-            <View className='time'>{getTime()}</View>
-            <View className='right' onClick={() => this.routeToImList()}>
-              <Image src={require('../../assets/image/ic_message.png')} className='icon' />
-              <View className='dot'></View>
-            </View>
+        <View className='top'>
+          <View className='time'>{getTime()}</View>
+          <View className='right' onClick={() => this.routeToImList()}>
+            <Image src={require('../../assets/image/ic_message.png')} className='icon' />
+            <View className='dot'></View>
           </View>
-          <View className='title--wrapper'>
-            <Text className='title'>{getDay()}好。</Text>
-          </View>
-          <Banner banners={this.state.banners} />
-          <View className='service--wrapper'>
-            <Text className='alias'>Service</Text>
-            <Text className='title'>服务</Text>
-            <View className='items'>
-              {
-                services.map((item, index) =>
-                  <View
-                    className='item'
-                    key={index}
-                    style={{ backgroundImage: `url(${item.cover})` }}
-                    onClick={() => this.routeToChildPage(index)}
-                  >
-                    <View className='info'>
-                      <Text className='name'>{item.name}</Text>
-                      <Text className='desc'>{item.desc}</Text>
-                    </View>
+        </View>
+        <View className='title--wrapper'>
+          <Text className='title'>{getDay()}好。</Text>
+        </View>
+        <Banner banners={this.state.banners} />
+        <View className='service--wrapper'>
+          <Text className='alias'>Service</Text>
+          <Text className='title'>服务</Text>
+          <View className='items'>
+            {
+              services.map((item, index) =>
+                <View
+                  className='item'
+                  key={index}
+                  style={{ backgroundImage: `url(${item.cover})` }}
+                  onClick={() => this.routeToChildPage(index)}
+                >
+                  <View className='info'>
+                    <Text className='name'>{item.name}</Text>
+                    <Text className='desc'>{item.desc}</Text>
                   </View>
-                )
-              }
-            </View>
+                </View>
+              )
+            }
           </View>
         </View>
       </View>

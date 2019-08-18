@@ -53,7 +53,11 @@ export default class ImListPage extends Component {
           messageList.length > 0 && messageList.map((item, index) => {
             return <View className='im-item' onClick={() => this.goMessage(item)} key={index}>
               {item.byId === openId ? <Image src={item.toAvatar} className='avatar' /> : <Image src={item.fromAvatar} className='avatar' />}
-              <View className='message'>{item.message[item.message.length - 1].type === 'image' ? '图片' : item.message[item.message.length - 1].message}</View>
+              <View className='right'>
+                <View className='name'>{item.byId === openId ? item.toName : item.fromName}</View>
+                <View className='message'>{item.message[item.message.length - 1].type === 'image' ? '图片' : item.message[item.message.length - 1].message}</View>
+              </View>
+              <View className='time'>{item.message[item.message.length - 1].sendTime.split(' ')[1]}</View>
             </View>
           })
         }

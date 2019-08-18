@@ -3,9 +3,12 @@ import { View, Image, Button } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
-import { checkOrderStatus, calcLevel, toast } from '../../lib/utils'
+import { checkOrderStatus, toast } from '../../lib/utils'
 import {
-  addOrder, updateUser, updateOrder, getUserByOpenId, delOrder, getPay, refundPay,
+  updateUser,
+  delOrder,
+  getPay,
+  refundPay,
   createOrder,
   cancelOrder,
   hunterGetOrder,
@@ -216,28 +219,15 @@ export class OrderDetailPage extends Component {
             }
             refundPay({ orderId: order.orderId, price }).then(res => {
               if (res.data.status === 200) {
-                user.userOrder.map((item, index) => {
-                  if (item.orderId === order.orderId) {
-                    user.pool += order.pool
-                    user.pool = parseFloat((user.pool).toFixed(2))
-                    user.userOrder.splice(index, 1)
-                  }
-                })
-                updateUser({ user }).then(res => {
-                  if (res.data.code === 200) {
-                    delOrder({ orderId: order.orderId }).then(res => {
-                      if (res.data.code == 200) {
-                        this.setState({ showDontTouch: true })
-                        toast('订单取消成功', 'success')
-                        setTimeout(() => {
-                          Taro.switchTab({
-                            url: '/pages/orderPage/index'
-                          })
-                        }, 1000)
-                      } else {
-                        toast('订单取消失败，请检查您的网络状态后重试', 'none')
-                      }
-                    })
+                delOrder({ orderId: order.orderId }).then(res => {
+                  if (res.data.code == 200) {
+                    this.setState({ showDontTouch: true })
+                    toast('订单取消成功', 'success')
+                    setTimeout(() => {
+                      Taro.switchTab({
+                        url: '/pages/orderPage/index'
+                      })
+                    }, 1000)
                   } else {
                     toast('订单取消失败，请检查您的网络状态后重试', 'none')
                   }

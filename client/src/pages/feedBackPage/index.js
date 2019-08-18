@@ -1,6 +1,8 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import './index.scss'
+
+import { toast } from '../../lib/utils'
 import { get } from '../../lib/global'
 import { addFeedBack, addService } from '../../api'
 
@@ -29,19 +31,18 @@ export default class RankPage extends Component {
     }
     addFeedBack({ feed }).then(res => {
       this.setState({ value: '' })
-      Taro.switchTab({
-        url: '/pages/mePage/index'
-      })
       const service = {
         openId: user.openId,
         title: '您的反馈已提交',
         content: '我们的工作人员会尽快对您的意见或建议进行回复。'
       }
-      addService({ service })
-      Taro.showToast({
-        title: '您的反馈已提交',
-        icon: 'success',
-        duration: 2000
+      addService({ service }).then(res => {
+        if (res.data.code === 200) {
+          toast('您的反馈已提交', 'success')
+          Taro.switchTab({
+            url: '/pages/mePage/index'
+          })
+        }
       })
     })
   }

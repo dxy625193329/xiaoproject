@@ -15,12 +15,15 @@ export default class TaskHallPage extends Component {
   }
 
   componentDidMount() {
-    this.fetchData()
     this.setState({
       timer: setInterval(() => {
         this.fetchData()
-      }, 5000)
+      }, 10000)
     })
+  }
+
+  componentDidShow() {
+    this.fetchData()
   }
 
   componentWillUnmount() {

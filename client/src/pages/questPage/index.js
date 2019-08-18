@@ -84,7 +84,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 2) {
       if (this.calcQuestStatus(tag)) {
@@ -99,7 +99,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 3) {
       if (this.calcQuestStatus(tag)) {
@@ -114,7 +114,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 4) {
       if (this.calcQuestStatus(tag)) {
@@ -129,7 +129,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 5) {
       if (this.calcQuestStatus(tag)) {
@@ -144,7 +144,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 6) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -158,7 +158,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 7) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -172,7 +172,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 8) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -186,7 +186,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 9) {
       if (this.calcLevelQuestStatus(tag)) {
@@ -200,7 +200,7 @@ export default class QuestPage extends Component {
         }
       }
     } else {
-      toast('您还未完成任务，无法领取奖励', 'none')
+      toast('您还未完成任务，无法领取奖励')
     }
   }
 
@@ -225,7 +225,7 @@ export default class QuestPage extends Component {
               this.setState({ dayQuest1: true })
               return
             } else {
-              toast('您还未完成任务，无法领取奖励', 'none')
+              toast('您还未完成任务，无法领取奖励')
             }
           }
         }
@@ -240,7 +240,7 @@ export default class QuestPage extends Component {
               this.setState({ dayQuest2: true })
               return
             } else {
-              toast('您还未完成任务，无法领取奖励', 'none')
+              toast('您还未完成任务，无法领取奖励')
             }
           }
         }
@@ -255,13 +255,13 @@ export default class QuestPage extends Component {
               this.setState({ dayQuest3: true })
               return
             } else {
-              toast('您还未完成任务，无法领取奖励', 'none')
+              toast('您还未完成任务，无法领取奖励')
             }
           }
         }
       }
     } else {
-      toast('您不是猎人，无法完成任务', 'none')
+      toast('您不是猎人，无法完成任务')
     }
   }
 

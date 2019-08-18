@@ -1,43 +1,33 @@
 import Taro, { Component } from '@tarojs/taro'
-import {
-  View,
-  Text,
-  Button
-} from '@tarojs/components'
+import { View, Text, Button } from '@tarojs/components'
 
-import {
-  getNowDay
-} from '../../lib/time'
+import { getNowDay } from '../../lib/time'
 import { set } from '../../lib/global'
 import { toast } from '../../lib/utils'
 
-import {
-  getOpenId,
-  getUserByOpenId,
-  addUser,
-} from '../../api'
+import { getOpenId, addUser, getUserPhoneNumber } from '../../api'
 
 import './index.scss'
 
 export default class SplashPage extends Component {
 
   componentDidMount() {
-    const openid = Taro.getStorageSync('openid')
-    if (openid) {
-      this.checkUserExist(openid)
-    }
+    this.saveUserPhoneNumber()
   }
 
-  checkUserExist = openid => {
-    getUserByOpenId({ openId: openid }).then(res => {
-      if (res.data.code === 200) {
-        set('openid', openid)
-        Taro.setStorageSync('phone', res.data.data.user.phoneNumber)
+  saveUserPhoneNumber = () => {
+    const openid = Taro.getStorageSync('openid')
+    if (openid) {
+      set('openid', openid)
+      getUserPhoneNumber(openid).then(res => {
+        if (res.data.code === 200) {
+          Taro.setStorageSync('phone', res.data.data.phoneNumber)
+        }
         Taro.switchTab({
           url: '/pages/indexPage/index'
         })
-      }
-    })
+      }).catch(err => toast('请检查您的网络环境后重试'))
+    }
   }
 
   onGotUserInfo = res => {
@@ -67,13 +57,14 @@ export default class SplashPage extends Component {
                 Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
+                Taro.setStorageSync('message', [])
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
                 })
               } else if (res.data.code === 201) {
                 const { phoneNumber } = res.data.data
-                set('user', res.data.data)
                 set('openid', openid)
+                Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
                 Taro.setStorageSync('phone', phoneNumber)
@@ -83,17 +74,17 @@ export default class SplashPage extends Component {
                 })
               }
             }).catch(err => {
-              toast('请检查您的网络状态后重试', 'none')
+              toast('请检查您的网络状态后重试')
             })
           }
         }).catch(err => {
-          toast('微信服务器无法获取用户信息', 'none')
+          toast('微信服务器无法获取用户信息')
         })
       }).catch(err => {
-        toast('请检查您的网络状态后重试', 'none')
+        toast('请检查您的网络状态后重试')
       })
     }).catch(err => {
-      toast('请检查您的网络状态后重试', 'none')
+      toast('请检查您的网络状态后重试')
     })
   }
 

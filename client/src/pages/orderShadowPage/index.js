@@ -132,7 +132,7 @@ export class OrderShadowPage extends Component {
     } else {
       this.setState({ checkPool: false })
     }
-    if (!isNaN(totalPrice) && totalPrice >= 1 && !!username && !!locateText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
+    if (!isNaN(totalPrice) && totalPrice >= 15 && !!username && !!locateText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
       set('order', order)
       Taro.navigateTo({
         url: '/pages/orderDetailPage/index'
@@ -292,7 +292,7 @@ export class OrderShadowPage extends Component {
                 <View className='info'>奖金池 {user.pool} 元，每次最高可折扣订单10%</View>
                 <View className='info'>折扣金额不可超过订单金额，最高可折扣50元</View>
                 {
-                  checkPool && <View className='error-info'>请输入正确的折扣金额</View>
+                  checkPool && <View className='error-info'>本次折扣最多{totalPrice * 0.1}元</View>
                 }
               </View>
               : <View className='bottom--item'>

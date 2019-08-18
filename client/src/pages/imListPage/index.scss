@@ -1,35 +1,53 @@
 .im__list {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  box-sizing: border-box;
-  padding: 20px 40px 40px 40px;
+  display         : flex;
+  flex-direction  : column;
+  min-height      : 100vh;
+  box-sizing      : border-box;
+  padding         : 20px 40px 40px 40px;
   background-color: #f8f8f8;
 
   .im-item {
-    width: 100%;
-    background: #fff;
+    width        : 100%;
+    background   : #fff;
     border-radius: 12px;
-    padding: 28px 20px;
+    padding      : 28px 20px;
     margin-bottom: 32px;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
+    box-sizing   : border-box;
+    display      : flex;
+    align-items  : center;
 
     .avatar {
-      max-width: 88px;
-      max-height: 88px;
+      max-width    : 88px;
+      max-height   : 88px;
       border-radius: 8px;
-      margin-right: 20px;
+      margin-right : 20px;
     }
 
-    .message {
-      width: fit-content;
-      overflow: hidden;
-      font-size: 32px;
-      color: #303030;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+    .time {
+      font-size  : 28px;
+      color      : #919191;
+      margin-left: auto;
+    }
+
+    .right {
+      display        : flex;
+      flex-direction : column;
+      justify-content: center;
+
+      .name {
+        font-weight: 700;
+        color      : #303030;
+        font-size  : 30px;
+      }
+
+      .message {
+        width        : fit-content;
+        overflow     : hidden;
+        font-size    : 30px;
+        color        : #919191;
+        white-space  : nowrap;
+        text-overflow: ellipsis;
+      }
     }
   }
 }

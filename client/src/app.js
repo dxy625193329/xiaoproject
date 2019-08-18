@@ -24,7 +24,8 @@ class App extends Component {
       'pages/agreePage/index',
       'pages/hunterAgreePage/index',
       'pages/imListPage/index',
-      'pages/messagePage/index'
+      'pages/messagePage/index',
+      'pages/aboutHunterPage/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -65,11 +66,6 @@ class App extends Component {
         }
       ]
     },
-    permission: {
-      'scope.userLocation': {
-        desc: '您的位置将帮助我们为您提供更优质的服务。'
-      }
-    }
   }
 
   componentDidMount() {

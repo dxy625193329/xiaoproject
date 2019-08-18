@@ -1,5 +1,5 @@
 import Taro, { Component, getCurrentPages } from '@tarojs/taro'
-import { View, Input, ScrollView } from '@tarojs/components'
+import { View, Input } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global';
 import { getFullTime } from '../../lib/time';
@@ -52,9 +52,10 @@ export default class MessagePage extends Component {
   }
 
   pageScrollToBottom = () => {
+    const length = this.state.messageList.length === 0 ? get('messageItem').message.length : this.state.messageList.length
     Taro.createSelectorQuery().select('#message').boundingClientRect(rect => {
       Taro.pageScrollTo({
-        scrollTop: rect.bottom
+        scrollTop: length * 200
       })
     }).exec()
   }
@@ -107,9 +108,8 @@ export default class MessagePage extends Component {
           messageLocalList: tempList,
           messageList: tempMessageList,
           message: ''
-        })
+        }, () => this.pageScrollToBottom())
         set('messageItem', message)
-        this.pageScrollToBottom()
       } else {
         toast('请检查您的网络环境后重试', 'none')
       }
@@ -187,7 +187,7 @@ export default class MessagePage extends Component {
 
     return (
       <View className='message'>
-        <View className='message-wrapper' id='message'>
+        <View className='message-wrapper'>
           {
             messageList.length > 0 && messageList.map((item, index) => {
               return openId !== item.fromId ?

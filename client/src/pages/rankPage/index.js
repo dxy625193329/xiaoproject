@@ -1,8 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
-import {
-  View,
-  Text
-} from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 
 import { getRankList } from '../../api'
 
@@ -23,13 +20,17 @@ export default class RankPage extends Component {
     timer: null
   }
 
-  componentDidShow() {
-    this.fetchData()
+  componentDidMount() {
     this.setState({
       timer: setInterval(() => {
         this.fetchData()
-      }, 5000)
+      }, 30000)
     })
+  }
+
+  componentDidShow() {
+    this.fetchData()
+
   }
 
   componentDidHide() {
@@ -51,13 +52,7 @@ export default class RankPage extends Component {
   }
 
   render() {
-
-    const {
-      currentIndex,
-      userList,
-      hunterList
-    } = this.state
-
+    const { currentIndex, userList, hunterList } = this.state
     return (
       <View className='rank'>
         <View className='rank--tabs'>

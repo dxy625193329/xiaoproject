@@ -65,7 +65,7 @@ export default class WalletPage extends Component {
 
   handlePayIn = () => {
     let { wallet, value } = this.state
-    let user = get('user')
+    const user = get('user')
     const openId = get('openid')
     let price = Number(value)
     if (price > 0.01 && !isNaN(price)) {
@@ -86,11 +86,7 @@ export default class WalletPage extends Component {
           this.setState({ wallet, showPayInMask: false, value: 0 })
           user.wallet = wallet
           updateUser({ user })
-          Taro.showToast({
-            title: '充值成功',
-            icon: 'success',
-            duration: 2000
-          })
+          toast('充值成功', 'success')
         }).catch(err => {
           console.log(err)
         })

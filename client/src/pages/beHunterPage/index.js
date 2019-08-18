@@ -48,6 +48,12 @@ export default class BeHunterPage extends Component {
     })
   }
 
+  routeToAboutHunter=()=>{
+    Taro.navigateTo({
+      url: '/pages/aboutHunterPage/index'
+    })
+  }
+
   handleInputChange = e => {
     this.setState({ [e.target.id]: e.target.value })
   }
@@ -105,18 +111,18 @@ export default class BeHunterPage extends Component {
                 url: '/pages/mePage/index'
               })
             })
-            let service = {
+            const service = {
               openId,
               title: '您的猎人审核已成功提交',
               content: '请您耐心等待，我们的工作人员会尽快进行审核。'
             }
             addService({ service })
           }).catch(err => {
-            toast('上传文件失败，请检查您的网络环境后再试', 'none')
+            toast('上传文件失败，请检查您的网络环境后再试')
             Taro.hideLoading()
           })
         }).catch(err => {
-          toast('支付失败，请稍后再试', 'none')
+          toast('支付失败，请稍后再试')
         })
       })
     }
@@ -129,7 +135,6 @@ export default class BeHunterPage extends Component {
       content: '注销后您只能重新申请猎人资格。',
       success: res => {
         if (res.confirm) {
-
           refundPay({ orderId: user.identity.orderId, price: user.deposit }).then(res => {
             if (res.data.status === 200) {
               user.isHunter = false
@@ -170,6 +175,7 @@ export default class BeHunterPage extends Component {
       <View className='be__hunter'>
         <View className='be__hunter--title'>{user.isHunter ? '你好，猎人' : '申请猎人资格'}</View>
         <View className='be__hunter--info'>{user.isHunter ? '猎人每天完成任务会获得更多奖励' : '请按规则填写您的资料以提供审核'}</View>
+        <Text className='about-hunter' onClick={this.routeToAboutHunter}>点击了解更多关于赏金猎人的信息</Text>
         {
           user.isHunter ?
             <View>

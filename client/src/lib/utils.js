@@ -110,7 +110,7 @@ export const calcLevel = (type, count, userLevel) => {
   }
 }
 
-export const toast = (title, icon, duration = 2000) => {
+export const toast = (title, icon='none', duration = 2000) => {
   Taro.showToast({
     title,
     icon,
