@@ -52,7 +52,7 @@ export default class MessagePage extends Component {
   }
 
   pageScrollToBottom = () => {
-    const length = this.state.messageList.length === 0 ? get('messageItem').message.length : this.state.messageList.length
+    const length = this.state.messageList.length === 0 ? 0 : get('messageItem').message.length
     Taro.createSelectorQuery().select('#message').boundingClientRect(rect => {
       Taro.pageScrollTo({
         scrollTop: length * 200
@@ -66,11 +66,6 @@ export default class MessagePage extends Component {
 
   componentWillUnmount() {
     clearInterval(this.state.timer)
-    if (this.state.fromPage !== 'pages/imListPage/index') {
-      Taro.switchTab({
-        url: '/pages/indexPage/index'
-      })
-    }
   }
 
   handleMessageSubmit = e => {

@@ -56,7 +56,6 @@ export class OrderDetailPage extends Component {
   }
 
   handleOrderCheck = (e) => {
-    console.log(e)
     this.maskAnimation('show')
   }
 
@@ -334,7 +333,6 @@ export class OrderDetailPage extends Component {
     if (this.state.orderInfo.hunterOpenId === this.state.savedOpenid) {
       toast('无法给自己留言', 'none')
     } else {
-
       if (this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId)) {
         Taro.navigateTo({
           url: '/pages/imListPage/index'
@@ -361,6 +359,7 @@ export class OrderDetailPage extends Component {
     if (this.state.orderInfo.openId === this.state.savedOpenid) {
       toast('无法给自己留言', 'none')
     } else {
+      console.log(this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId))
       if (this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId)) {
         Taro.navigateTo({
           url: '/pages/imListPage/index'
