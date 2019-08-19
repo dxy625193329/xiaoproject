@@ -57,7 +57,6 @@ export default class SplashPage extends Component {
                 Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
-                Taro.setStorageSync('message', [])
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
                 })
@@ -68,7 +67,6 @@ export default class SplashPage extends Component {
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
                 Taro.setStorageSync('phone', phoneNumber)
-                Taro.setStorageSync('message', [])
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
                 })

@@ -214,6 +214,8 @@ export class OrderShadowPage extends Component {
           {
             checkLocate && <View className='error-info'>请输入目标地址</View>
           }
+        </View>
+        <View className='order--locate'>
           <View className='locate--top m-t'>
             <View className='title'>日期</View>
             <Picker
@@ -231,6 +233,8 @@ export class OrderShadowPage extends Component {
           {
             checkDate && <View className='error-info'>请选择日期</View>
           }
+        </View>
+        <View className='order--locate'>
           <View className='locate--top m-t'>
             <View className='title'>时间</View>
             <Picker
@@ -248,6 +252,8 @@ export class OrderShadowPage extends Component {
           {
             checkTime && <View className='error-info'>请选择时间</View>
           }
+        </View>
+        <View className='order--locate'>
           <View className='local--bottom'>
             <View className='title'>
               预期费用
@@ -289,7 +295,7 @@ export class OrderShadowPage extends Component {
                   cursor-spacing='100px'
                   maxLength='5'
                   className='input' />
-                <View className='info'>奖金池 {user.pool} 元，每次最高可折扣订单10%</View>
+                <View className='info'>奖金池 {user.pool.toFixed(2)} 元，每次最高可折扣订单10%</View>
                 <View className='info'>折扣金额不可超过订单金额，最高可折扣50元</View>
                 {
                   checkPool && <View className='error-info'>本次折扣最多{totalPrice * 0.1}元</View>

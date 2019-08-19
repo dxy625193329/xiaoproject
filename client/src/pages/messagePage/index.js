@@ -33,8 +33,8 @@ export default class MessagePage extends Component {
       user: get('user'),
       timer: setInterval(this.getOnlineMessage, 5000),
       fromPage: pages[pages.length - 2].route,
-    })
-    this.pageScrollToBottom()
+    }, () => this.pageScrollToBottom())
+    this.getOnlineMessage()
   }
 
   getOnlineMessage = () => {
@@ -46,18 +46,16 @@ export default class MessagePage extends Component {
         })
         this.setState({
           messageList: nowMessage.length > 0 ? nowMessage[0].message : []
-        })
+        }, () => this.pageScrollToBottom())
       }
     })
   }
 
   pageScrollToBottom = () => {
     const length = this.state.messageList.length === 0 ? 0 : get('messageItem').message.length
-    Taro.createSelectorQuery().select('#message').boundingClientRect(rect => {
-      Taro.pageScrollTo({
-        scrollTop: length * 200
-      })
-    }).exec()
+    Taro.pageScrollTo({
+      scrollTop: length * 200
+    })
   }
 
   handleMessageChange = e => {

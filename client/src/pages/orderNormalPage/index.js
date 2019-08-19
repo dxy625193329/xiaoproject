@@ -135,7 +135,7 @@ export class OrderNormalPage extends Component {
     } else {
       this.setState({ checkPool: false })
     }
-    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && (!!locateText||selectorChecked==='就近目标') && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
+    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && (!!locateText || selectorChecked === '就近目标') && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
       set('order', order)
       Taro.navigateTo({
         url: '/pages/orderDetailPage/index'
@@ -165,9 +165,9 @@ export class OrderNormalPage extends Component {
         <View className='top'>
           <View
             className='rank'
-            style={{ background: typeInfo.rank ? '#72c9aa' : '#ff3b3b' }}
+            style={{ background: '#72c9aa' }}
           >
-            {typeInfo.rank ? '可参与排行' : '不可参与排行'}
+            可参与排行
           </View>
           <View className='name'>{typeInfo.title}</View>
           <View className='desc'>{typeInfo.desc}</View>
@@ -189,6 +189,8 @@ export class OrderNormalPage extends Component {
           {
             checkUsername && <View className='error-info'>请输入联系人姓名</View>
           }
+        </View>
+        <View className='middle' style={{ marginTop: '20rpx' }}>
           <View className='locate'>
             <Image
               src={require('../../assets/image/ic_order_locate.png')}
@@ -247,6 +249,8 @@ export class OrderNormalPage extends Component {
           {
             checkLocate && <View className='error-info'>请输入您的联系地址</View>
           }
+        </View>
+        <View className='order--locate'>
           <View className='local--bottom'>
             <View className='title'>
               预期费用
@@ -288,7 +292,7 @@ export class OrderNormalPage extends Component {
                   cursor-spacing='100px'
                   maxLength='5'
                   className='input' />
-                <View className='info'>奖金池 {user.pool} 元，每次最高可折扣订单10%</View>
+                <View className='info'>奖金池 {user.pool.toFixed(2)} 元，每次最高可折扣订单10%</View>
                 <View className='info'>折扣金额不可超过订单金额，最高可折扣50元</View>
                 {
                   checkPool && <View className='error-info'>本次折扣最多{totalPrice * 0.1}元</View>

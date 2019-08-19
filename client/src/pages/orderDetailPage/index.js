@@ -5,7 +5,6 @@ import { get, set } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
 import { checkOrderStatus, toast } from '../../lib/utils'
 import {
-  updateUser,
   delOrder,
   getPay,
   refundPay,
@@ -13,7 +12,8 @@ import {
   cancelOrder,
   hunterGetOrder,
   hunterCompleteOrder,
-  userConfirmOrder
+  userConfirmOrder,
+  getMessageList
 } from '../../api'
 
 export class OrderDetailPage extends Component {
@@ -53,6 +53,15 @@ export class OrderDetailPage extends Component {
     } else {
       this.setState({ wxPay: true, disabledRestPay: true })
     }
+  }
+
+  componentDidShow() {
+    getMessageList({ openId: this.state.savedOpenid }).then(res => {
+      if (res.data.code === 200) {
+        const { messageList } = res.data
+        set('message', messageList)
+      }
+    })
   }
 
   handleOrderCheck = (e) => {
@@ -333,9 +342,14 @@ export class OrderDetailPage extends Component {
     if (this.state.orderInfo.hunterOpenId === this.state.savedOpenid) {
       toast('无法给自己留言', 'none')
     } else {
-      if (this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId)) {
+      const message = get('message')
+      const messageItemList = message.filter(item => {
+        return (item.byId === this.state.orderInfo.openId && item.toId === this.state.orderInfo.hunterOpenId) || item.byId === this.state.orderInfo.hunterOpenId && item.toId === this.state.orderInfo.openId
+      })
+      if (messageItemList.length > 0) {
+        set('messageItem', messageItemList[0])
         Taro.navigateTo({
-          url: '/pages/imListPage/index'
+          url: '/pages/messagePage/index'
         })
       } else {
         set('messageItem', {
@@ -359,10 +373,14 @@ export class OrderDetailPage extends Component {
     if (this.state.orderInfo.openId === this.state.savedOpenid) {
       toast('无法给自己留言', 'none')
     } else {
-      console.log(this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId))
-      if (this.state.message.includes(this.state.orderInfo.hunterOpenId) || this.state.message.includes(this.state.orderInfo.openId)) {
+      const message = get('message')
+      const messageItemList = message.filter(item => {
+        return (item.byId === this.state.orderInfo.openId && item.toId === this.state.orderInfo.hunterOpenId) || item.byId === this.state.orderInfo.hunterOpenId && item.toId === this.state.orderInfo.openId
+      })
+      if (messageItemList.length > 0) {
+        set('messageItem', messageItemList[0])
         Taro.navigateTo({
-          url: '/pages/imListPage/index'
+          url: '/pages/messagePage/index'
         })
       } else {
         set('messageItem', {
@@ -625,16 +643,14 @@ export class OrderDetailPage extends Component {
         </View>
         {
           status === 'waitpay' && openId === savedOpenid ?
-            <Form reportSubmit onSubmit={this.handleOrderCheck}>
-              <Button className='order--price' formType='submit'>
-                <View style={{ flex: 1 }}></View>
-                <View className='order--comfirm'>立即支付</View>
-                <View className='right'>
-                  <View className='singal'>¥</View>
-                  <View className='price'>{price - pool}</View>
-                </View>
-              </Button>
-            </Form>
+            <View className='order--price' onClick={this.handleOrderCheck}>
+              <View style={{ flex: 1 }}></View>
+              <View className='order--comfirm'>立即支付</View>
+              <View className='right'>
+                <View className='singal'>¥</View>
+                <View className='price'>{price - pool}</View>
+              </View>
+            </View>
             : null
         }
         {

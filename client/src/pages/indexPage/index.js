@@ -95,17 +95,10 @@ export default class IndexPage extends Component {
     }).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
-    const messageLocalList = Taro.getStorageSync('message')
     getMessageList({ openId }).then(res => {
       if (res.data.code === 200) {
         const { messageList } = res.data
         set('message', messageList)
-        messageList.map(item => {
-          if (!messageLocalList.includes(item.fromId) && get('openid') !== item.fromId) {
-            messageLocalList.push(item.fromId)
-            Taro.setStorageSync('message', messageLocalList)
-          }
-        })
       }
     })
   }
