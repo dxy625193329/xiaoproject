@@ -14,23 +14,15 @@ export default class ImListPage extends Component {
     messageList: []
   }
 
-  componentDidMount() {
-    this.setState({ messageList: get('message') })
+  componentDidShow() {
+    this.fetchData()
   }
 
-  componentDidShow() {
-    const messageLocalList = Taro.getStorageSync('message') || []
+  fetchData = () => {
     getMessageList({ openId: get('openid') }).then(res => {
       if (res.data.code === 200) {
-        set('message', res.data.messageList)
         const { messageList } = res.data
-        messageList.map(item => {
-          if (!messageLocalList.includes(item.fromId) && get('openid') !== item.fromId) {
-            messageLocalList.push(item.fromId)
-            Taro.setStorageSync('message', messageLocalList)
-          }
-        })
-        this.setState({ messageList: messageList.reverse() })
+        this.setState({ messageList: messageList })
       }
     })
   }

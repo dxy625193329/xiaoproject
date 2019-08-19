@@ -41,7 +41,6 @@ export class OrderDetailPage extends Component {
       isHunter: get('user').isHunter,
       savedOpenid: get('openid'),
       statusInfo: checkOrderStatus(get('order').status),
-      message: Taro.getStorageSync('message') || []
     })
   }
 
@@ -59,7 +58,7 @@ export class OrderDetailPage extends Component {
     getMessageList({ openId: this.state.savedOpenid }).then(res => {
       if (res.data.code === 200) {
         const { messageList } = res.data
-        set('message', messageList)
+        this.setState({ message: messageList })
       }
     })
   }
@@ -342,7 +341,7 @@ export class OrderDetailPage extends Component {
     if (this.state.orderInfo.hunterOpenId === this.state.savedOpenid) {
       toast('无法给自己留言', 'none')
     } else {
-      const message = get('message')
+      const { message } = this.state
       const messageItemList = message.filter(item => {
         return (item.byId === this.state.orderInfo.openId && item.toId === this.state.orderInfo.hunterOpenId) || item.byId === this.state.orderInfo.hunterOpenId && item.toId === this.state.orderInfo.openId
       })
@@ -373,7 +372,7 @@ export class OrderDetailPage extends Component {
     if (this.state.orderInfo.openId === this.state.savedOpenid) {
       toast('无法给自己留言', 'none')
     } else {
-      const message = get('message')
+      const { message } = this.state
       const messageItemList = message.filter(item => {
         return (item.byId === this.state.orderInfo.openId && item.toId === this.state.orderInfo.hunterOpenId) || item.byId === this.state.orderInfo.hunterOpenId && item.toId === this.state.orderInfo.openId
       })

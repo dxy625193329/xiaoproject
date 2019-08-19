@@ -38,7 +38,7 @@ export default class SplashPage extends Component {
         const { openid, session_key } = res.data
         Taro.getUserInfo({ lang: 'zh_CN' }).then(res => {
           const { userInfo } = res
-          if (userInfo) {
+          if (userInfo && openid) {
             const user = {
               openId: openid,
               userName: userInfo.nickName,
@@ -74,6 +74,8 @@ export default class SplashPage extends Component {
             }).catch(err => {
               toast('请检查您的网络状态后重试')
             })
+          } else {
+            toast('请检查您的网络状态后重试')
           }
         }).catch(err => {
           toast('微信服务器无法获取用户信息')

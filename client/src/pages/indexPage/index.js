@@ -95,12 +95,6 @@ export default class IndexPage extends Component {
     }).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
-    getMessageList({ openId }).then(res => {
-      if (res.data.code === 200) {
-        const { messageList } = res.data
-        set('message', messageList)
-      }
-    })
   }
 
   render() {
