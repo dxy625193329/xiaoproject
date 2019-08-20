@@ -48,7 +48,7 @@ export default class BeHunterPage extends Component {
     })
   }
 
-  routeToAboutHunter=()=>{
+  routeToAboutHunter = () => {
     Taro.navigateTo({
       url: '/pages/aboutHunterPage/index'
     })
@@ -179,6 +179,7 @@ export default class BeHunterPage extends Component {
         {
           user.isHunter ?
             <View>
+              <View className='cancel'>剩余押金：{user.deposit}</View>
               <View className='cancel'>注销猎人资格</View>
               <View className='desc'>发起注销猎人后，您将失去猎人资格，您的猎人数据将清空，奖金池也将清空。您无法再继续接单、完成任务并获得奖励。这是一项不可逆的操作，请您谨慎考虑。</View>
               <View

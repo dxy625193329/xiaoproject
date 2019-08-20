@@ -13,8 +13,10 @@ import {
   hunterGetOrder,
   hunterCompleteOrder,
   userConfirmOrder,
-  getMessageList
+  getMessageList,
+  hunterCancelOrder
 } from '../../api'
+import moment from 'moment'
 
 export class OrderDetailPage extends Component {
 
@@ -183,68 +185,82 @@ export class OrderDetailPage extends Component {
     }
   }
 
+  cancelOrderFunc = (formId = '') => {
+    const order = { ...this.state.orderInfo }
+    const user = { ...this.state.userInfo }
+    const data = {}
+    if (order.pay === 'rest') {
+      if (order.pool > 0) {
+        user.wallet += (order.price - order.pool)
+        user.wallet = parseFloat((user.wallet).toFixed(2))
+        user.pool += order.pool
+        user.pool = parseFloat((user.pool).toFixed(2))
+      } else {
+        user.wallet += order.price
+        user.wallet = parseFloat((user.wallet).toFixed(2))
+      }
+      if (fromId) {
+        data = {
+          orderId: order.orderId, formId, hunterOpenId: order.hunterOpenId
+        }
+      } else {
+        data = {
+          user: { openId: user.openId, wallet: user.wallet, pool: user.pool }, orderId: order.orderId
+        }
+      }
+      cancelOrder(data).then(res => {
+        if (res.data.code === 200) {
+          set('user', user)
+          this.setState({ showDontTouch: true })
+          toast('订单取消成功', 'success')
+          setTimeout(() => {
+            Taro.switchTab({
+              url: '/pages/orderPage/index'
+            })
+          }, 1000)
+        } else {
+          toast('订单取消失败，请检查您的网络状态后重试', 'none')
+        }
+      }).catch(err => {
+        toast('订单取消失败，请检查您的网络状态后重试', 'none')
+      })
+    } else {
+      let price = 0
+      if (order.pool > 0) {
+        price = order.price - order.pool
+        price = parseFloat(price.toFixed(2))
+      } else {
+        price = order.price
+        price = parseFloat(price.toFixed(2))
+      }
+      refundPay({ orderId: order.orderId, price }).then(res => {
+        if (res.data.status === 200) {
+          cancelOrder({ orderId: order.orderId, hunterOpenId: order.hunterOpenId, formId }).then(res => {
+            if (res.data.code == 200) {
+              this.setState({ showDontTouch: true })
+              toast('订单取消成功', 'success')
+              setTimeout(() => {
+                Taro.switchTab({
+                  url: '/pages/orderPage/index'
+                })
+              }, 1000)
+            } else {
+              toast('订单取消失败，请检查您的网络状态后重试', 'none')
+            }
+          })
+        } else {
+          toast('订单取消失败，请检查您的网络状态后重试', 'none')
+        }
+      })
+    }
+  }
+
   handleCancelOrder = () => {
     Taro.showModal({
       title: '确定取消订单？',
       success: res => {
         if (res.confirm) {
-          const order = { ...this.state.orderInfo }
-          const user = { ...this.state.userInfo }
-          if (order.pay === 'rest') {
-            if (order.pool > 0) {
-              user.wallet += (order.price - order.pool)
-              user.wallet = parseFloat((user.wallet).toFixed(2))
-              user.pool += order.pool
-              user.pool = parseFloat((user.pool).toFixed(2))
-            } else {
-              user.wallet += order.price
-              user.wallet = parseFloat((user.wallet).toFixed(2))
-            }
-            cancelOrder({ user: { openId: user.openId, wallet: user.wallet, pool: user.pool }, orderId: order.orderId }).then(res => {
-              if (res.data.code === 200) {
-                set('user', user)
-                this.setState({ showDontTouch: true })
-                toast('订单取消成功', 'success')
-                setTimeout(() => {
-                  Taro.switchTab({
-                    url: '/pages/orderPage/index'
-                  })
-                }, 1000)
-              } else {
-                toast('订单取消失败，请检查您的网络状态后重试', 'none')
-              }
-            }).catch(err => {
-              toast('订单取消失败，请检查您的网络状态后重试', 'none')
-            })
-          } else {
-            let price = 0
-            if (order.pool > 0) {
-              price = order.price - order.pool
-              price = parseFloat(price.toFixed(2))
-            } else {
-              price = order.price
-              price = parseFloat(price.toFixed(2))
-            }
-            refundPay({ orderId: order.orderId, price }).then(res => {
-              if (res.data.status === 200) {
-                delOrder({ orderId: order.orderId }).then(res => {
-                  if (res.data.code == 200) {
-                    this.setState({ showDontTouch: true })
-                    toast('订单取消成功', 'success')
-                    setTimeout(() => {
-                      Taro.switchTab({
-                        url: '/pages/orderPage/index'
-                      })
-                    }, 1000)
-                  } else {
-                    toast('订单取消失败，请检查您的网络状态后重试', 'none')
-                  }
-                })
-              } else {
-                toast('订单取消失败，请检查您的网络状态后重试', 'none')
-              }
-            })
-          }
+          this.cancelOrderFunc()
         }
       }
     })
@@ -262,7 +278,8 @@ export class OrderDetailPage extends Component {
       avatar: user.userAvatar,
       level: user.hunterLevel.name,
       count: user.hunterOrderCount,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
+      getTime: Date.now()
     }
     hunterGetOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status, hunterOpenId: order.hunterOpenId, hunter: order.hunter } }).then(res => {
       if (res.data.code === 200) {
@@ -274,32 +291,38 @@ export class OrderDetailPage extends Component {
           })
         }, 1000)
       } else {
-        toast('接单失败，请检查您的网络状态后重试', 'none')
+        toast('接单失败，请检查您的网络状态后重试')
       }
     }).catch(err => {
-      toast('接单失败，请检查您的网络状态后重试', 'none')
+      toast('接单失败，请检查您的网络状态后重试')
     })
   }
 
   handleOrderComplete = () => {
-    const order = { ...this.state.orderInfo }
-    order.statusText = '订单等待确认完成'
-    order.status = 'confirm'
-    hunterCompleteOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status } }).then(res => {
-      if (res.data.code === 200) {
-        this.setState({ showDontTouch: true })
-        toast('完成订单成功', 'success')
-        setTimeout(() => {
-          Taro.switchTab({
-            url: '/pages/orderPage/index'
-          })
-        }, 1000)
-      } else {
-        toast('完成订单失败，请检查您的网络状态后重试', 'none')
-      }
-    }).catch(err => {
-      toast('完成订单失败，请检查您的网络状态后重试', 'none')
-    })
+    const overTime = parseInt(this.state.orderInfo.hunter.getTime) / 1000 + 5 * 60
+    const isOverTime = Date.now() / 1000 - overTime > 0
+    if (isOverTime) {
+      const order = { ...this.state.orderInfo }
+      order.statusText = '订单等待确认完成'
+      order.status = 'confirm'
+      hunterCompleteOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status } }).then(res => {
+        if (res.data.code === 200) {
+          this.setState({ showDontTouch: true })
+          toast('完成订单成功', 'success')
+          setTimeout(() => {
+            Taro.switchTab({
+              url: '/pages/orderPage/index'
+            })
+          }, 1000)
+        } else {
+          toast('完成订单失败，请检查您的网络状态后重试')
+        }
+      }).catch(err => {
+        toast('完成订单失败，请检查您的网络状态后重试')
+      })
+    } else {
+      toast('5分钟保护期后您才可以完成订单。')
+    }
   }
 
   handleConfirmOrder = () => {
@@ -399,6 +422,78 @@ export class OrderDetailPage extends Component {
     }
   }
 
+  cancelProcessOrder = e => {
+    Taro.showModal({
+      title: '您正在取消订单',
+      content: '确定取消订单吗？',
+      success: res => {
+        if (res.confirm) {
+          this.cancelOrderFunc(formId)
+        }
+      },
+    })
+  }
+
+  handleHunterCancel = e => {
+    const overTime = parseInt(this.state.orderInfo.hunter.getTime) / 1000 + 5 * 60
+    const isOverTime = Date.now() / 1000 - overTime > 0
+    const order = { ...this.state.orderInfo }
+    const formId = e.detail.formId
+    if (isOverTime) {
+      Taro.showModal({
+        title: '您正在取消订单',
+        content: '此时取消订单您将从您的猎人保证金中扣除2元作为惩罚，请您谨慎操作。',
+        success: res => {
+          if (res.confirm) {
+            order.statusText = '订单等待接单'
+            order.status = 'wait'
+            hunterCancelOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status, hunterOpenId: order.hunterOpenId, price: order.price, userName: order.userName, openId: order.openId }, formId, flag: 2 }).then(res => {
+              if (res.data.code === 200) {
+                this.setState({ showMask: false, showDontTouch: true })
+                toast('取消订单成功', 'success')
+                setTimeout(() => {
+                  Taro.switchTab({
+                    url: '/pages/orderPage/index'
+                  })
+                }, 1000)
+              } else {
+                toast('取消订单失败，请检查您的网络状态后重试')
+              }
+            }).catch(err => {
+              toast('取消订单失败，请检查您的网络状态后重试')
+            })
+          }
+        },
+      })
+    } else {
+      Taro.showModal({
+        title: '您正在取消订单',
+        content: '确定取消订单吗？',
+        success: res => {
+          if (res.confirm) {
+            order.statusText = '订单等待接单'
+            order.status = 'wait'
+            hunterCancelOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status, hunterOpenid: order.hunterOpenId, price: order.price, userName: order.userName, openId: order.openId }, formId, flag: 1 }).then(res => {
+              if (res.data.code === 200) {
+                this.setState({ showMask: false, showDontTouch: true })
+                toast('取消订单成功', 'success')
+                setTimeout(() => {
+                  Taro.switchTab({
+                    url: '/pages/orderPage/index'
+                  })
+                }, 1000)
+              } else {
+                toast('取消订单失败，请检查您的网络状态后重试')
+              }
+            }).catch(err => {
+              toast('取消订单失败，请检查您的网络状态后重试')
+            })
+          }
+        },
+      })
+    }
+  }
+
   preventTouchMove = () => { }
 
   render() {
@@ -418,7 +513,7 @@ export class OrderDetailPage extends Component {
       status,
       pool,
       pay,
-      hunterOpenId
+      hunterOpenId,
     } = this.state.orderInfo
     const { wallet } = this.state.userInfo
     const {
@@ -432,6 +527,11 @@ export class OrderDetailPage extends Component {
       isHunter
     } = this.state
 
+    let overTime = 0
+    if (hunter) {
+      overTime = parseInt(hunter.getTime) / 1000 + 5 * 60
+    }
+    const isOverTime = Date.now() / 1000 - overTime > 0
     return (
       <View className='orderconfirm'>
         {
@@ -515,6 +615,19 @@ export class OrderDetailPage extends Component {
                 </View>
               </View>
             </View> : null
+        }
+        {
+          status === 'process' && openId === savedOpenid ?
+            <View className='middle' style={{ marginBottom: '20rpx' }}>
+              {
+                isOverTime ?
+                  <View style={{ fontSize: '32rpx', fontWeight: '700', color: '#ff4e4e' }}>已超过保护时间，无法取消订单。</View> : <View style={{ fontSize: '32rpx', fontWeight: '700', color: '#ff4e4e' }}>您在 {moment.unix(overTime).format('lll')} 前可无责任取消订单。</View>
+              }
+              <Form onSubmit={this.cancelProcessOrder} reportSubmit>
+                <Button className='user--cancel-btn' formType='submit' style={{ lineHeight: 'normal' }}>取消订单</Button>
+              </Form>
+            </View>
+            : null
         }
         <View className={['middle', hunter === {} || hunter === undefined ? 'mg-t' : null]}>
           <View className='title'>用户信息</View>
@@ -678,11 +791,17 @@ export class OrderDetailPage extends Component {
         }
         {
           status === 'process' && openId !== savedOpenid && isHunter && hunterOpenId === savedOpenid ?
-            <View className='order--price' onClick={this.handleOrderComplete}>
-              <View style={{ flex: 1 }}></View>
-              <View className='order--comfirm'>完成订单</View>
-              <View style={{ flex: 1 }}></View>
-            </View> : null
+            <View className='btn-wrapper'>
+              <Form onSubmit={this.handleHunterCancel} reportSubmit>
+                <Button className='order-price' style={{ background: '#ff4e4e' }} formType='submit'>
+                  <View className='order-comfirm'>取消订单</View>
+                </Button>
+              </Form>
+              <View className='order-price' onClick={this.handleOrderComplete}>
+                <View className='order-comfirm'>完成订单</View>
+              </View>
+            </View>
+            : null
         }
       </View>
     )

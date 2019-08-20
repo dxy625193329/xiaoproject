@@ -130,6 +130,10 @@ export const delOrder = data => {
   return post('/order/del', data)
 }
 
+export const hunterCancelOrder = data => {
+  return post('/order/hunterCancelOrder', data)
+}
+
 // messagePage
 
 export const addAndUpdateMessage = data => {
