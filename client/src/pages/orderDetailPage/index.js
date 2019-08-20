@@ -188,7 +188,7 @@ export class OrderDetailPage extends Component {
   cancelOrderFunc = (formId = '') => {
     const order = { ...this.state.orderInfo }
     const user = { ...this.state.userInfo }
-    const data = {}
+    let data = {}
     if (order.pay === 'rest') {
       if (order.pool > 0) {
         user.wallet += (order.price - order.pool)
@@ -235,7 +235,7 @@ export class OrderDetailPage extends Component {
       }
       refundPay({ orderId: order.orderId, price }).then(res => {
         if (res.data.status === 200) {
-          cancelOrder({ orderId: order.orderId, hunterOpenId: order.hunterOpenId, formId }).then(res => {
+          cancelOrder(data).then(res => {
             if (res.data.code == 200) {
               this.setState({ showDontTouch: true })
               toast('订单取消成功', 'success')
