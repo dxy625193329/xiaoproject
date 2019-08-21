@@ -5,33 +5,32 @@ import { getNowDay } from '../../lib/time'
 import { set } from '../../lib/global'
 import { toast } from '../../lib/utils'
 
-import { getOpenId, addUser, getUserPhoneNumber } from '../../api'
+import { getOpenId, addUser, getUserByOpenId } from '../../api'
 
 import './index.scss'
 
 export default class SplashPage extends Component {
 
   componentDidMount() {
-    this.saveUserPhoneNumber()
+    this.checkUserExsits()
   }
 
-  saveUserPhoneNumber = () => {
+  checkUserExsits = () => {
     const openid = Taro.getStorageSync('openid')
     if (openid) {
       set('openid', openid)
-      getUserPhoneNumber(openid).then(res => {
+      getUserByOpenId({ openId: openid }).then(res => {
         if (res.data.code === 200) {
-          Taro.setStorageSync('phone', res.data.data.phoneNumber)
+          Taro.switchTab({
+            url: '/pages/indexPage/index'
+          })
         }
-        Taro.switchTab({
-          url: '/pages/indexPage/index'
-        })
       }).catch(err => toast('请检查您的网络环境后重试'))
     }
   }
 
   onGotUserInfo = res => {
-    Taro.clearStorage()
+    Taro.clearStorageSync()
     Taro.login().then(res => {
       const { code } = res
       getOpenId({ code }).then(res => {
@@ -39,6 +38,7 @@ export default class SplashPage extends Component {
         Taro.getUserInfo({ lang: 'zh_CN' }).then(res => {
           const { userInfo } = res
           if (userInfo && openid) {
+            set('openid', openid)
             const user = {
               openId: openid,
               userName: userInfo.nickName,
@@ -53,20 +53,20 @@ export default class SplashPage extends Component {
             }
             addUser({ user }).then(res => {
               if (res.data.code === 200) {
-                set('openid', openid)
                 Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
+                Taro.setStorageSync('showEvent', true)
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
                 })
               } else if (res.data.code === 201) {
                 const { phoneNumber } = res.data.data
-                set('openid', openid)
                 Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
                 Taro.setStorageSync('phone', phoneNumber)
+                Taro.setStorageSync('showEvent', true)
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
                 })

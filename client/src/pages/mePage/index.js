@@ -93,7 +93,7 @@ export default class MePage extends Component {
   }
 
   onGotPhoneNumber = res => {
-    // 对没有绑定手机号的情况做手动输入的兼容处理
+    // 对没有绑定手机号的账号做兼容处理
     const response = res
     Taro.checkSession({
       success: () => {
@@ -152,6 +152,8 @@ export default class MePage extends Component {
       }
     })
   }
+
+  preventTouchMove = () => { }
 
   render() {
     const {

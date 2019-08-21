@@ -1,26 +1,43 @@
-import moment from 'moment'
-import 'moment/locale/zh-cn'
+import dayjs from 'dayjs'
+import RelativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/zh-cn'
 
-moment.locale('zh-cn')
+dayjs.extend(RelativeTime)
+dayjs.locale('zh-cn')
 
 const getTime = () => {
-  return moment().format('dddd')
+  return dayjs().format('dddd')
 }
 
 const getDay = () => {
-  return moment().format('A')
+  let timeStr = ''
+  switch (dayjs().format('A')) {
+    case 'AM':
+      timeStr = '早上'
+      break
+    case 'PM':
+      timeStr = '下午'
+      break
+    default:
+      timeStr = '晚上'
+  }
+  return timeStr
 }
 
 const getNowDay = () => {
-  return moment().format('YYYY-MM-DD')
+  return dayjs().format('YYYY-MM-DD')
 }
 
 const getFullTime = () => {
-  return moment().format('lll')
+  return dayjs().format('YYYY-MM-DD HH:mm:ss')
 }
 
 const fromNow = time => {
-  return moment(time).fromNow()
+  return dayjs(time).fromNow()
+}
+
+const getOverTime = time => {
+  return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
 }
 
 export {
@@ -28,5 +45,6 @@ export {
   getFullTime,
   getTime,
   fromNow,
-  getNowDay
+  getNowDay,
+  getOverTime
 }

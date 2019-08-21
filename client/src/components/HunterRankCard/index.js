@@ -38,7 +38,7 @@ export default class HunterRankCard extends Component {
         <View className='rank'>#{rankIndex + 1}</View>
         <Image src={userInfo.userAvatar} className='avatar' />
         <View className='name'>{userInfo.userName}</View>
-        <View className='level'>{userInfo.userLevel.name}</View>
+        <View className='level'>{userInfo.hunterLevel.name}</View>
         <View className='number'>{userInfo.hunterOrderCount}单</View>
       </View>
     )

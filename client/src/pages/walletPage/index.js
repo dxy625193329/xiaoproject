@@ -11,14 +11,15 @@ export default class WalletPage extends Component {
     wallet: 0,
     pool: 0,
     value: 0,
+    voucher: 0,
     showPayInMask: false,
     showCashOutMask: false,
     animation: {},
   }
 
   componentDidMount() {
-    const { wallet, pool } = get('user')
-    this.setState({ wallet, pool })
+    const { wallet, pool, voucher } = get('user')
+    this.setState({ wallet, pool, voucher })
   }
 
   hideMask = tag => {
@@ -67,6 +68,7 @@ export default class WalletPage extends Component {
     let { wallet, value } = this.state
     const user = get('user')
     const openId = get('openid')
+    const { firstRecharge } = user
     let price = Number(value)
     if (price > 0.01 && !isNaN(price)) {
       let orderId = parseInt(Date.now() * Math.random())
@@ -83,12 +85,24 @@ export default class WalletPage extends Component {
           let reslut = price
           wallet += reslut
           wallet = parseFloat(wallet.toFixed(2))
-          this.setState({ wallet, showPayInMask: false, value: 0 })
           user.wallet = wallet
+          if (!firstRecharge) {
+            if (reslut >= 100) {
+              user.voucher += 15
+              user.firstRecharge = true
+            } else if (reslut >= 50) {
+              user.voucher += 10
+              user.firstRecharge = true
+            } else if (reslut >= 20) {
+              user.voucher += 2
+              user.firstRecharge = true
+            }
+          }
+          this.setState({ wallet, voucher, showPayInMask: false, value: 0 })
           updateUser({ user })
           toast('充值成功', 'success')
         }).catch(err => {
-          console.log(err)
+          toast('充值失败或取消充值，请重试')
         })
       })
     }
@@ -139,7 +153,7 @@ export default class WalletPage extends Component {
   }
 
   showCashOutMask = () => {
-    toast('因微信支付平台未完善的缘故，10月7日之后才可提现。给您带来的不便，我们感到十分抱歉。', 'none', 4000)
+    toast('因微信支付平台未完善的缘故，9月30日之后才可提现。给您带来的不便，我们感到十分抱歉。', 'none', 4000)
     // this.setState({ showCashOutMask: true })
   }
 
@@ -150,15 +164,16 @@ export default class WalletPage extends Component {
   preventTouchMove = () => { }
 
   render() {
-    const { wallet, pool, showPayInMask, value } = this.state
+    const { wallet, pool, voucher, showPayInMask, value } = this.state
 
     return (
       <View className='wallet'>
         <View className='wallet--title'>钱包</View>
-        <View className='wallet--info'>钱包分为余额和奖金池，有不同的功效</View>
+        <View className='wallet--info'>钱包分为余额、代金池和奖金池，有不同的功能</View>
         <View className='wallet--item'>
           <View className='title'>余额</View>
           <View className='desc'>可提现，也可以消费，提现后奖金池清空</View>
+          <View className='desc'>来源于用户充值或猎人完成订单的奖励</View>
           <View className='money'>
             <View className='wrapper'>
               <View className='singal'>¥</View>
@@ -171,8 +186,20 @@ export default class WalletPage extends Component {
           </View>
         </View>
         <View className='wallet--item'>
+          <View className='title'>代金池</View>
+          <View className='desc'>不可提现，可使用代金池内金额支付订单</View>
+          <View className='desc'>来源于充值活动或其他用户反馈活动</View>
+          <View className='money'>
+            <View className='wrapper'>
+              <View className='singal'>¥</View>
+              <View className='num'>{Number(voucher.toFixed(2))}</View>
+            </View>
+          </View>
+        </View>
+        <View className='wallet--item'>
           <View className='title'>奖金池</View>
           <View className='desc'>不可提现，只能在交易时作为折扣使用</View>
+          <View className='desc'>来源于猎人完成订单的奖励</View>
           <View className='money'>
             <View className='wrapper'>
               <View className='singal'>¥</View>

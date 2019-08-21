@@ -2,21 +2,18 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Image, Button, Form } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global'
-import { getNowDay } from '../../lib/time'
+import { getNowDay, getOverTime } from '../../lib/time'
 import { checkOrderStatus, toast } from '../../lib/utils'
 import {
-  delOrder,
-  getPay,
-  refundPay,
   createOrder,
   cancelOrder,
+  cancelOrderForVoucher,
   hunterGetOrder,
   hunterCompleteOrder,
   userConfirmOrder,
   getMessageList,
   hunterCancelOrder
 } from '../../api'
-import moment from 'moment'
 
 export class OrderDetailPage extends Component {
 
@@ -30,9 +27,8 @@ export class OrderDetailPage extends Component {
     showMask: false,
     showDontTouch: false,
     showAppraiseMask: false,
-    wxPay: false,
+    voucherPay: true,
     restPay: false,
-    disabledRestPay: false,
     message: []
   }
 
@@ -40,20 +36,10 @@ export class OrderDetailPage extends Component {
     this.setState({
       orderInfo: get('order'),
       userInfo: get('user'),
-      isHunter: get('user').isHunter,
+      isHunter: get('isHunter'),
       savedOpenid: get('openid'),
       statusInfo: checkOrderStatus(get('order').status),
     })
-  }
-
-  componentDidMount() {
-    const { wallet } = this.state.userInfo
-    const { price } = this.state.orderInfo
-    if (wallet - price >= 0) {
-      this.setState({ restPay: true })
-    } else {
-      this.setState({ wxPay: true, disabledRestPay: true })
-    }
   }
 
   componentDidShow() {
@@ -96,92 +82,87 @@ export class OrderDetailPage extends Component {
   }
 
   selectPayment = index => {
-    if (index === 1 && !this.state.disabledRestPay) {
-      this.setState({ restPay: true, wxPay: false })
+    if (index === 1) {
+      this.setState({ voucherPay: true, restPay: false })
     } else {
-      this.setState({ restPay: false, wxPay: true })
+      this.setState({ voucherPay: false, restPay: true })
     }
   }
 
   handleOrderPay = () => {
     const order = { ...this.state.orderInfo }
     const user = { ...this.state.userInfo }
-    if (this.state.restPay) {
-      let { wallet } = user
-      if (order.pool > 0) {
-        wallet = wallet - (order.price - order.pool)
-        wallet = parseFloat(wallet.toFixed(2))
-        user.pool -= order.pool
-        user.pool = parseFloat((user.pool).toFixed(2))
-      } else {
-        wallet -= order.price
-        wallet = parseFloat(wallet.toFixed(2))
-      }
-      order.pay = 'rest'
-      order.statusText = '订单等待接单'
-      order.status = 'wait'
-      user.wallet = wallet
-      createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
-        if (res.data.code === 200) {
-          set('user', user)
-          this.setState({ showMask: false, showDontTouch: true })
-          toast('发单成功', 'success')
-          setTimeout(() => {
-            Taro.switchTab({
-              url: '/pages/orderPage/index'
-            })
-          }, 1000)
+    if (this.state.voucherPay) {
+      if (user.voucher - order.price >= 0) {
+        let { voucher } = user
+        if (order.pool > 0) {
+          voucher = voucher - (order.price - order.pool)
+          voucher = parseFloat(voucher.toFixed(2))
+          user.pool -= order.pool
+          user.pool = parseFloat((user.pool).toFixed(2))
         } else {
-          toast('创建订单失败，请检查您的网络状态后重试', 'none')
+          voucher -= order.price
+          voucher = parseFloat(voucher.toFixed(2))
         }
-      }).catch(err => {
-        toast('创建订单失败，请检查您的网络状态后重试', 'none')
-      })
-    } else {
-      let nowPrice
-      if (order.pool > 0) {
-        nowPrice = order.price - order.pool
-        nowPrice = parseFloat(nowPrice.toFixed(2))
-        user.pool -= order.pool
-        user.pool = parseFloat((order.pool).toFixed(2))
-      } else {
-        nowPrice = order.price
-        nowPrice = parseFloat(nowPrice.toFixed(2))
-      }
-      getPay({ orderId: order.orderId, price: nowPrice, openId: user.openId }).then(res => {
-        const { timeStamp, nonceStr, signType, paySign } = res.data
-        const payPackage = res.data.package
-        Taro.requestPayment({
-          timeStamp,
-          nonceStr,
-          package: payPackage,
-          signType,
-          paySign
-        }).then(res => {
-          order.pay = 'wx'
-          order.statusText = '订单等待接单'
-          order.status = 'wait'
-          createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
-            if (res.data.code === 200) {
-              this.setState({ showMask: false, showDontTouch: true })
-              toast('发单成功', 'success')
-              setTimeout(() => {
-                Taro.switchTab({
-                  url: '/pages/orderPage/index'
-                })
-              }, 1000)
-            } else {
-              toast('创建订单失败，请检查您的网络状态后重试', 'none')
-            }
-          }).catch(err => {
-            toast('创建订单失败，请检查您的网络状态后重试', 'none')
-          })
+        order.pay = 'voucher'
+        order.statusText = '订单等待接单'
+        order.status = 'wait'
+        user.voucher = voucher
+        createOrder({ order, user: { openId: user.openId, voucher: user.voucher, pool: user.pool } }).then(res => {
+          if (res.data.code === 200) {
+            set('user', user)
+            this.setState({ showMask: false, showDontTouch: true })
+            toast('发单成功', 'success')
+            setTimeout(() => {
+              Taro.switchTab({
+                url: '/pages/orderPage/index'
+              })
+            }, 1000)
+          } else {
+            toast('创建订单失败，请检查您的网络状态后重试')
+          }
         }).catch(err => {
-          toast('支付失败或取消支付，请重试', 'none')
+          toast('创建订单失败，请检查您的网络状态后重试')
         })
-      }).catch(err => {
-        toast('支付失败，请检查您的网络环境后重试', 'none')
-      })
+      } else {
+        toast('代金不足，请选择其他支付方式')
+      }
+    }
+    if (this.state.restPay) {
+      if (user.wallet - order.price >= 0) {
+        let { wallet } = user
+        if (order.pool > 0) {
+          wallet = wallet - (order.price - order.pool)
+          wallet = parseFloat(wallet.toFixed(2))
+          user.pool -= order.pool
+          user.pool = parseFloat((user.pool).toFixed(2))
+        } else {
+          wallet -= order.price
+          wallet = parseFloat(wallet.toFixed(2))
+        }
+        order.pay = 'rest'
+        order.statusText = '订单等待接单'
+        order.status = 'wait'
+        user.wallet = wallet
+        createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
+          if (res.data.code === 200) {
+            set('user', user)
+            this.setState({ showMask: false, showDontTouch: true })
+            toast('发单成功', 'success')
+            setTimeout(() => {
+              Taro.switchTab({
+                url: '/pages/orderPage/index'
+              })
+            }, 1000)
+          } else {
+            toast('创建订单失败，请检查您的网络状态后重试', 'none')
+          }
+        }).catch(err => {
+          toast('创建订单失败，请检查您的网络状态后重试', 'none')
+        })
+      } else {
+        toast('余额不足，请前往钱包充值')
+      }
     }
   }
 
@@ -199,9 +180,9 @@ export class OrderDetailPage extends Component {
         user.wallet += order.price
         user.wallet = parseFloat((user.wallet).toFixed(2))
       }
-      if (fromId) {
+      if (formId) {
         data = {
-          orderId: order.orderId, formId, hunterOpenId: order.hunterOpenId
+          user: { openId: user.openId, wallet: user.wallet, pool: user.pool }, orderId: order.orderId, formId, hunterOpenId: order.hunterOpenId
         }
       } else {
         data = {
@@ -219,38 +200,45 @@ export class OrderDetailPage extends Component {
             })
           }, 1000)
         } else {
-          toast('订单取消失败，请检查您的网络状态后重试', 'none')
+          toast('订单取消失败，请检查您的网络状态后重试')
         }
       }).catch(err => {
-        toast('订单取消失败，请检查您的网络状态后重试', 'none')
+        toast('订单取消失败，请检查您的网络状态后重试')
       })
     } else {
-      let price = 0
       if (order.pool > 0) {
-        price = order.price - order.pool
-        price = parseFloat(price.toFixed(2))
+        user.voucher += (order.price - order.pool)
+        user.voucher = parseFloat((user.voucher).toFixed(2))
+        user.pool += order.pool
+        user.pool = parseFloat((user.pool).toFixed(2))
       } else {
-        price = order.price
-        price = parseFloat(price.toFixed(2))
+        user.voucher += order.price
+        user.voucher = parseFloat((user.voucher).toFixed(2))
       }
-      refundPay({ orderId: order.orderId, price }).then(res => {
-        if (res.data.status === 200) {
-          cancelOrder(data).then(res => {
-            if (res.data.code == 200) {
-              this.setState({ showDontTouch: true })
-              toast('订单取消成功', 'success')
-              setTimeout(() => {
-                Taro.switchTab({
-                  url: '/pages/orderPage/index'
-                })
-              }, 1000)
-            } else {
-              toast('订单取消失败，请检查您的网络状态后重试', 'none')
-            }
-          })
-        } else {
-          toast('订单取消失败，请检查您的网络状态后重试', 'none')
+      if (formId) {
+        data = {
+          user: { openId: user.openId, voucher: user.voucher, pool: user.pool }, orderId: order.orderId, formId, hunterOpenId: order.hunterOpenId
         }
+      } else {
+        data = {
+          user: { openId: user.openId, voucher: user.voucher, pool: user.pool }, orderId: order.orderId
+        }
+      }
+      cancelOrderForVoucher(data).then(res => {
+        if (res.data.code === 200) {
+          set('user', user)
+          this.setState({ showDontTouch: true })
+          toast('订单取消成功', 'success')
+          setTimeout(() => {
+            Taro.switchTab({
+              url: '/pages/orderPage/index'
+            })
+          }, 1000)
+        } else {
+          toast('订单取消失败，请检查您的网络状态后重试')
+        }
+      }).catch(err => {
+        toast('订单取消失败，请检查您的网络状态后重试')
       })
     }
   }
@@ -299,7 +287,7 @@ export class OrderDetailPage extends Component {
   }
 
   handleOrderComplete = () => {
-    const overTime = parseInt(this.state.orderInfo.hunter.getTime) / 1000 + 5 * 60
+    const overTime = parseInt(this.state.orderInfo.hunter.getTime / 1000) + 5 * 60
     const isOverTime = Date.now() / 1000 - overTime > 0
     if (isOverTime) {
       const order = { ...this.state.orderInfo }
@@ -339,10 +327,10 @@ export class OrderDetailPage extends Component {
           })
         }, 1000)
       } else {
-        toast('确认订单失败，请检查您的网络状态后重试', 'none')
+        toast('确认订单失败，请检查您的网络状态后重试')
       }
     }).catch(err => {
-      toast('确认订单失败，请检查您的网络状态后重试', 'none')
+      toast('确认订单失败，请检查您的网络状态后重试')
     })
   }
 
@@ -362,7 +350,7 @@ export class OrderDetailPage extends Component {
 
   makeMessageToHunter = () => {
     if (this.state.orderInfo.hunterOpenId === this.state.savedOpenid) {
-      toast('无法给自己留言', 'none')
+      toast('无法给自己留言')
     } else {
       const { message } = this.state
       const messageItemList = message.filter(item => {
@@ -393,7 +381,7 @@ export class OrderDetailPage extends Component {
 
   makeMessageToUser = () => {
     if (this.state.orderInfo.openId === this.state.savedOpenid) {
-      toast('无法给自己留言', 'none')
+      toast('无法给自己留言')
     } else {
       const { message } = this.state
       const messageItemList = message.filter(item => {
@@ -428,14 +416,14 @@ export class OrderDetailPage extends Component {
       content: '确定取消订单吗？',
       success: res => {
         if (res.confirm) {
-          this.cancelOrderFunc(formId)
+          this.cancelOrderFunc(e.detail.formId)
         }
       },
     })
   }
 
   handleHunterCancel = e => {
-    const overTime = parseInt(this.state.orderInfo.hunter.getTime) / 1000 + 5 * 60
+    const overTime = parseInt(this.state.orderInfo.hunter.getTime / 1000) + 5 * 60
     const isOverTime = Date.now() / 1000 - overTime > 0
     const order = { ...this.state.orderInfo }
     const formId = e.detail.formId
@@ -515,21 +503,19 @@ export class OrderDetailPage extends Component {
       pay,
       hunterOpenId,
     } = this.state.orderInfo
-    const { wallet } = this.state.userInfo
+    const { wallet, voucher } = this.state.userInfo
     const {
       statusInfo,
       savedOpenid,
       animation,
       showMask,
       restPay,
-      wxPay,
-      disabledRestPay,
       isHunter
     } = this.state
 
     let overTime = 0
     if (hunter) {
-      overTime = parseInt(hunter.getTime) / 1000 + 5 * 60
+      overTime = parseInt(hunter.getTime) + 5 * 60 * 1000
     }
     const isOverTime = Date.now() / 1000 - overTime > 0
     return (
@@ -546,8 +532,21 @@ export class OrderDetailPage extends Component {
                   <View className='title'>选择支付方式</View>
                   <View className='pay'>
                     <View
-                      className={['item', disabledRestPay ? 'pay--disabled' : null, restPay ? 'payment' : null]}
+                      className={['item', voucherPay ? 'payment' : null]}
                       onClick={() => this.selectPayment(1)}
+                    >
+                      <View className='left'>
+                        <Image
+                          src={require('../../assets/image/ic_voucher_pay.png')}
+                          className='icon'
+                        />
+                        <View>代金支付</View>
+                      </View>
+                      <View className='right'>¥ {voucher}</View>
+                    </View>
+                    <View
+                      className={['item', restPay ? 'payment' : null]}
+                      onClick={() => this.selectPayment(2)}
                     >
                       <View className='left'>
                         <Image
@@ -557,18 +556,6 @@ export class OrderDetailPage extends Component {
                         <View>余额支付</View>
                       </View>
                       <View className='right'>¥ {wallet}</View>
-                    </View>
-                    <View
-                      className={['item', wxPay ? 'payment' : null]}
-                      onClick={() => this.selectPayment(2)}
-                    >
-                      <View className='left'>
-                        <Image
-                          src={require('../../assets/image/ic_weixin_pay.png')}
-                          className='icon'
-                        />
-                        <View>微信支付</View>
-                      </View>
                     </View>
                   </View>
                   <View className='check' onClick={this.handleOrderPay}>支付</View>
@@ -621,7 +608,7 @@ export class OrderDetailPage extends Component {
             <View className='middle' style={{ marginBottom: '20rpx' }}>
               {
                 isOverTime ?
-                  <View style={{ fontSize: '32rpx', fontWeight: '700', color: '#ff4e4e' }}>已超过保护时间，无法取消订单。</View> : <View style={{ fontSize: '32rpx', fontWeight: '700', color: '#ff4e4e' }}>您在 {moment.unix(overTime).format('lll')} 前可无责任取消订单。</View>
+                  <View style={{ fontSize: '32rpx', fontWeight: '700', color: '#ff4e4e' }}>已超过保护时间，无法取消订单。</View> : <View style={{ fontSize: '32rpx', fontWeight: '700', color: '#ff4e4e' }}>您在 {getOverTime(overTime)} 前可无责任取消订单。</View>
               }
               <Form onSubmit={this.cancelProcessOrder} reportSubmit>
                 <Button className='user--cancel-btn' formType='submit' style={{ lineHeight: 'normal' }}>取消订单</Button>
@@ -749,7 +736,7 @@ export class OrderDetailPage extends Component {
           {
             pay ? <View className='bottom--item'>
               <View className='bottom--title'>支付方式</View>
-              <View className='bottom--text'>{pay === 'rest' ? '余额支付' : '微信支付'}</View>
+              <View className='bottom--text'>{pay === 'rest' ? '余额支付' : '代金支付'}</View>
             </View> : null
           }
         </View>

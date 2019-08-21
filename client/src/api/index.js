@@ -114,6 +114,10 @@ export const cancelOrder = data => {
   return post('/order/cancelOrderForRest', data)
 }
 
+export const cancelOrderForVoucher = data => {
+  return post('/order/cancelOrderForVoucher', data)
+}
+
 export const hunterGetOrder = data => {
   return post('/order/hunterGetOrder', data)
 }

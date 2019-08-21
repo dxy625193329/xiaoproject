@@ -5,7 +5,7 @@ import { getTime, getDay, getNowDay } from '../../lib/time'
 import { set, get } from '../../lib/global'
 import { toast } from '../../lib/utils'
 
-import { getUserByOpenId, getBanner, updateUser, getMessageList } from '../../api'
+import { getUserByOpenId, getBanner, updateUser } from '../../api'
 
 import Banner from '../../components/Banner'
 import './index.scss'
@@ -27,9 +27,16 @@ export default class IndexPage extends Component {
 
   state = {
     banners: [],
+    phoneNumber: '',
+    showEvent: false
   }
 
   componentDidMount() {
+    const showEvent = Taro.getStorageSync('showEvent')
+    if (showEvent) {
+      Taro.hideTabBar()
+    }
+    this.setState({ showEvent })
     getBanner().then(res => this.setState({
       banners: res.data.data.eventList
     })).catch(err => {
@@ -97,9 +104,34 @@ export default class IndexPage extends Component {
     })
   }
 
+  handleEventOk = () => {
+    this.setState({ showEvent: false })
+    Taro.setStorageSync('showEvent', false)
+    Taro.showTabBar()
+  }
+
   render() {
+
+    const { showEvent } = this.state
     return (
       <View className='index'>
+        {
+          showEvent ? <View catchtouchmove={this.preventTouchMove}>
+            <View className='mask' onClick={() => this.hideMask()}></View>
+            <View className='mask--wrapper'>
+              <View className='mask--content'>
+                <View className='title'>校无忧上线活动</View>
+                <View className='desc'>1.因微信端问题，现发布订单需提前充值。充值金额也可直接提现。</View>
+                <View className='desc'>2.首次充值送代金(代金可直接支付订单)</View>
+                <View className='desc'>充20元送2元代金</View>
+                <View className='desc'>充50元送10元代金</View>
+                <View className='desc'>充100元送15元代金</View>
+                <View className='desc'>3.活动持续到2019年9月9日</View>
+                <View className='check' onClick={this.handleEventOk}>确定</View>
+              </View>
+            </View>
+          </View> : null
+        }
         <View className='top'>
           <View className='time'>{getTime()}</View>
           <View className='right' onClick={() => this.routeToImList()}>
