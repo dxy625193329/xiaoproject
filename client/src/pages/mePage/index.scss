@@ -83,9 +83,13 @@
       flex-direction: column;
 
       .name {
-        font-size  : 52px;
-        font-weight: 700;
-        color      : #303030;
+        width        : 400px;
+        overflow     : hidden;
+        text-overflow: ellipsis;
+        white-space  : nowrap;
+        font-size    : 52px;
+        font-weight  : 700;
+        color        : #303030;
       }
 
       .phone {
