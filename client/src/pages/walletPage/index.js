@@ -67,7 +67,6 @@ export default class WalletPage extends Component {
   handlePayIn = () => {
     let { wallet, value, voucher } = this.state
     const user = get('user')
-    console.log(user)
     const openId = get('openid')
     const { firstRecharge } = user
     let price = Number(value)
@@ -76,6 +75,7 @@ export default class WalletPage extends Component {
       getPay({ orderId, price, openId }).then(res => {
         const { timeStamp, nonceStr, signType, paySign } = res.data
         const payPackage = res.data.package
+        this.setState({ showPayInMask: false, value: 0 })
         wx.requestPayment({
           timeStamp,
           nonceStr,
@@ -101,7 +101,7 @@ export default class WalletPage extends Component {
                 }
                 user.voucher = voucher
               }
-              this.setState({ wallet, voucher, showPayInMask: false, value: 0 })
+              this.setState({ wallet, voucher })
               updateUser({ user })
               toast('充值成功', 'success')
             }
@@ -110,7 +110,7 @@ export default class WalletPage extends Component {
             if (err.errMsg === 'requestPayment:fail cancel') {
               this.setState({ showPayInMask: false, value: 0 })
               toast('取消充值')
-            }else{
+            } else {
               this.setState({ showPayInMask: false, value: 0 })
               toast('充值失败，请稍后再试')
             }
