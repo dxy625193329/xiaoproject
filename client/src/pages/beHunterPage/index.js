@@ -157,10 +157,15 @@ export default class BeHunterPage extends Component {
               user.deposit = 0
               user.identity = {}
               updateUser({ user }).then(res => {
-                Taro.switchTab({
-                  url: '/pages/mePage/index'
-                })
+                toast('押金已退还，如在3天内未收到押金，请联系客服。')
+                setTimeout(() => {
+                  Taro.switchTab({
+                    url: '/pages/mePage/index'
+                  })
+                }, 1000)
               })
+            } else {
+              toast('退款失败，请稍后再试，或联系客服。')
             }
           })
         }
