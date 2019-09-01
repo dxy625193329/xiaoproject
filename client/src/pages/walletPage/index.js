@@ -65,7 +65,7 @@ export default class WalletPage extends Component {
   }
 
   handlePayIn = () => {
-    let { wallet, value } = this.state
+    let { wallet, value, voucher } = this.state
     const user = get('user')
     const openId = get('openid')
     const { firstRecharge } = user
@@ -75,34 +75,46 @@ export default class WalletPage extends Component {
       getPay({ orderId, price, openId }).then(res => {
         const { timeStamp, nonceStr, signType, paySign } = res.data
         const payPackage = res.data.package
-        Taro.requestPayment({
+        this.setState({ showPayInMask: false, value: 0 })
+        wx.requestPayment({
           timeStamp,
           nonceStr,
           package: payPackage,
           signType,
-          paySign
-        }).then(res => {
-          let reslut = price
-          wallet += reslut
-          wallet = parseFloat(wallet.toFixed(2))
-          user.wallet = wallet
-          if (!firstRecharge) {
-            if (reslut >= 100) {
-              user.voucher += 15
-              user.firstRecharge = true
-            } else if (reslut >= 50) {
-              user.voucher += 10
-              user.firstRecharge = true
-            } else if (reslut >= 20) {
-              user.voucher += 2
-              user.firstRecharge = true
+          paySign,
+          success: res => {
+            if (res.errMsg === 'requestPayment:ok') {
+              let reslut = price
+              wallet += reslut
+              wallet = parseFloat(wallet.toFixed(2))
+              user.wallet = wallet
+              if (!firstRecharge) {
+                if (reslut >= 100) {
+                  voucher += 15
+                  user.firstRecharge = true
+                } else if (reslut >= 50) {
+                  voucher += 10
+                  user.firstRecharge = true
+                } else if (reslut >= 20) {
+                  voucher += 2
+                  user.firstRecharge = true
+                }
+                user.voucher = voucher
+              }
+              this.setState({ wallet, voucher })
+              updateUser({ user })
+              toast('充值成功', 'success')
+            }
+          },
+          fail: err => {
+            if (err.errMsg === 'requestPayment:fail cancel') {
+              this.setState({ showPayInMask: false, value: 0 })
+              toast('取消充值')
+            } else {
+              this.setState({ showPayInMask: false, value: 0 })
+              toast('充值失败，请稍后再试')
             }
           }
-          this.setState({ wallet, voucher, showPayInMask: false, value: 0 })
-          updateUser({ user })
-          toast('充值成功', 'success')
-        }).catch(err => {
-          toast('充值失败或取消充值，请重试')
         })
       })
     }
