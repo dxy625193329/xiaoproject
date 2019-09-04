@@ -73,49 +73,53 @@ export default class WalletPage extends Component {
     if (price > 0.01 && !isNaN(price)) {
       let orderId = parseInt(Date.now() * Math.random())
       getPay({ orderId, price, openId }).then(res => {
-        const { timeStamp, nonceStr, signType, paySign } = res.data
-        const payPackage = res.data.package
-        this.setState({ showPayInMask: false, value: 0 })
-        wx.requestPayment({
-          timeStamp,
-          nonceStr,
-          package: payPackage,
-          signType,
-          paySign,
-          success: res => {
-            if (res.errMsg === 'requestPayment:ok') {
-              let reslut = price
-              wallet += reslut
-              wallet = parseFloat(wallet.toFixed(2))
-              user.wallet = wallet
-              if (!firstRecharge) {
-                if (reslut >= 100) {
-                  voucher += 15
-                  user.firstRecharge = true
-                } else if (reslut >= 50) {
-                  voucher += 10
-                  user.firstRecharge = true
-                } else if (reslut >= 20) {
-                  voucher += 2
-                  user.firstRecharge = true
+        if (res.data.status === 200) {
+          const { timeStamp, nonceStr, signType, paySign } = res.data
+          const payPackage = res.data.package
+          this.setState({ showPayInMask: false, value: 0 })
+          wx.requestPayment({
+            timeStamp,
+            nonceStr,
+            package: payPackage,
+            signType,
+            paySign,
+            success: res => {
+              if (res.errMsg === 'requestPayment:ok') {
+                let reslut = price
+                wallet += reslut
+                wallet = parseFloat(wallet.toFixed(2))
+                user.wallet = wallet
+                if (!firstRecharge) {
+                  if (reslut >= 100) {
+                    voucher += 15
+                    user.firstRecharge = true
+                  } else if (reslut >= 50) {
+                    voucher += 10
+                    user.firstRecharge = true
+                  } else if (reslut >= 20) {
+                    voucher += 2
+                    user.firstRecharge = true
+                  }
+                  user.voucher = voucher
                 }
-                user.voucher = voucher
+                this.setState({ wallet, voucher })
+                updateUser({ user })
+                toast('充值成功', 'success')
               }
-              this.setState({ wallet, voucher })
-              updateUser({ user })
-              toast('充值成功', 'success')
+            },
+            fail: err => {
+              if (err.errMsg === 'requestPayment:fail cancel') {
+                this.setState({ showPayInMask: false, value: 0 })
+                toast('取消充值')
+              } else {
+                this.setState({ showPayInMask: false, value: 0 })
+                toast('充值失败，请稍后再试')
+              }
             }
-          },
-          fail: err => {
-            if (err.errMsg === 'requestPayment:fail cancel') {
-              this.setState({ showPayInMask: false, value: 0 })
-              toast('取消充值')
-            } else {
-              this.setState({ showPayInMask: false, value: 0 })
-              toast('充值失败，请稍后再试')
-            }
-          }
-        })
+          })
+        }else{
+          toast('充值失败，请稍后再试')
+        }
       })
     }
   }
