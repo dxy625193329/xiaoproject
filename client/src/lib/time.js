@@ -40,11 +40,16 @@ const getOverTime = time => {
   return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
 }
 
+const formatStringTime = str => {
+  return dayjs(str).valueOf()
+}
+
 export {
   getDay,
   getFullTime,
   getTime,
   fromNow,
   getNowDay,
-  getOverTime
+  getOverTime,
+  formatStringTime
 }

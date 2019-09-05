@@ -10,7 +10,8 @@ import './index.scss'
 export default class OrderPage extends Component {
 
   state = {
-    serviceList: []
+    serviceList: [],
+    serviceReaded: 0
   }
 
   componentDidShow() {
@@ -19,26 +20,34 @@ export default class OrderPage extends Component {
 
   fetchData = () => {
     const openId = get('openid')
+    const serviceReaded = Taro.getStorageSync('serviceReaded')
     getServiceByOpenId({ openId }).then(res => {
       const list = res.data.data.serviceList
-      Taro.setStorageSync('serviceReaded', list.length)
       this.setState({
-        serviceList: list.reverse()
+        serviceList: list.reverse(),
+        serviceReaded
       })
     })
   }
 
+  componentWillUnmount() {
+    Taro.setStorageSync('serviceReaded', this.state.serviceList.length)
+  }
+
   render() {
-    const { serviceList } = this.state
+    const { serviceList, serviceReaded } = this.state
     return (
       <View className='service'>
         <View className='service--title'>客服</View>
         <View className='service--info'>在此您可查看一些官方的客服信息</View>
         <View className='service--content'>
           {
-            serviceList.map(service =>
+            serviceList.map((service, index) =>
               <View className="service--card" key={service._id}>
                 <View className="top">
+                  {
+                    index < serviceList.length - serviceReaded && <View className='new'></View>
+                  }
                   <View className="title">{service.title}</View>
                   <Text className='time'>{fromNow(parseInt(service.createAt))}</Text>
                 </View>

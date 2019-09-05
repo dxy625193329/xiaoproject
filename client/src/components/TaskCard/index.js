@@ -59,6 +59,8 @@ export default class TaskCard extends Component {
         <View className="middle">
           <Text className='desc'>订单类别</Text>
           <Text className={['type', this.checkType(taskInfo.type)]}>{taskInfo.typeText}</Text>
+          <Text className='desc'>需求简介</Text>
+          <Text className='need'>{taskInfo.needText}</Text>
           <Text className='text'>点击查看详情</Text>
           <View className='bottom'>
             <View className='total'>总计</View>

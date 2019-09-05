@@ -21,6 +21,10 @@ export default class SplashPage extends Component {
       set('openid', openid)
       getUserByOpenId({ openId: openid }).then(res => {
         if (res.data.code === 200) {
+          if (!Taro.getStorageSync('messageReaded')) {
+            Taro.setStorageSync('messageReaded', 0)
+            Taro.setStorageSync('messageRecent', JSON.stringify({}))
+          }
           Taro.switchTab({
             url: '/pages/indexPage/index'
           })
@@ -56,6 +60,8 @@ export default class SplashPage extends Component {
                 Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
+                Taro.setStorageSync('messageReaded', 0)
+                Taro.setStorageSync('messageRecent', JSON.stringify({}))
                 Taro.setStorageSync('showEvent', true)
                 Taro.switchTab({
                   url: '/pages/indexPage/index'
@@ -65,6 +71,8 @@ export default class SplashPage extends Component {
                 Taro.setStorageSync('session', session_key)
                 Taro.setStorageSync('openid', openid)
                 Taro.setStorageSync('serviceReaded', 0)
+                Taro.setStorageSync('messageReaded', 0)
+                Taro.setStorageSync('messageRecent', JSON.stringify({}))
                 Taro.setStorageSync('phone', phoneNumber)
                 Taro.setStorageSync('showEvent', true)
                 Taro.switchTab({

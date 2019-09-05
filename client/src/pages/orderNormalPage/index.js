@@ -216,7 +216,7 @@ export class OrderNormalPage extends Component {
             id='needText'
             value={needText}
             onInput={this.handleInputChange}
-            placeholder='如：帮拿快递，帮带饭等'
+            placeholder='如：代拿快递，代买饭等。(如因需求信息有歧义或描述不清晰导致订单取消，发布方承担主要责任)'
             cursor-spacing='100px'
           />
           {

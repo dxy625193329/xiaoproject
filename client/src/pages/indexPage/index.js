@@ -5,7 +5,7 @@ import { getTime, getDay, getNowDay } from '../../lib/time'
 import { set, get } from '../../lib/global'
 import { toast } from '../../lib/utils'
 
-import { getUserByOpenId, getBanner, updateUser } from '../../api'
+import { getUserByOpenId, getBanner, updateUser, getMessageList } from '../../api'
 
 import Banner from '../../components/Banner'
 import './index.scss'
@@ -28,7 +28,9 @@ export default class IndexPage extends Component {
   state = {
     banners: [],
     phoneNumber: '',
-    showEvent: false
+    showEvent: false,
+    timer: null,
+    messageLength: 0
   }
 
   componentDidMount() {
@@ -42,10 +44,29 @@ export default class IndexPage extends Component {
     })).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
+    setInterval(this.fetchIm, 15000)
   }
 
   componentDidShow() {
     this.fetchData()
+    this.fetchIm()
+  }
+
+  componentDidHide() {
+    clearInterval(this.state.timer)
+  }
+
+  fetchIm = () => {
+    getMessageList({ openId: get('openid') }).then(res => {
+      if (res.data.code === 200) {
+        const { messageList } = res.data
+        let length = 0
+        for (let i = 0; i < messageList.length; i++) {
+          length += messageList[i].message.length
+        }
+        this.setState({ messageLength: length })
+      }
+    })
   }
 
   routeToChildPage = id => {
@@ -111,8 +132,7 @@ export default class IndexPage extends Component {
   }
 
   render() {
-
-    const { showEvent } = this.state
+    const { showEvent, messageLength } = this.state
     return (
       <View className='index'>
         {
@@ -136,7 +156,9 @@ export default class IndexPage extends Component {
           <View className='time'>{getTime()}</View>
           <View className='right' onClick={() => this.routeToImList()}>
             <Image src={require('../../assets/image/ic_message.png')} className='icon' />
-            <View className='dot'></View>
+            {
+              messageLength > Taro.getStorageSync('messageReaded') && <View className='dot'></View>
+            }
           </View>
         </View>
         <View className='title--wrapper'>

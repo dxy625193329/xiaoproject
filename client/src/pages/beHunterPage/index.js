@@ -211,6 +211,7 @@ export default class BeHunterPage extends Component {
                   onInput={this.handleInputChange}
                 />
               </View>
+              <View className='be__hunter--input-desc'>身份证最后一位为X时，请使用数字0代替</View>
               <View
                 id="image1"
                 className='be__hunter--upload'

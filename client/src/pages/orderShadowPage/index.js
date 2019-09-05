@@ -192,7 +192,7 @@ export class OrderShadowPage extends Component {
             id='needText'
             value={needText}
             onInput={this.handleInputChange}
-            placeholder='如：想找人到东教304看看'
+            placeholder='如：想找人到东教304看看等。(如因需求信息有歧义或描述不清晰导致订单取消，发布方承担主要责任)'
             cursor-spacing='100px'
           />
           {
