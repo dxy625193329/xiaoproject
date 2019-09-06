@@ -30,26 +30,34 @@ export default class IndexPage extends Component {
     phoneNumber: '',
     showEvent: false,
     timer: null,
-    messageLength: 0
+    messageLength: 0,
+  }
+
+  componentWillMount() {
+    const dontShowEvent = Taro.getStorageSync('dontShowEvent')
+    if (!dontShowEvent) {
+      Taro.hideTabBar()
+      this.setState({ showEvent: true })
+    }
   }
 
   componentDidMount() {
-    const showEvent = Taro.getStorageSync('showEvent')
-    if (showEvent) {
-      Taro.hideTabBar()
-    }
-    this.setState({ showEvent })
     getBanner().then(res => this.setState({
       banners: res.data.data.eventList
     })).catch(err => {
       toast('请检查您的网络状态', 'none')
     })
-    setInterval(this.fetchIm, 15000)
+    const openId = Taro.getStorageSync('openid')
+    if (openId) {
+      setInterval(this.fetchIm, 15000)
+    }
   }
 
   componentDidShow() {
-    this.fetchData()
-    this.fetchIm()
+    if (Taro.getStorageSync('openid')) {
+      this.fetchData()
+      this.fetchIm()
+    }
   }
 
   componentDidHide() {
@@ -57,7 +65,7 @@ export default class IndexPage extends Component {
   }
 
   fetchIm = () => {
-    getMessageList({ openId: get('openid') }).then(res => {
+    getMessageList({ openId: Taro.getStorageSync('openid') }).then(res => {
       if (res.data.code === 200) {
         const { messageList } = res.data
         let length = 0
@@ -84,8 +92,8 @@ export default class IndexPage extends Component {
     } else {
       Taro.showModal({
         title: '提示',
-        content: '发单或者接单都需要授权手机号码',
-        confirmText: '前往授权',
+        content: '发单或者接单都需要登录并授权手机号码',
+        confirmText: '前往登录',
       }).then(res => {
         if (res.confirm) {
           Taro.switchTab({
@@ -103,7 +111,7 @@ export default class IndexPage extends Component {
   }
 
   fetchData = () => {
-    const openId = get('openid')
+    const openId = Taro.getStorageSync('openid')
     getUserByOpenId({ openId }).then(res => {
       const { user } = res.data.data
       const { isHunter, dayQuest } = res.data.data.user
@@ -127,8 +135,12 @@ export default class IndexPage extends Component {
 
   handleEventOk = () => {
     this.setState({ showEvent: false })
-    Taro.setStorageSync('showEvent', false)
+    Taro.setStorageSync('dontShowEvent', true)
     Taro.showTabBar()
+  }
+
+  hideMask = () => {
+    this.setState({ showEvent: false })
   }
 
   render() {

@@ -37,7 +37,7 @@ export class OrderDetailPage extends Component {
       orderInfo: get('order'),
       userInfo: get('user'),
       isHunter: get('isHunter'),
-      savedOpenid: get('openid'),
+      savedOpenid: Taro.getStorageSync('openid'),
       statusInfo: checkOrderStatus(get('order').status),
     })
   }
@@ -427,7 +427,7 @@ export class OrderDetailPage extends Component {
     const isOverTime = Date.now() / 1000 - overTime > 0
     const order = { ...this.state.orderInfo }
     const formId = e.detail.formId
-    if (isOverTime) {
+    if (true) {
       Taro.showModal({
         title: '您正在取消订单',
         content: '此时取消订单您将从您的猎人保证金中扣除2元作为惩罚，请您谨慎操作。',
@@ -517,7 +517,7 @@ export class OrderDetailPage extends Component {
     if (hunter) {
       overTime = parseInt(hunter.getTime) + 5 * 60 * 1000
     }
-    const isOverTime = Date.now() / 1000 - overTime > 0
+    const isOverTime = Date.now() - overTime > 0
     return (
       <View className='orderconfirm'>
         {

@@ -25,7 +25,7 @@ export default class ImListPage extends Component {
   }
 
   fetchData = () => {
-    getMessageList({ openId: get('openid') }).then(res => {
+    getMessageList({ openId: Taro.getStorageSync('openid') }).then(res => {
       if (res.data.code === 200) {
         let { messageList } = res.data
         let length = 0
@@ -55,7 +55,7 @@ export default class ImListPage extends Component {
   render() {
 
     const { messageList } = this.state
-    const openId = get('openid')
+    const openId = Taro.getStorageSync('openid')
 
     return (
       <View className='im__list'>
@@ -69,7 +69,7 @@ export default class ImListPage extends Component {
               </View>
               <View className='time'>{item.message[item.message.length - 1].sendTime.split(' ')[1]}</View>
               {
-                JSON.parse(Taro.getStorageSync('messageRecent'))[item.byId] !== item.message[item.message.length - 1].sendTime && <View className='new'></View>
+                JSON.parse(Taro.getStorageSync('messageRecent'))[item.byId] !== item.message[item.message.length - 1].sendTime && item.message[item.message.length - 1].fromId !== Taro.getStorageSync('openid') && <View className='new'></View>
               }
             </View>
           })

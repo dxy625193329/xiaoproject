@@ -22,13 +22,13 @@ export default class MessagePage extends Component {
 
   componentDidMount() {
     Taro.setNavigationBarTitle({
-      title: get('messageItem').byId === get('openid') ? get('messageItem').toName : get('messageItem').fromName
+      title: get('messageItem').byId === Taro.getStorageSync('openid') ? get('messageItem').toName : get('messageItem').fromName
     })
     const pages = getCurrentPages()
     this.setState({
       messageObj: get('messageItem'),
       messageLocalList: Taro.getStorageSync('message') || [],
-      openId: get('openid'),
+      openId: Taro.getStorageSync('openid'),
       messageList: get('messageItem').message || [],
       user: get('user'),
       timer: setInterval(this.getOnlineMessage, 5000),
@@ -38,7 +38,7 @@ export default class MessagePage extends Component {
   }
 
   getOnlineMessage = () => {
-    getMessageList({ openId: get('openid') }).then(res => {
+    getMessageList({ openId: Taro.getStorageSync('openid') }).then(res => {
       if (res.code === 200) {
         const { messageList } = res.data
         const nowMessage = messageList.filter(item => {

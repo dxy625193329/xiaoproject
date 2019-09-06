@@ -34,6 +34,7 @@ export default class SplashPage extends Component {
   }
 
   onGotUserInfo = res => {
+    const dontShowEvent = Taro.getStorageSync('dontShowEvent')
     Taro.clearStorageSync()
     Taro.login().then(res => {
       const { code } = res
@@ -42,7 +43,7 @@ export default class SplashPage extends Component {
         Taro.getUserInfo({ lang: 'zh_CN' }).then(res => {
           const { userInfo } = res
           if (userInfo && openid) {
-            set('openid', openid)
+            Taro.setStorageSync('openid', openid)
             const user = {
               openId: openid,
               userName: userInfo.nickName,
@@ -62,10 +63,8 @@ export default class SplashPage extends Component {
                 Taro.setStorageSync('serviceReaded', 0)
                 Taro.setStorageSync('messageReaded', 0)
                 Taro.setStorageSync('messageRecent', JSON.stringify({}))
-                Taro.setStorageSync('showEvent', true)
-                Taro.switchTab({
-                  url: '/pages/indexPage/index'
-                })
+                Taro.setStorageSync('dontShowEvent', dontShowEvent)
+                Taro.navigateBack()
               } else if (res.data.code === 201) {
                 const { phoneNumber } = res.data.data
                 Taro.setStorageSync('session', session_key)
@@ -74,10 +73,8 @@ export default class SplashPage extends Component {
                 Taro.setStorageSync('messageReaded', 0)
                 Taro.setStorageSync('messageRecent', JSON.stringify({}))
                 Taro.setStorageSync('phone', phoneNumber)
-                Taro.setStorageSync('showEvent', true)
-                Taro.switchTab({
-                  url: '/pages/indexPage/index'
-                })
+                Taro.setStorageSync('dontShowEvent', dontShowEvent)
+                Taro.navigateBack()
               }
             }).catch(err => {
               toast('请检查您的网络状态后重试')
@@ -117,12 +114,19 @@ export default class SplashPage extends Component {
             <View className='info--text'>· 获得您的公开信息（昵称、头像、地区及性别）</View>
             <View className='info--text'>· 获得您的手机号码</View>
             <View className='info--text'>授权即同意<Text className='agreement' onClick={this.routeToAgreePage}>《校无忧用户协议》</Text></View>
-            <Button
-              className='auth--btn'
-              openType="getUserInfo"
-              lang="zh_CN"
-              onGetUserInfo={this.onGotUserInfo}
-            >授权登陆</Button>
+            <View className='btns-group'>
+              <Button
+                className='auth--btn'
+                style={{ background: '#909090' }}
+                onClick={() => Taro.navigateBack()}
+              >取消登录</Button>
+              <Button
+                className='auth--btn'
+                openType="getUserInfo"
+                lang="zh_CN"
+                onGetUserInfo={this.onGotUserInfo}
+              >授权登陆</Button>
+            </View>
           </View>
         </View>
       </View>

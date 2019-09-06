@@ -49,7 +49,7 @@
       }
 
       .message {
-        width: fit-content;
+        max-width: 300px;
         overflow: hidden;
         font-size: 30px;
         color: #919191;

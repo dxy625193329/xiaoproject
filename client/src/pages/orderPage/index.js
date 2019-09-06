@@ -44,7 +44,7 @@ export default class OrderPage extends Component {
   }
 
   fetchData = () => {
-    const openId = get('openid')
+    const openId = Taro.getStorageSync('openid')
     getOrderListByOpenId({ openId: openId }).then(res => {
       if (res.data.code === 200) {
         this.setState({

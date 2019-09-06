@@ -19,7 +19,8 @@ export default class OrderPage extends Component {
   }
 
   fetchData = () => {
-    const openId = get('openid')
+    Taro.getStorageSync('openid')
+    const openId = Taro.getStorageSync('openid')
     const serviceReaded = Taro.getStorageSync('serviceReaded')
     getServiceByOpenId({ openId }).then(res => {
       const list = res.data.data.serviceList

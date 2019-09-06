@@ -77,7 +77,7 @@ export class OrderNormalPage extends Component {
       user
     } = this.state
 
-    const openid = get('openid')
+    const openid = Taro.getStorageSync('openid')
     const order = {
       openId: openid,
       userAvatar: user.userAvatar,

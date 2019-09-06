@@ -65,6 +65,12 @@ Component({
 				}
 
 			}
+		},
+		previewImage: function (e) {
+			wx.previewImage({
+				current: e.currentTarget.dataset.url,
+				urls: [e.currentTarget.dataset.url],
+			});
 		}
 	}
 });

@@ -16,7 +16,8 @@ export default class MePage extends Component {
 
   state = {
     wxName: '',
-    wxAvatar: '',
+    loginText: '点击此处登录',
+    wxAvatar: 'http://cdn.xwuyou.com/logo.png',
     userOrderCount: 0,
     hunterOrderCount: 0,
     isHunter: false,
@@ -27,7 +28,8 @@ export default class MePage extends Component {
     serviceReaded: 0,
     phoneNumber: '',
     showPhoneMask: false,
-    value: ''
+    value: '',
+    showPhoneAuth: false
   }
 
   componentDidShow() {
@@ -35,22 +37,24 @@ export default class MePage extends Component {
   }
 
   fetchUserData = () => {
-    const openId = get('openid')
-    getUserByOpenId({ openId }).then(res => {
-      const { user } = res.data.data
-      set('user', user)
-      this.setState({
-        isHunter: user.isHunter,
-        userOrderCount: user.userOrderCount,
-        hunterOrderCount: user.hunterOrderCount,
-        hunterLevel: user.hunterLevel,
-        userLevel: user.userLevel,
-        phoneNumber: user.phoneNumber,
-        wxName: user.userName,
-        wxAvatar: user.userAvatar,
+    const openId = Taro.getStorageSync('openid')
+    if (openId) {
+      getUserByOpenId({ openId }).then(res => {
+        const { user } = res.data.data
+        set('user', user)
+        this.setState({
+          isHunter: user.isHunter,
+          userOrderCount: user.userOrderCount,
+          hunterOrderCount: user.hunterOrderCount,
+          hunterLevel: user.hunterLevel,
+          userLevel: user.userLevel,
+          phoneNumber: user.phoneNumber,
+          wxName: user.userName,
+          wxAvatar: user.userAvatar,
+        })
       })
-    })
-    this.getService(openId)
+      this.getService(openId)
+    }
   }
 
   getService = openId => {
@@ -83,37 +87,46 @@ export default class MePage extends Component {
   }
 
   handleRouteItemPage = path => {
-    if (path === 'beHunterPage/index' && this.state.hasPostHunterReq) {
-      toast('你已提交审核，请耐心等待')
+    if (Taro.getStorageSync('openid')) {
+      if (path === 'beHunterPage/index' && this.state.hasPostHunterReq) {
+        toast('你已提交审核，请耐心等待')
+      } else {
+        Taro.navigateTo({
+          url: `/pages/${path}`
+        })
+      }
     } else {
-      Taro.navigateTo({
-        url: `/pages/${path}`
-      })
+      toast('您还没有登录，无法获得您的用户信息')
     }
   }
 
   onGotPhoneNumber = res => {
     // 对没有绑定手机号的账号做兼容处理
     const response = res
-    Taro.checkSession({
-      success: () => {
-        const session_key = Taro.getStorageSync('session')
-        if (session_key) {
-          this.getPhoneNumber(session_key, response)
-        } else {
-          this.setState({ showPhoneMask: true })
-        }
-      },
-      fail: () => {
-        Taro.login().then(res => {
-          const { code } = res
-          getOpenId({ code }).then(res => {
-            const { session_key } = res.data
+    if (res.detail.errMsg === 'getPhoneNumber:fail user deny') {
+      this.setState({ showPhoneMask: false })
+      toast('授权后才能愉快的玩耍哦！')
+    } else {
+      Taro.checkSession({
+        success: () => {
+          const session_key = Taro.getStorageSync('session')
+          if (session_key) {
             this.getPhoneNumber(session_key, response)
+          } else {
+            this.setState({ showPhoneMask: true })
+          }
+        },
+        fail: () => {
+          Taro.login().then(res => {
+            const { code } = res
+            getOpenId({ code }).then(res => {
+              const { session_key } = res.data
+              this.getPhoneNumber(session_key, response)
+            })
           })
-        })
-      }
-    })
+        }
+      })
+    }
   }
 
   getPhoneNumber = (session, response) => {
@@ -153,6 +166,12 @@ export default class MePage extends Component {
     })
   }
 
+  handleAuth = () => {
+    Taro.navigateTo({
+      url: '/pages/splashPage/index'
+    })
+  }
+
   preventTouchMove = () => { }
 
   render() {
@@ -165,7 +184,8 @@ export default class MePage extends Component {
       wxName,
       wxAvatar,
       serviceListLength,
-      phoneNumber
+      phoneNumber,
+      loginText
     } = this.state
 
     const entryList = [
@@ -200,14 +220,17 @@ export default class MePage extends Component {
         }
         <View className='top'>
           <View className='left'>
-            <View className='name'>{wxName}</View>
             {
-              phoneNumber ? <View className='phone'>{phoneNumber}</View> :
-                <Button
-                  className='auth-phone'
-                  openType="getPhoneNumber"
-                  onGetPhoneNumber={this.onGotPhoneNumber}
-                >授权电话号码</Button>
+              Taro.getStorageSync('openid') ? <View className='name'>{wxName}</View> : <View className='name' onClick={this.handleAuth}>{loginText}</View>
+            }
+            {
+              phoneNumber ? <View className='phone'>{phoneNumber}</View> : (
+                Taro.getStorageSync('openid') ?
+                  <Button
+                    className='auth-phone'
+                    openType="getPhoneNumber"
+                    onGetPhoneNumber={this.onGotPhoneNumber}
+                  >授权电话号码</Button> : null)
             }
           </View>
           <Image className='right' src={wxAvatar} />
@@ -218,9 +241,9 @@ export default class MePage extends Component {
               isHunter ? <Image src='http://cdn.xwuyou.com/hunter_1.png' className='title' /> :
                 <Image src='http://cdn.xwuyou.com/user_1.png' className='title' />
             }
-            <View className='level'>{isHunter ? hunterLevel.name : userLevel.name}</View>
+            <View className='level'>{Taro.getStorageSync('openid') ? (isHunter ? hunterLevel.name : userLevel.name) : '未登录用户'}</View>
             <View className='exp'>
-              <View className='num'>{isHunter ? this.calcExp(hunterLevel.exp, hunterLevel.levelUp) : this.calcExp(userLevel.exp, userLevel.levelUp)}</View>
+              <View className='num'>{Taro.getStorageSync('openid') ? (isHunter ? this.calcExp(hunterLevel.exp, hunterLevel.levelUp) : this.calcExp(userLevel.exp, userLevel.levelUp)) : 0}</View>
               <View className='singal'>%</View>
             </View>
             <View className='dots'>

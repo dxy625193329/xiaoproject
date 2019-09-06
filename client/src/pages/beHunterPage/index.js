@@ -65,7 +65,7 @@ export default class BeHunterPage extends Component {
 
   handleBtnClick = () => {
     const { name, idCardNumber, tempImageUrl1, tempImageUrl2, tempImageUrl3, checked, user } = this.state
-    const openId = get('openid')
+    const openId = Taro.getStorageSync('openid')
     if (name && idCardNumber && tempImageUrl1 && tempImageUrl2 && tempImageUrl3 && checked) {
       const orderId = parseInt(Date.now() * Math.random())
       const price = 100

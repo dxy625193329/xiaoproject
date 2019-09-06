@@ -73,7 +73,7 @@ export class OrderShadowPage extends Component {
       user
     } = this.state
 
-    const openid = get('openid')
+    const openid = Taro.getStorageSync('openid')
 
     const order = {
       openId: openid,

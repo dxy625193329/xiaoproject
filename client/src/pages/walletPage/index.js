@@ -67,7 +67,7 @@ export default class WalletPage extends Component {
   handlePayIn = () => {
     let { wallet, value, voucher } = this.state
     const user = get('user')
-    const openId = get('openid')
+    const openId = Taro.getStorageSync('openid')
     const { firstRecharge } = user
     let price = Number(value)
     if (price > 0.01 && !isNaN(price)) {
@@ -127,7 +127,7 @@ export default class WalletPage extends Component {
   handleCashOut = () => {
     // let { wallet, value, pool } = this.state
     // let user = get('user')
-    // const openId = get('openid')
+    // const openId = Taro.getStorageSync('openid')
     // let money = Number(value)
     // if (money >= 0.3 && !isNaN(money) && money <= wallet) {
     //   let orderId = parseInt(Date.now() * Math.random())
