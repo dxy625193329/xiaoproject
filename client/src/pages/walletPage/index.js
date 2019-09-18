@@ -45,21 +45,21 @@ export default class WalletPage extends Component {
           this.setState({ animation: animation.export() })
         }, 50)
       } else {
-        // this.setState({
-        //   animation: animation.export(),
-        //   showCashOutMask: true
-        // })
-        // setTimeout(() => {
-        //   animation.translateY(0)
-        //   animation.step()
-        //   this.setState({ animation: animation.export() })
-        // }, 50)
+        this.setState({
+          animation: animation.export(),
+          showCashOutMask: true
+        })
+        setTimeout(() => {
+          animation.translateY(0)
+          animation.step()
+          this.setState({ animation: animation.export() })
+        }, 50)
       }
     } else {
       if (tag === 1) {
         this.setState({ showPayInMask: false })
       } else {
-        // this.setState({ showCashOutMask: false })
+        this.setState({ showCashOutMask: false })
       }
     }
   }
@@ -117,7 +117,7 @@ export default class WalletPage extends Component {
               }
             }
           })
-        }else{
+        } else {
           toast('充值失败，请稍后再试')
         }
       })
@@ -125,43 +125,44 @@ export default class WalletPage extends Component {
   }
 
   handleCashOut = () => {
-    // let { wallet, value, pool } = this.state
-    // let user = get('user')
-    // const openId = Taro.getStorageSync('openid')
-    // let money = Number(value)
-    // if (money >= 0.3 && !isNaN(money) && money <= wallet) {
-    //   let orderId = parseInt(Date.now() * Math.random())
-    //   cashOut({ openId, orderId, money }).then(res => {
-    //     if (res.data.status === 200) {
-    //       Taro.showToast({
-    //         title: '提现成功',
-    //         icon: 'success',
-    //         duration: 2000
-    //       })
-    //       user.wallet -= money
-    //       user.wallet = parseFloat((user.wallet).toFixed(2))
-    //       user.pool = 0
-    //       wallet -= money
-    //       wallet = parseFloat(wallet.toFixed(2))
-    //       pool = 0
-    //       this.setState({ wallet, pool, showCashOutMask: false, value: 0 })
-    //       updateUser({ user })
-    //     } else {
-    //       Taro.showToast({
-    //         title: '提现失败，请联系客服',
-    //         icon: 'none',
-    //         duration: 2000
-    //       })
-    //       this.setState({ showCashOutMask: false, value: 0 })
-    //     }
-    //   }).catch(err => {
-    //     Taro.showToast({
-    //       title: '提现失败,请检查网络',
-    //       icon: 'none',
-    //       duration: 2000
-    //     })
-    //   })
-    // }
+    let { wallet, value, pool } = this.state
+    let user = get('user')
+    const openId = Taro.getStorageSync('openid')
+    let money = Number(value)
+    if (money >= 0.3 && !isNaN(money) && money <= wallet) {
+      let orderId = parseInt(Date.now() * Math.random())
+      cashOut({ openId, orderId, money }).then(res => {
+        if (res.data.status === 200) {
+
+          user.wallet -= money
+          user.wallet = parseFloat((user.wallet).toFixed(2))
+          user.pool = 0
+          wallet -= money
+          wallet = parseFloat(wallet.toFixed(2))
+          pool = 0
+          this.setState({ wallet, pool, showCashOutMask: false, value: 0 })
+          Taro.showToast({
+            title: '提现成功',
+            icon: 'success',
+            duration: 2000
+          })
+          updateUser({ user })
+        } else {
+          this.setState({ showCashOutMask: false, value: 0 })
+          Taro.showToast({
+            title: '提现失败，请联系客服',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      }).catch(err => {
+        Taro.showToast({
+          title: '提现失败,请检查网络',
+          icon: 'none',
+          duration: 2000
+        })
+      })
+    }
   }
 
   showPayInMask = () => {
@@ -169,8 +170,7 @@ export default class WalletPage extends Component {
   }
 
   showCashOutMask = () => {
-    toast('因微信支付平台未完善的缘故，9月30日之后才可提现。给您带来的不便，我们感到十分抱歉。', 'none', 4000)
-    // this.setState({ showCashOutMask: true })
+    this.setState({ showCashOutMask: true })
   }
 
   handleInputChange = e => {
@@ -236,6 +236,7 @@ export default class WalletPage extends Component {
                   >¥</View>
                   <Input className='input' cursor-spacing='100px' value={value} onInput={this.handleInputChange} />
                 </View>
+                <View className='info'>充值金额必须大于0.1元</View>
                 <View className='check' onClick={this.handlePayIn}>充值</View>
               </View>
             </View>
@@ -254,7 +255,7 @@ export default class WalletPage extends Component {
                   >¥</View>
                   <Input className='input' cursor-spacing='100px' value={value} onInput={this.handleInputChange} />
                 </View>
-                <View className='info'>提现金额必须大于0.3元，小于100元每次</View>
+                <View className='info'>提现金额必须大于0.3元，单次提现金额小于100元，当天累计不超过1000元</View>
                 <View className='check' onClick={this.handleCashOut}>提现</View>
               </View>
             </View>

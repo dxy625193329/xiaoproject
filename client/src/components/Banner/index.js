@@ -46,9 +46,24 @@ export default class Banner extends Component {
 
   handleBannerClick = item => {
     set('banner', item.content)
-    Taro.navigateTo({
-      url: '/pages/bannerPage/index'
-    })
+    const openid = Taro.getStorageSync('openid')
+    if (openid) {
+      Taro.navigateTo({
+        url: '/pages/bannerPage/index'
+      })
+    } else {
+      Taro.showModal({
+        title: '提示',
+        content: '登录后查看更多信息',
+        success: function (res) {
+          if (res.confirm) {
+            Taro.navigateTo({
+              url: '/pages/splashPage/index'
+            })
+          }
+        }
+      })
+    }
   }
 
 
