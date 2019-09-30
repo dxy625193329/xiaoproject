@@ -271,7 +271,7 @@ export class OrderShadowPage extends Component {
             </View>
           </View>
           {
-            user.pool >= 10 ?
+            user.pool >= 0.2 ?
               <View className='local--bottom'>
                 <View className='title'>
                   折扣
