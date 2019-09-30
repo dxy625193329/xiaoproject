@@ -57,9 +57,9 @@ export default class WalletPage extends Component {
       }
     } else {
       if (tag === 1) {
-        this.setState({ showPayInMask: false })
+        this.setState({ showPayInMask: false, value: 0 })
       } else {
-        this.setState({ showCashOutMask: false })
+        this.setState({ showCashOutMask: false, value: 0 })
       }
     }
   }
@@ -131,16 +131,16 @@ export default class WalletPage extends Component {
     let money = Number(value)
     if (money >= 0.3 && !isNaN(money) && money <= wallet) {
       let orderId = parseInt(Date.now() * Math.random())
+      this.setState({ showCashOutMask: false })
       cashOut({ openId, orderId, money }).then(res => {
         if (res.data.status === 200) {
-
           user.wallet -= money
           user.wallet = parseFloat((user.wallet).toFixed(2))
           user.pool = 0
           wallet -= money
           wallet = parseFloat(wallet.toFixed(2))
           pool = 0
-          this.setState({ wallet, pool, showCashOutMask: false, value: 0 })
+          this.setState({ wallet, pool, value: 0 })
           Taro.showToast({
             title: '提现成功',
             icon: 'success',
@@ -148,7 +148,7 @@ export default class WalletPage extends Component {
           })
           updateUser({ user })
         } else {
-          this.setState({ showCashOutMask: false, value: 0 })
+          this.setState({ value: 0 })
           Taro.showToast({
             title: '提现失败，请联系客服',
             icon: 'none',

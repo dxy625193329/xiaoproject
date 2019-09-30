@@ -1,5 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Textarea, Input, Picker, Text } from '@tarojs/components'
+import { View, Textarea, Input, Picker } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global'
 import { getFullTime } from '../../lib/time'
@@ -10,28 +10,27 @@ export class OrderNormalPage extends Component {
   state = {
     typeInfo: {},
     user: {},
-    username: '',
-    selector: ['指定地址', '就近目标'],
-    selectorChecked: '指定地址',
-    price: 0,
-    totalPrice: 0,
-    addressText: '',
-    locateText: '',
-    needText: '',
+    username: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').userName : '',
+    selector: ['不限', '男', '女'],
+    selectorChecked: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').sexText : '不限',
+    price: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').price : 0,
+    totalPrice: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').price - Taro.getStorageSync('tempOrder').pool : 0,
+    addressText: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').addressText : '',
+    needText: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').needText : '',
+    privateText: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').privateText : '',
     date: '',
     time: '',
-    ticket: {},
-    pool: 0,
+    pool: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').pool : 0,
     checkUsername: false,
     checkAddress: false,
     checkNeed: false,
-    checkLocate: false,
     checkPrice: false,
-    checkPool: false
+    checkPool: false,
+    tempOrder: {}
   }
 
   componentWillMount() {
-    this.setState({ typeInfo: getTypeInfo(this.$router.params.type), user: get('user') })
+    this.setState({ typeInfo: getTypeInfo(this.$router.params.type), user: get('user'), tempOrder: Taro.getStorageSync('tempOrder') })
   }
 
   handleSelectorChange = e => {
@@ -65,16 +64,14 @@ export class OrderNormalPage extends Component {
       typeInfo,
       username,
       addressText,
-      locateText,
-      locate,
       needText,
       selectorChecked,
-      ticket,
+      privateText,
       date,
       time,
       pool,
       totalPrice,
-      user
+      user,
     } = this.state
 
     const openid = Taro.getStorageSync('openid')
@@ -88,13 +85,10 @@ export class OrderNormalPage extends Component {
       rank: typeInfo.rank,
       phoneNumber: user.phoneNumber,
       addressText,
-      locate: {
-        type: selectorChecked,
-        text: selectorChecked === '就近目标' ? '就近目标' : locateText
-      },
-      needText,
+      sexText: selectorChecked,
+      needText: needText.replace(/代课/g, '无忧课'),
+      privateText,
       price: totalPrice,
-      ticket,
       date,
       time,
       pool,
@@ -115,11 +109,6 @@ export class OrderNormalPage extends Component {
     } else {
       this.setState({ checkAddress: false })
     }
-    if (!locateText && selectorChecked === '指定地址') {
-      this.setState({ checkLocate: true })
-    } else {
-      this.setState({ checkLocate: false })
-    }
     if (!needText) {
       this.setState({ checkNeed: true })
     } else {
@@ -135,10 +124,10 @@ export class OrderNormalPage extends Component {
     } else {
       this.setState({ checkPool: false })
     }
-    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && (!!locateText || selectorChecked === '就近目标') && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
+    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
       set('order', order)
       Taro.navigateTo({
-        url: '/pages/orderDetailPage/index'
+        url: '/pages/orderDetailPage/index?fromOrder=true'
       })
     }
   }
@@ -152,12 +141,12 @@ export class OrderNormalPage extends Component {
       selectorChecked,
       addressText,
       needText,
+      privateText,
       checkUsername,
       checkAddress,
       checkNeed,
-      checkLocate,
       checkPrice,
-      user
+      user,
     } = this.state
 
     return (
@@ -223,9 +212,20 @@ export class OrderNormalPage extends Component {
             checkNeed && <View className='error-info'>请输您的需求</View>
           }
         </View>
+        <View className='order--info'>
+          <View className='title'>填写隐私信息</View>
+          <Textarea
+            className='content'
+            id='privateText'
+            value={privateText}
+            onInput={this.handleInputChange}
+            placeholder='如：快递单号、教室门牌号等'
+            cursor-spacing='100px'
+          />
+        </View>
         <View className='order--locate'>
           <View className='locate--top'>
-            <View className='title'>目标地址</View>
+            <View className='title'>猎人性别要求</View>
             <Picker mode='selector' range={selector} onChange={this.handleSelectorChange}>
               <View className='right'>
                 <View className='right--title'>{selectorChecked}</View>
@@ -236,19 +236,6 @@ export class OrderNormalPage extends Component {
               </View>
             </Picker>
           </View>
-          {
-            selectorChecked === '指定地址' ? <Input
-              id='locateText'
-              className='input--locate'
-              placeholder='填写目标地址'
-              value={locateText}
-              cursor-spacing='100px'
-              onChange={this.handleInputChange}
-            /> : null
-          }
-          {
-            checkLocate && <View className='error-info'>请输入您的联系地址</View>
-          }
         </View>
         <View className='order--locate'>
           <View className='local--bottom'>
@@ -262,6 +249,7 @@ export class OrderNormalPage extends Component {
               placeholder='请输入预期费用'
               cursor-spacing='100px'
               maxLength='5'
+              value={price}
               className='input' />
             <View className='info'>根据实际情况填写，可增加被猎人接取的概率</View>
           </View>

@@ -10,26 +10,27 @@ export class OrderShadowPage extends Component {
   state = {
     typeInfo: {},
     user: {},
-    username: '',
-    price: 0,
-    totalPrice: 0,
+    username: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').userName : '',
+    price: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').price : 0,
+    totalPrice: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').price - Taro.getStorageSync('tempOrder').pool : 0,
     locateText: '',
-    needText: '',
-    ticket: {},
-    time: '',
-    date: '',
-    pool: 0,
+    selector: ['不限', '男', '女'],
+    selectorChecked: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').sexText : '不限',
+    needText: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').needText : '',
+    time: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').time : '',
+    date: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').date : '',
+    pool: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').pool : 0,
     checkUsername: false,
     checkNeed: false,
-    checkLocate: false,
     checkPrice: false,
     checkTime: false,
     checkDate: false,
-    checkPool: false
+    checkPool: false,
+    tempOrder: {}
   }
 
   componentWillMount() {
-    this.setState({ typeInfo: getTypeInfo(this.$router.params.type), user: get('user') })
+    this.setState({ typeInfo: getTypeInfo(this.$router.params.type), user: get('user'), tempOrder: Taro.getStorageSync('tempOrder') })
   }
 
   handleSelectorChange = e => {
@@ -63,9 +64,8 @@ export class OrderShadowPage extends Component {
     const {
       typeInfo,
       username,
-      locateText,
       needText,
-      ticket,
+      selectorChecked,
       totalPrice,
       date,
       time,
@@ -83,12 +83,11 @@ export class OrderShadowPage extends Component {
       typeText: typeInfo.type === 1 ? '大众类需求' : '影分身',
       rank: typeInfo.rank,
       phoneNumber: user.phoneNumber,
-      locate: { type: '指定地址', text: locateText },
-      needText,
+      sexText: selectorChecked,
+      needText: needText.replace(/代课/g, '无忧课'),
       date,
       time,
       price: totalPrice,
-      ticket,
       pool,
       orderStamp: Date.now(),
       orderId: parseInt(Date.now() * Math.random()),
@@ -101,11 +100,6 @@ export class OrderShadowPage extends Component {
       this.setState({ checkUsername: true })
     } else {
       this.setState({ checkUsername: false })
-    }
-    if (!locateText) {
-      this.setState({ checkLocate: true })
-    } else {
-      this.setState({ checkLocate: false })
     }
     if (!needText) {
       this.setState({ checkNeed: true })
@@ -132,26 +126,23 @@ export class OrderShadowPage extends Component {
     } else {
       this.setState({ checkPool: false })
     }
-    if (!isNaN(totalPrice) && totalPrice >= 15 && !!username && !!locateText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
+    if (!isNaN(totalPrice) && totalPrice >= 15 && !!username && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
       set('order', order)
       Taro.navigateTo({
-        url: '/pages/orderDetailPage/index'
+        url: '/pages/orderDetailPage/index?fromOrder=true'
       })
     }
   }
 
   render() {
-
     const {
       typeInfo,
       username,
-      locateText,
       needText,
       date,
       time,
       checkUsername,
       checkNeed,
-      checkLocate,
       checkPrice,
       checkTime,
       checkDate,
@@ -201,19 +192,17 @@ export class OrderShadowPage extends Component {
         </View>
         <View className='order--locate'>
           <View className='locate--top'>
-            <View className='title'>目标地址</View>
+            <View className='title'>猎人性别要求</View>
+            <Picker mode='selector' range={selector} onChange={this.handleSelectorChange}>
+              <View className='right'>
+                <View className='right--title'>{selectorChecked}</View>
+                <Image
+                  src={require('../../assets/image/ic_arrow.png')}
+                  className='arrow'
+                />
+              </View>
+            </Picker>
           </View>
-          <Input
-            id='locateText'
-            className='input--locate'
-            cursor-spacing='100px'
-            placeholder='填写目标地址'
-            value={locateText}
-            onChange={this.handleInputChange}
-          />
-          {
-            checkLocate && <View className='error-info'>请输入目标地址</View>
-          }
         </View>
         <View className='order--locate'>
           <View className='locate--top m-t'>
@@ -263,6 +252,7 @@ export class OrderShadowPage extends Component {
               onChange={this.handleInputChange}
               type='number'
               placeholder='请输入预期费用'
+              value={price}
               maxLength='5'
               cursor-spacing='100px'
               className='input' />

@@ -29,7 +29,8 @@ export class OrderDetailPage extends Component {
     showAppraiseMask: false,
     voucherPay: true,
     restPay: false,
-    message: []
+    message: [],
+    fromOrder: false
   }
 
   componentWillMount() {
@@ -39,6 +40,7 @@ export class OrderDetailPage extends Component {
       isHunter: get('isHunter'),
       savedOpenid: Taro.getStorageSync('openid'),
       statusInfo: checkOrderStatus(get('order').status),
+      fromOrder: this.$router.params.fromOrder
     })
   }
 
@@ -108,21 +110,24 @@ export class OrderDetailPage extends Component {
         order.statusText = '订单等待接单'
         order.status = 'wait'
         user.voucher = voucher
-        createOrder({ order, user: { openId: user.openId, voucher: user.voucher, pool: user.pool } }).then(res => {
-          if (res.data.code === 200) {
-            set('user', user)
-            this.setState({ showMask: false, showDontTouch: true })
-            toast('发单成功', 'success')
-            setTimeout(() => {
-              Taro.switchTab({
-                url: '/pages/orderPage/index'
-              })
-            }, 1000)
-          } else {
+        this.setState({ fromOrder: false }, () => {
+          createOrder({ order, user: { openId: user.openId, voucher: user.voucher, pool: user.pool } }).then(res => {
+            if (res.data.code === 200) {
+              set('user', user)
+              this.setState({ showMask: false, showDontTouch: true })
+              toast('发单成功', 'success')
+              Taro.removeStorageSync('tempOrder')
+              setTimeout(() => {
+                Taro.switchTab({
+                  url: '/pages/orderPage/index'
+                })
+              }, 1000)
+            } else {
+              toast('创建订单失败，请检查您的网络状态后重试')
+            }
+          }).catch(err => {
             toast('创建订单失败，请检查您的网络状态后重试')
-          }
-        }).catch(err => {
-          toast('创建订单失败，请检查您的网络状态后重试')
+          })
         })
       } else {
         toast('代金不足，请选择其他支付方式')
@@ -144,21 +149,24 @@ export class OrderDetailPage extends Component {
         order.statusText = '订单等待接单'
         order.status = 'wait'
         user.wallet = wallet
-        createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
-          if (res.data.code === 200) {
-            set('user', user)
-            this.setState({ showMask: false, showDontTouch: true })
-            toast('发单成功', 'success')
-            setTimeout(() => {
-              Taro.switchTab({
-                url: '/pages/orderPage/index'
-              })
-            }, 1000)
-          } else {
+        this.setState({ fromOrder: false }, () => {
+          createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
+            if (res.data.code === 200) {
+              set('user', user)
+              this.setState({ showMask: false, showDontTouch: true })
+              toast('发单成功', 'success')
+              Taro.removeStorageSync('tempOrder')
+              setTimeout(() => {
+                Taro.switchTab({
+                  url: '/pages/orderPage/index'
+                })
+              }, 1000)
+            } else {
+              toast('创建订单失败，请检查您的网络状态后重试', 'none')
+            }
+          }).catch(err => {
             toast('创建订单失败，请检查您的网络状态后重试', 'none')
-          }
-        }).catch(err => {
-          toast('创建订单失败，请检查您的网络状态后重试', 'none')
+          })
         })
       } else {
         toast('余额不足，请前往钱包充值')
@@ -278,6 +286,8 @@ export class OrderDetailPage extends Component {
             url: '/pages/orderPage/index'
           })
         }, 1000)
+      } else if (res.data.code === 201) {
+        toast('订单已被接取，请尝试其他订单')
       } else {
         toast('接单失败，请检查您的网络状态后重试')
       }
@@ -427,7 +437,7 @@ export class OrderDetailPage extends Component {
     const isOverTime = Date.now() / 1000 - overTime > 0
     const order = { ...this.state.orderInfo }
     const formId = e.detail.formId
-    if (true) {
+    if (isOverTime) {
       Taro.showModal({
         title: '您正在取消订单',
         content: '此时取消订单您将从您的猎人保证金中扣除2元作为惩罚，请您谨慎操作。',
@@ -484,11 +494,17 @@ export class OrderDetailPage extends Component {
 
   preventTouchMove = () => { }
 
+  componentWillUnmount() {
+    if (this.state.fromOrder) {
+      toast('系统监测到您未付款，将保存当前订单状态，下次下单将自动填写信息', 'none', 4000)
+      Taro.setStorageSync('tempOrder', this.state.orderInfo)
+    }
+  }
+
   render() {
     const {
       openId,
       userName,
-      locate,
       type,
       needText,
       price,
@@ -502,6 +518,8 @@ export class OrderDetailPage extends Component {
       pool,
       pay,
       hunterOpenId,
+      privateText,
+      sexText
     } = this.state.orderInfo
     const { wallet, voucher } = this.state.userInfo
     const {
@@ -616,21 +634,20 @@ export class OrderDetailPage extends Component {
             </View>
             : null
         }
-        <View className={['middle', hunter === {} || hunter === undefined ? 'mg-t' : null]}>
-          <View className='title'>用户信息</View>
-          <View className='info--type'>
-            <View className='info--title'>联系人</View>
-            <View className='info--text'>{userName}</View>
-          </View>
-          {
-            type === 1 ?
-              <View className='info--desc'>
-                <View className='title'>联系地址</View>
-                <View className='text'>{addressText}</View>
-              </View> : null
-          }
-          {
-            ['process', 'confirm', 'complete'].includes(status) &&
+        {
+          ['process', 'confirm', 'complete'].includes(status) && <View className={['middle', hunter === {} || hunter === undefined ? 'mg-t' : null]}>
+            <View className='title'>用户信息</View>
+            <View className='info--type'>
+              <View className='info--title'>联系人</View>
+              <View className='info--text'>{userName}</View>
+            </View>
+            {
+              type === 1 ?
+                <View className='info--desc'>
+                  <View className='title'>联系地址</View>
+                  <View className='text'>{addressText}</View>
+                </View> : null
+            }
             <View className='info--desc'>
               <View className='title'>联系方式</View>
               <View className='contact'>
@@ -650,9 +667,8 @@ export class OrderDetailPage extends Component {
                 </View>
               </View>
             </View>
-          }
-
-        </View>
+          </View>
+        }
         <View className='order--info'>
           <View className='title'>需求信息</View>
           <View className='info--type'>
@@ -663,23 +679,29 @@ export class OrderDetailPage extends Component {
             <View className='title'>需求信息</View>
             <View className='text'>{needText}</View>
           </View>
+          {
+            ['process', 'confirm', 'complete'].includes(status) && privateText != undefined && <View className='info--desc'>
+              <View className='title'>隐私信息</View>
+              <View className='text'>{privateText}</View>
+            </View>
+          }
           <View className='info--desc'>
-            <View className='title'>目标地址</View>
-            <View className='text'>{locate.text}</View>
+            <View className='title'>猎人性别要求</View>
+            <View className='text'>{sexText}</View>
           </View>
           {
-            date != '' ?
-              <View className='info--desc'>
-                <View className='title'>日期</View>
-                <View className='text'>{date}</View>
-              </View> : null
+            date != '' &&
+            <View className='info--desc'>
+              <View className='title'>日期</View>
+              <View className='text'>{date}</View>
+            </View>
           }
           {
-            time != '' ?
-              <View className='info--desc'>
-                <View className='title'>时间</View>
-                <View className='text'>{time}</View>
-              </View> : null
+            time != '' &&
+            <View className='info--desc'>
+              <View className='title'>时间</View>
+              <View className='text'>{time}</View>
+            </View>
           }
         </View>
         <View className='bottom'>
