@@ -130,7 +130,7 @@ export default class WalletPage extends Component {
     let user = get('user')
     const openId = Taro.getStorageSync('openid')
     let money = Number(value)
-    if (money >= 0.3 && !isNaN(money) && money <= wallet) {
+    if (money >= 0.3 && !isNaN(money) && money <= wallet && money <= 100) {
       let orderId = parseInt(Date.now() * Math.random())
       this.setState({ showCashOutMask: false }, () => {
         cashOut({ openId, orderId, money, userName: user.userName }).then(res => {
@@ -143,7 +143,7 @@ export default class WalletPage extends Component {
             pool = 0
             this.setState({ wallet, pool, value: 0 }, () => {
               updateUser({ user })
-              toast('提现发起成功，将于3天内到账，请注意查收', 'none',4000)
+              toast('提现发起成功，将于3天内到账，请注意查收', 'none', 4000)
             })
           } else {
             this.setState({ value: 0 })
