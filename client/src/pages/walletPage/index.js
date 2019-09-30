@@ -70,13 +70,14 @@ export default class WalletPage extends Component {
     const openId = Taro.getStorageSync('openid')
     const { firstRecharge } = user
     let price = Number(value)
+    this.setState({ showPayInMask: false })
     if (price > 0.01 && !isNaN(price)) {
       let orderId = parseInt(Date.now() * Math.random())
       getPay({ orderId, price, openId }).then(res => {
         if (res.data.status === 200) {
           const { timeStamp, nonceStr, signType, paySign } = res.data
           const payPackage = res.data.package
-          this.setState({ showPayInMask: false, value: 0 })
+          this.setState({ value: 0 })
           wx.requestPayment({
             timeStamp,
             nonceStr,
