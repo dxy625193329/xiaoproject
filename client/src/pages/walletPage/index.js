@@ -132,35 +132,25 @@ export default class WalletPage extends Component {
     let money = Number(value)
     if (money >= 0.3 && !isNaN(money) && money <= wallet) {
       let orderId = parseInt(Date.now() * Math.random())
-      this.setState({ showCashOutMask: false })
-      cashOut({ openId, orderId, money }).then(res => {
-        if (res.data.status === 200) {
-          user.wallet -= money
-          user.wallet = parseFloat((user.wallet).toFixed(2))
-          user.pool = 0
-          wallet -= money
-          wallet = parseFloat(wallet.toFixed(2))
-          pool = 0
-          this.setState({ wallet, pool, value: 0 })
-          Taro.showToast({
-            title: '提现成功',
-            icon: 'success',
-            duration: 2000
-          })
-          updateUser({ user })
-        } else {
-          this.setState({ value: 0 })
-          Taro.showToast({
-            title: '提现失败，请联系客服',
-            icon: 'none',
-            duration: 2000
-          })
-        }
-      }).catch(err => {
-        Taro.showToast({
-          title: '提现失败,请检查网络',
-          icon: 'none',
-          duration: 2000
+      this.setState({ showCashOutMask: false }, () => {
+        cashOut({ openId, orderId, money, userName: user.userName }).then(res => {
+          if (res.data.code === 200) {
+            user.wallet -= money
+            user.wallet = parseFloat((user.wallet).toFixed(2))
+            user.pool = 0
+            wallet -= money
+            wallet = parseFloat(wallet.toFixed(2))
+            pool = 0
+            this.setState({ wallet, pool, value: 0 }, () => {
+              updateUser({ user })
+              toast('提现发起成功，将于3天内到账，请注意查收', 'none',4000)
+            })
+          } else {
+            this.setState({ value: 0 })
+            toast('提现发起失败，请联系客服')
+          }
+        }).catch(err => {
+          toast('提现发起失败，请检查网络')
         })
       })
     }

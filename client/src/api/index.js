@@ -79,7 +79,7 @@ export const getPay = data => {
 }
 
 export const cashOut = data => {
-  return post('/wx/cashOut', data)
+  return post('/wx/getCashOut', data)
 }
 
 // beHunterPage
