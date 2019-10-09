@@ -133,7 +133,7 @@ export default class WalletPage extends Component {
     if (money >= 0.3 && !isNaN(money) && money <= wallet && money <= 100) {
       let orderId = parseInt(Date.now() * Math.random())
       this.setState({ showCashOutMask: false }, () => {
-        cashOut({ openId, orderId, money, userName: user.userName }).then(res => {
+        cashOut({ openId, orderId, money, userName: user.userName,from:'提现' }).then(res => {
           if (res.data.code === 200) {
             user.wallet -= money
             user.wallet = parseFloat((user.wallet).toFixed(2))

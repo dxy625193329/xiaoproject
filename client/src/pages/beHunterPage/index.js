@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Input, Text, Image, Checkbox, CheckboxGroup } from '@tarojs/components'
 import './index.scss'
-import { addHunter, addService, getPay, updateUser, refundPay } from '../../api'
+import { addHunter, addService, getPay, updateUser, refundPay, } from '../../api'
 import { get } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
 import { toast } from '../../lib/utils';
@@ -171,7 +171,7 @@ export default class BeHunterPage extends Component {
             })
           } else if (user.deposit > 0) {
             let orderId = parseInt(Date.now() * Math.random())
-            cashOut({ openId: user.openId, orderId, money: user.deposit, userName: user.userName }).then(res => {
+            cashOut({ openId: user.openId, orderId, money: user.deposit, userName: user.userName, from: '押金退款' }).then(res => {
               if (res.data.code === 200) {
                 user.isHunter = false
                 user.hunterOrderCount = 0
