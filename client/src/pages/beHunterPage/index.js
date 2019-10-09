@@ -135,39 +135,78 @@ export default class BeHunterPage extends Component {
       content: '注销后您只能重新申请猎人资格。',
       success: res => {
         if (res.confirm) {
-          refundPay({ orderId: user.identity.orderId, price: user.deposit }).then(res => {
-            if (res.data.status === 200) {
-              user.isHunter = false
-              user.hunterOrderCount = 0
-              user.hunterLevel = {
-                name: '黑铁猎人',
-                exp: 0,
-                levelUp: 20
-              }
-              user.pool = 0
-              user.dayQuest = [
-                {
-                  date: getNowDay(),
-                  order: [],
-                  quest1: false,
-                  quest2: false,
-                  quest3: false
+          if (user.deposit === 100) {
+            refundPay({ orderId: user.identity.orderId, price: user.deposit }).then(res => {
+              if (res.data.status === 200) {
+                user.isHunter = false
+                user.hunterOrderCount = 0
+                user.hunterLevel = {
+                  name: '黑铁猎人',
+                  exp: 0,
+                  levelUp: 20
                 }
-              ]
-              user.deposit = 0
-              user.identity = {}
-              updateUser({ user }).then(res => {
-                toast('押金已退还，如在3天内未收到押金，请联系客服。')
-                setTimeout(() => {
-                  Taro.switchTab({
-                    url: '/pages/mePage/index'
-                  })
-                }, 1000)
-              })
-            } else {
-              toast('退款失败，请稍后再试，或联系客服。')
-            }
-          })
+                user.pool = 0
+                user.dayQuest = [
+                  {
+                    date: getNowDay(),
+                    order: [],
+                    quest1: false,
+                    quest2: false,
+                    quest3: false
+                  }
+                ]
+                user.deposit = 0
+                user.identity = {}
+                updateUser({ user }).then(res => {
+                  toast('押金已退还，如在3天内未收到押金，请联系客服。')
+                  setTimeout(() => {
+                    Taro.switchTab({
+                      url: '/pages/mePage/index'
+                    })
+                  }, 1000)
+                })
+              } else {
+                toast('退款失败，请稍后再试，或联系客服。')
+              }
+            })
+          } else if (user.deposit > 0) {
+            let orderId = parseInt(Date.now() * Math.random())
+            cashOut({ openId: user.openId, orderId, money: user.deposit, userName: user.userName }).then(res => {
+              if (res.data.code === 200) {
+                user.isHunter = false
+                user.hunterOrderCount = 0
+                user.hunterLevel = {
+                  name: '黑铁猎人',
+                  exp: 0,
+                  levelUp: 20
+                }
+                user.pool = 0
+                user.dayQuest = [
+                  {
+                    date: getNowDay(),
+                    order: [],
+                    quest1: false,
+                    quest2: false,
+                    quest3: false
+                  }
+                ]
+                user.deposit = 0
+                user.identity = {}
+                updateUser({ user }).then(res => {
+                  toast('押金退还申请已提交，如在3天内未收到退款，请联系客服。')
+                  setTimeout(() => {
+                    Taro.switchTab({
+                      url: '/pages/mePage/index'
+                    })
+                  }, 1000)
+                })
+              } else {
+                toast('退款失败，请稍后再试，或联系客服。')
+              }
+            }).catch(err => {
+              toast('提现发起失败，请检查网络')
+            })
+          }
         }
       }
     })
