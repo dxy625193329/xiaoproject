@@ -20,6 +20,11 @@ const services = [
     name: '任务大厅',
     desc: '当前板块只限猎人接取任务',
     cover: 'http://cdn.xwuyou.com/service_2.jpg'
+  },
+   {
+    name: '校园投票',
+    desc: '当前板块可发布校园内的投票活动',
+    cover: 'http://cdn.xwuyou.com/service_3.jpg'
   }
 ]
 
