@@ -144,4 +144,17 @@ export const addAndUpdateMessage = data => {
   return post('/message/add', data)
 }
 
+// voteListPage
+
+export const getVoteList = () => {
+  return get('/vote/activeList')
+}
+
+export const addPlayer = data => {
+  return post('/vote/addPlayer', data)
+}
+
+export const updateVoteInfo = data => {
+  return post('/vote/updateVoteInfo', data)
+}
 

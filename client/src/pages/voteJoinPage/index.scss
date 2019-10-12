@@ -1,0 +1,70 @@
+.vote-join {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 20px 40px 40px 40px;
+  background-color: #f8f8f8;
+
+  .vote--input-wrapper {
+    width: 100%;
+    background: #fff;
+    padding: 20px 32px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    font-size: 32px;
+    color: #303030;
+    margin-bottom: 40px;
+  }
+
+  .vote--title {
+    line-height: 66px;
+    font-size: 66px;
+    color: #303030;
+    font-weight: 700;
+  }
+
+  .vote--info {
+    margin-top: 32px;
+    font-size: 26px;
+    color: #919191;
+    margin-bottom: 40px;
+  }
+
+  .vote--upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 380px;
+    background-color: #fff;
+    border-radius: 12px;
+    border: 2px dashed rgba(0, 0, 0, 0.3);
+    margin-bottom: 40px;
+
+    .text {
+      font-size: 32px;
+      font-weight: 700;
+      color: #303030;
+    }
+
+    .image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .vote--btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+    line-height: normal;
+    border-radius: 12px;
+    font-size: 34px;
+    color: #fff;
+    background: #72c9aa;
+    margin-bottom: 60px;
+  }
+}

@@ -1,0 +1,240 @@
+.vote-wrapper {
+  min-height: 100vh;
+  background: #f8f8f8;
+  padding-top: 40px;
+}
+
+.vote-subtitle {
+  padding: 12px 20px;
+  background: #e0e0e0;
+  margin: 0 40px 40px;
+  font-size: 50px;
+  font-weight: 700;
+}
+
+.vote-join {
+  padding: 32px 40px;
+  background: rgb(243, 16, 16);
+  margin: 40px;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+}
+
+.vote-players {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+}
+
+.vote-players-title {
+  margin: 40px;
+  font-size: 50px;
+  color: #313131;
+  font-weight: 700;
+}
+
+.no-player {
+  font-size: 32px;
+  color: #a1a1a1;
+}
+
+.vote-item {
+  width: 100%;
+  margin: 20px 40px;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.vote-image {
+  width: 100%;
+  height: 400px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.vote-info {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 40px;
+}
+
+.player-name {
+  font-weight: 700;
+  color: #313131;
+  font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.player-count {
+  color: #a1a1a1;
+  margin-bottom: 20px;
+  font-size: 30px;
+}
+
+.ticket {
+  width: fit-content;
+  padding: 12px 20px;
+  background: #0a99eb;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.has-joined {
+  background: rgba(243, 16, 16, 0.5);
+}
+
+.has-ticket {
+  background: #9bdaff;
+  color: #313131;
+}
+
+.hot {
+  width: fit-content;
+  padding: 12px 20px;
+  background: #860aeb;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.mask {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  z-index: 2333;
+}
+
+.mask--wrapper {
+  width: 100%;
+  min-height: fit-content;
+  position: fixed;
+  bottom: 80px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  z-index: 2334;
+
+  .mask--content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-sizing: border-box;
+    padding: 40px;
+
+    .title {
+      font-size: 52px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .desc {
+      font-size: 30px;
+      color: #a1a1a1;
+      margin-bottom: 20px;
+    }
+
+    .input {
+      font-size: 36px;
+      color: #313131;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .input-wrapper {
+      background: #e1e1e1;
+      font-size: 30px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      color: #313131;
+      margin-bottom: 20px;
+    }
+
+    .count {
+      font-size: 30px;
+      font-weight: 700;
+      color: #313131;
+      margin-bottom: 20px;
+    }
+
+    .pay-desc {
+      font-size: 36px;
+      color: #313131;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .pay {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+
+      .pay--disabled {
+        color: #919191 !important;
+      }
+
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        box-sizing: border-box;
+        padding: 20px;
+        border-radius: 12px;
+        color: #303030;
+
+        .left {
+          display: flex;
+          align-items: center;
+          font-size: 32px;
+          font-weight: 700;
+
+          .icon {
+            width: 52px;
+            height: 52px;
+            margin-right: 16px;
+          }
+        }
+
+        .right {
+          display: flex;
+          align-items: center;
+          font-size: 32px;
+          font-family: "DIN";
+        }
+      }
+    }
+
+    .check {
+      display: flex;
+      background: #72c9aa;
+      border-radius: 12px;
+      padding: 20px;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      color: #fff;
+    }
+  }
+}
+
+.payment {
+  background: #f1f1f1;
+}

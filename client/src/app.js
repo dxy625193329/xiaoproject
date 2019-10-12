@@ -25,7 +25,10 @@ class App extends Component {
       'pages/hunterAgreePage/index',
       'pages/imListPage/index',
       'pages/messagePage/index',
-      'pages/aboutHunterPage/index'
+      'pages/aboutHunterPage/index',
+      'pages/voteListPage/index',
+      'pages/voteDetailPage/index',
+      'pages/voteJoinPage/index'
     ],
     window: {
       backgroundTextStyle: 'light',

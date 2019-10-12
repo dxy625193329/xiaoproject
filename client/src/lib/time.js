@@ -44,6 +44,10 @@ const formatStringTime = str => {
   return dayjs(str).valueOf()
 }
 
+const formatVoteTime = str => {
+  return dayjs(str).format('YYYY-MM-DD')
+}
+
 export {
   getDay,
   getFullTime,
@@ -51,5 +55,6 @@ export {
   fromNow,
   getNowDay,
   getOverTime,
-  formatStringTime
+  formatStringTime,
+  formatVoteTime
 }

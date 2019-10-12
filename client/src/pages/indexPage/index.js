@@ -21,7 +21,7 @@ const services = [
     desc: '当前板块只限猎人接取任务',
     cover: 'http://cdn.xwuyou.com/service_2.jpg'
   },
-   {
+  {
     name: '校园投票',
     desc: '当前板块可发布校园内的投票活动',
     cover: 'http://cdn.xwuyou.com/service_3.jpg'
@@ -82,30 +82,51 @@ export default class IndexPage extends Component {
     })
   }
 
-  routeToChildPage = id => {
+  routeToChildPage = index => {
     const phoneNumber = Taro.getStorageSync('phone')
-    if (phoneNumber) {
-      if (id === 0) {
+    if (index === 2) {
+      if (Taro.getStorageSync('openid')) {
         Taro.navigateTo({
-          url: '/pages/orderTypePage/index'
+          url: '/pages/voteListPage/index'
         })
+        return
       } else {
-        Taro.navigateTo({
-          url: '/pages/taskHallPage/index'
+        Taro.showModal({
+          title: '提示',
+          content: '参与投票需要登录',
+          confirmText: '前往登录',
+        }).then(res => {
+          if (res.confirm) {
+            Taro.switchTab({
+              url: '/pages/mePage/index'
+            })
+          }
         })
       }
     } else {
-      Taro.showModal({
-        title: '提示',
-        content: '发单或者接单都需要登录并授权手机号码',
-        confirmText: '前往登录',
-      }).then(res => {
-        if (res.confirm) {
-          Taro.switchTab({
-            url: '/pages/mePage/index'
+      if (phoneNumber) {
+        if (index === 0) {
+          Taro.navigateTo({
+            url: '/pages/orderTypePage/index'
+          })
+        } else if (index === 1) {
+          Taro.navigateTo({
+            url: '/pages/taskHallPage/index'
           })
         }
-      })
+      } else {
+        Taro.showModal({
+          title: '提示',
+          content: '发单或者接单都需要登录并授权手机号码',
+          confirmText: '前往登录',
+        }).then(res => {
+          if (res.confirm) {
+            Taro.switchTab({
+              url: '/pages/mePage/index'
+            })
+          }
+        })
+      }
     }
   }
 

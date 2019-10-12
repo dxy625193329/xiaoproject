@@ -72,6 +72,10 @@ export default class QuestPage extends Component {
   handleGetReward = tag => {
     const { userInfo, quest } = this.state
     if (tag === 1) {
+      if (quest[0].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcQuestStatus(tag)) {
         if (!quest[0].status) {
           userInfo.quest.push({ name: 'quest1', status: true })
@@ -87,6 +91,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 2) {
+      if (quest[1].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcQuestStatus(tag)) {
         if (!quest[1].status) {
           userInfo.quest.push({ name: 'quest2', status: true })
@@ -102,6 +110,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 3) {
+      if (quest[2].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcQuestStatus(tag)) {
         if (!quest[2].status) {
           userInfo.quest.push({ name: 'quest3', status: true })
@@ -117,6 +129,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 4) {
+      if (quest[3].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcQuestStatus(tag)) {
         if (!quest[3].status) {
           userInfo.quest.push({ name: 'quest4', status: true })
@@ -132,6 +148,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 5) {
+      if (quest[4].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcQuestStatus(tag)) {
         if (!quest[4].status) {
           userInfo.quest.push({ name: 'quest5', status: true })
@@ -147,6 +167,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 6) {
+      if (quest[5].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcLevelQuestStatus(tag)) {
         if (!quest[5].status) {
           userInfo.quest.push({ name: 'quest6', status: true })
@@ -161,6 +185,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 7) {
+      if (quest[6].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcLevelQuestStatus(tag)) {
         if (!quest[6].status) {
           userInfo.quest.push({ name: 'quest7', status: true })
@@ -175,6 +203,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 8) {
+      if (quest[7].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcLevelQuestStatus(tag)) {
         if (!quest[7].status) {
           userInfo.quest.push({ name: 'quest8', status: true })
@@ -189,6 +221,10 @@ export default class QuestPage extends Component {
       toast('您还未完成任务，无法领取奖励')
     }
     if (tag === 9) {
+      if (quest[8].status) {
+        toast('你已经领取过奖励了')
+        return
+      }
       if (this.calcLevelQuestStatus(tag)) {
         if (!quest[8].status) {
           userInfo.quest.push({ name: 'quest9', status: true })
@@ -216,6 +252,10 @@ export default class QuestPage extends Component {
     const { userInfo } = this.state
     if (userInfo.isHunter) {
       if (tag === 1) {
+        if (this.state.dayQuest1) {
+          toast('你已经领取过奖励了')
+          return
+        }
         for (let i = 0; i < userInfo.dayQuest.length; i++) {
           if (userInfo.dayQuest[i].date === getNowDay()) {
             if (userInfo.dayQuest[i].order.length > 0) {
@@ -231,6 +271,10 @@ export default class QuestPage extends Component {
         }
       }
       if (tag === 2) {
+        if (this.state.dayQuest2) {
+          toast('你已经领取过奖励了')
+          return
+        }
         for (let i = 0; i < userInfo.dayQuest.length; i++) {
           if (userInfo.dayQuest[i].date === getNowDay()) {
             if (userInfo.dayQuest[i].order.length >= 10) {
@@ -246,6 +290,10 @@ export default class QuestPage extends Component {
         }
       }
       if (tag === 3) {
+        if (this.state.dayQuest3) {
+          toast('你已经领取过奖励了')
+          return
+        }
         for (let i = 0; i < userInfo.dayQuest.length; i++) {
           if (userInfo.dayQuest[i].date === getNowDay()) {
             if (userInfo.dayQuest[i].order.filter(item => item.type === 2).length >= 4) {

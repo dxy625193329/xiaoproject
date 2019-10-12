@@ -1,0 +1,51 @@
+.vote {
+  min-height: 100vh;
+  background: #f8f8f8;
+  box-sizing: border-box;
+  padding: 20px 40px 40px 40px;
+
+  .vote-list-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .vote-item {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin-top: 32px;
+    padding: 28px 20px;
+    border-radius: 12px;
+    background: #fff;
+
+    .vote-item-title {
+      font-size: 50px;
+      font-weight: 700;
+      color: #303030;
+      margin-bottom: 16px;
+    }
+
+    .vote-item-status {
+      width: fit-content;
+      padding: 10px 20px;
+      font-size: 30px;
+      border-radius: 12px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .active {
+      background: #ec5a21;
+    }
+
+    .finish {
+      background: #303030;
+    }
+
+    .vote-item-time {
+      margin-bottom: 8px;
+      font-size: 28px;
+      color: #a1a1a1;
+    }
+  }
+}
