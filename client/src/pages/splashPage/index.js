@@ -35,7 +35,6 @@ export default class SplashPage extends Component {
 
   onGotUserInfo = res => {
     const dontShowEvent = Taro.getStorageSync('dontShowEvent')
-    Taro.clearStorageSync()
     Taro.login().then(res => {
       const { code } = res
       getOpenId({ code }).then(res => {

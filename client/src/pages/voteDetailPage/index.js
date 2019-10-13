@@ -211,6 +211,24 @@ export default class voteDetailPage extends Component {
     }
   }
 
+  openHot = item => {
+    if (Taro.getStorageSync('openid')) {
+      this.setState({ showHot: true, hotItem: item })
+    } else {
+      Taro.showModal({
+        title: '提示',
+        content: '使用热度小助手需要登录',
+        confirmText: '前往登录',
+      }).then(res => {
+        if (res.confirm) {
+          Taro.switchTab({
+            url: '/pages/mePage/index'
+          })
+        }
+      })
+    }
+  }
+
   render() {
     const { vote, isJoined, hasTicket, ticketId, showHot, hotCount, user, poolPay, restPay, voucherPay } = this.state
 
@@ -232,7 +250,7 @@ export default class voteDetailPage extends Component {
                   <View className='player-count'>{item.count} 票</View>
                   <View className={['ticket', ticketId === item.openId ? 'has-ticket' : '']} onClick={() => this.ticketIt(item)}>{ticketId === item.openId ? '👍 已投票' : '👍 给他投票'}</View>
                   {
-                    hasTicket && <View className='hot' onClick={() => this.setState({ showHot: true, hotItem: item })}>🚀 点击开启热度小助手</View>
+                    hasTicket && <View className='hot' onClick={() => this.openHot(item)}>🚀 点击开启热度小助手</View>
                   }
                 </View>
               </View>

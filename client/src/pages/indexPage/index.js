@@ -85,24 +85,10 @@ export default class IndexPage extends Component {
   routeToChildPage = index => {
     const phoneNumber = Taro.getStorageSync('phone')
     if (index === 2) {
-      if (Taro.getStorageSync('openid')) {
-        Taro.navigateTo({
-          url: '/pages/voteListPage/index'
-        })
-        return
-      } else {
-        Taro.showModal({
-          title: '提示',
-          content: '参与投票需要登录',
-          confirmText: '前往登录',
-        }).then(res => {
-          if (res.confirm) {
-            Taro.switchTab({
-              url: '/pages/mePage/index'
-            })
-          }
-        })
-      }
+      Taro.navigateTo({
+        url: '/pages/voteListPage/index'
+      })
+      return
     } else {
       if (phoneNumber) {
         if (index === 0) {
