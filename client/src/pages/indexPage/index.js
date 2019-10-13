@@ -178,13 +178,12 @@ export default class IndexPage extends Component {
             <View className='mask' onClick={() => this.hideMask()}></View>
             <View className='mask--wrapper'>
               <View className='mask--content'>
-                <View className='title'>校无忧上线活动</View>
-                <View className='desc'>1.因微信端问题，现发布订单需提前充值。充值金额也可直接提现。</View>
-                <View className='desc'>2.首次充值送代金(代金可直接支付订单)</View>
-                <View className='desc'>充20元送2元代金</View>
-                <View className='desc'>充50元送10元代金</View>
-                <View className='desc'>充100元送15元代金</View>
-                <View className='desc'>3.活动持续到2019年9月9日</View>
+                <View className='title'>校园投票功能全新上线！</View>
+                <View className='desc'>1.第二届“最受欢迎社团”投票活动火热进行中，快来为你喜欢的社团投票吧！</View>
+                <View className='desc'>（报名窗口持续开放中，欢迎加入活动）</View>
+                <View className='desc'>2.充值20送代金1元</View>
+                <View className='desc'>充值50元送代金3元</View>
+                <View className='desc'>充值100元送代金8元</View>
                 <View className='check' onClick={this.handleEventOk}>确定</View>
               </View>
             </View>

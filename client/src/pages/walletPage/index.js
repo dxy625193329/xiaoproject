@@ -92,13 +92,13 @@ export default class WalletPage extends Component {
                 user.wallet = wallet
                 if (!firstRecharge) {
                   if (reslut >= 100) {
-                    voucher += 15
+                    voucher += 8
                     user.firstRecharge = true
                   } else if (reslut >= 50) {
-                    voucher += 10
+                    voucher += 3
                     user.firstRecharge = true
                   } else if (reslut >= 20) {
-                    voucher += 2
+                    voucher += 1
                     user.firstRecharge = true
                   }
                   user.voucher = voucher
