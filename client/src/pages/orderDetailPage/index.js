@@ -96,7 +96,6 @@ export class OrderDetailPage extends Component {
     const order = { ...this.state.orderInfo }
     const user = { ...this.state.userInfo }
     if (this.state.voucherPay) {
-      console.log(user.voucher - (order.price - order.pool))
       if (user.voucher - (order.price - order.pool) >= 0) {
         let { voucher } = user
         if (order.pool > 0) {
