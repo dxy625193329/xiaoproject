@@ -23,28 +23,30 @@ export default class RankPage extends Component {
 
   handleBtnClick = () => {
     const { user, value } = this.state
-    let feed = {
-      openId: user.openId,
-      userName: user.userName,
-      userAvatar: user.userAvatar,
-      content: value,
-    }
-    addFeedBack({ feed }).then(res => {
-      this.setState({ value: '' })
-      const service = {
+    if (value.length > 0) {
+      const feed = {
         openId: user.openId,
-        title: '您的反馈已提交',
-        content: '我们的工作人员会尽快对您的意见或建议进行回复。'
+        userName: user.userName,
+        userAvatar: user.userAvatar,
+        content: value,
       }
-      addService({ service }).then(res => {
-        if (res.data.code === 200) {
-          toast('您的反馈已提交', 'success')
-          Taro.switchTab({
-            url: '/pages/mePage/index'
-          })
+      addFeedBack({ feed }).then(res => {
+        this.setState({ value: '' })
+        const service = {
+          openId: user.openId,
+          title: '您的反馈已提交',
+          content: '我们的工作人员会尽快对您的意见或建议进行回复。'
         }
+        addService({ service }).then(res => {
+          if (res.data.code === 200) {
+            toast('您的反馈已提交', 'success')
+            Taro.switchTab({
+              url: '/pages/mePage/index'
+            })
+          }
+        })
       })
-    })
+    }
   }
 
   render() {
