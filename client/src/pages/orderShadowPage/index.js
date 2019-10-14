@@ -146,7 +146,9 @@ export class OrderShadowPage extends Component {
       checkPrice,
       checkTime,
       checkDate,
-      user
+      checkPool,
+      user,
+      totalPrice
     } = this.state
 
     return (
@@ -288,7 +290,7 @@ export class OrderShadowPage extends Component {
                 <View className='info'>奖金池 {user.pool.toFixed(2)} 元，每次最高可折扣订单10%</View>
                 <View className='info'>折扣金额不可超过订单金额，最高可折扣50元</View>
                 {
-                  checkPool && <View className='error-info'>本次折扣最多{totalPrice * 0.1}元</View>
+                  checkPool && <View className='error-info'>本次折扣最多{(totalPrice * 0.1).toFixed(1)}元，当前可用奖金池{user.pool}元</View>
                 }
               </View>
               : <View className='bottom--item'>

@@ -34,6 +34,7 @@ export class OrderDetailPage extends Component {
   }
 
   componentWillMount() {
+    console.log(get('order'))
     this.setState({
       orderInfo: get('order'),
       userInfo: get('user'),
@@ -95,7 +96,8 @@ export class OrderDetailPage extends Component {
     const order = { ...this.state.orderInfo }
     const user = { ...this.state.userInfo }
     if (this.state.voucherPay) {
-      if (user.voucher - order.price >= 0) {
+      console.log(user.voucher - (order.price - order.pool))
+      if (user.voucher - (order.price - order.pool) >= 0) {
         let { voucher } = user
         if (order.pool > 0) {
           voucher = voucher - (order.price - order.pool)
@@ -134,7 +136,7 @@ export class OrderDetailPage extends Component {
       }
     }
     if (this.state.restPay) {
-      if (user.wallet - order.price >= 0) {
+      if (user.wallet - (order.price - order.pool) >= 0) {
         let { wallet } = user
         if (order.pool > 0) {
           wallet = wallet - (order.price - order.pool)
