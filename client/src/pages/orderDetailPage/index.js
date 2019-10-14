@@ -34,7 +34,6 @@ export class OrderDetailPage extends Component {
   }
 
   componentWillMount() {
-    console.log(get('order'))
     this.setState({
       orderInfo: get('order'),
       userInfo: get('user'),
