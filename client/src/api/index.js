@@ -95,6 +95,10 @@ export const refundPay = data => {
   return post('/wx/refundPay', data)
 }
 
+export const addCancelHunter = data => {
+  return post('/hunter/addCancelHunter', data)
+}
+
 // feedBackPage
 export const addFeedBack = data => {
   return post('/feed/add', data)

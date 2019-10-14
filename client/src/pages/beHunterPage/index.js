@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Input, Text, Image, Checkbox, CheckboxGroup } from '@tarojs/components'
 import './index.scss'
-import { addHunter, addService, getPay, updateUser, refundPay,cashOut } from '../../api'
+import { addHunter, addService, getPay, updateUser, refundPay, cashOut, addCancelHunter } from '../../api'
 import { get } from '../../lib/global'
 import { getNowDay } from '../../lib/time'
 import { toast } from '../../lib/utils';
@@ -136,6 +136,15 @@ export default class BeHunterPage extends Component {
       success: res => {
         if (res.confirm) {
           if (user.deposit === 100) {
+            if (user.identity) {
+              const hunter = {
+                openId: user.openId,
+                userName: user.userName,
+                userAvatar: user.userAvatar,
+                idCard: user.identity.idCardNumber
+              }
+              addCancelHunter({ hunter })
+            }
             refundPay({ orderId: user.identity.orderId, price: user.deposit }).then(res => {
               if (res.data.status === 200) {
                 user.isHunter = false
@@ -166,7 +175,7 @@ export default class BeHunterPage extends Component {
                   }, 1000)
                 })
               } else {
-                toast('退款失败，请稍后再试，或联系客服。')
+                toast('退款发起失败，请稍后再试，或联系客服。')
               }
             })
           } else if (user.deposit > 0) {
@@ -201,10 +210,10 @@ export default class BeHunterPage extends Component {
                   }, 1000)
                 })
               } else {
-                toast('退款失败，请稍后再试，或联系客服。')
+                toast('退款发起失败，请稍后再试，或联系客服。')
               }
             }).catch(err => {
-              toast('提现发起失败，请检查网络')
+              toast('退款发起失败，请检查网络')
             })
           }
         }
