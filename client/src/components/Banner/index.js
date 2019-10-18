@@ -2,7 +2,6 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Swiper, SwiperItem } from '@tarojs/components'
 import './index.scss'
 import { set } from '../../lib/global'
-import {getBanner} from '../../api'
 
 export default class Banner extends Component {
 
@@ -14,12 +13,14 @@ export default class Banner extends Component {
     animationShrink: {}
   }
 
-  componentWillMount() {
-    getBanner().then(res => this.setState({
-      bannerList: res.data.data.eventList
-    })).catch(err => {
-      toast('请检查您的网络状态', 'none')
-    })
+  // https://github.com/NervJS/taro/issues/11#issuecomment-395400150
+  static getDerivedStateFromProps(props, state) {
+    if (props.banners !== state.bannerList) {
+      return {
+        bannerList: props.banners
+      }
+    }
+    return null
   }
 
   handleChange = e => {
