@@ -2,25 +2,24 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Swiper, SwiperItem } from '@tarojs/components'
 import './index.scss'
 import { set } from '../../lib/global'
+import {getBanner} from '../../api'
 
 export default class Banner extends Component {
 
   state = {
-    banners: [],
+    bannerList: [],
     currentIndex: 0,
     margin: '40px',
     animationEnlarge: {},
     animationShrink: {}
   }
 
-  // https://github.com/NervJS/taro/issues/11#issuecomment-395400150
-  static getDerivedStateFromProps(props, state) {
-    if (props.banners !== state.banners) {
-      return {
-        banners: props.banners
-      }
-    }
-    return null
+  componentWillMount() {
+    getBanner().then(res => this.setState({
+      bannerList: res.data.data.eventList
+    })).catch(err => {
+      toast('请检查您的网络状态', 'none')
+    })
   }
 
   handleChange = e => {
@@ -68,7 +67,7 @@ export default class Banner extends Component {
 
 
   render() {
-    const { margin, currentIndex, animationEnlarge, animationShrink, banners } = this.state
+    const { margin, currentIndex, animationEnlarge, animationShrink, bannerList } = this.state
     return (
       <View className='banner--wrapper'>
         <Swiper
@@ -81,7 +80,7 @@ export default class Banner extends Component {
           onChange={this.handleChange}
         >
           {
-            banners.map((item, index) =>
+            bannerList.map((item, index) =>
               <SwiperItem
                 key={item._id}
                 className='swiper--item'
@@ -102,7 +101,7 @@ export default class Banner extends Component {
         <View className='swiper--dot'>
           <ul>
             {
-              banners.map((item, index) =>
+              bannerList.map((item, index) =>
                 <View
                   key={index}
                   className={['dot', currentIndex === index ? 'dot--active' : null]}

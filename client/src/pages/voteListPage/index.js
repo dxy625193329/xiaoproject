@@ -2,10 +2,10 @@ import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 
 import { getVoteList } from '../../api'
-import { formatVoteTime } from "../../lib/time";
+import { formatVoteTime } from "../../lib/time"
 
 import './index.scss'
-import { set } from '../../lib/global';
+import { set } from '../../lib/global'
 
 export default class VoteListPage extends Component {
 

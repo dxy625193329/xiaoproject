@@ -5,7 +5,7 @@ import { getTime, getDay, getNowDay } from '../../lib/time'
 import { set, get } from '../../lib/global'
 import { toast } from '../../lib/utils'
 
-import { getUserByOpenId, getBanner, updateUser, getMessageList } from '../../api'
+import { getUserByOpenId, updateUser, getMessageList } from '../../api'
 
 import Banner from '../../components/Banner'
 import './index.scss'
@@ -47,11 +47,6 @@ export default class IndexPage extends Component {
   }
 
   componentDidMount() {
-    getBanner().then(res => this.setState({
-      banners: res.data.data.eventList
-    })).catch(err => {
-      toast('请检查您的网络状态', 'none')
-    })
     const openId = Taro.getStorageSync('openid')
     if (openId) {
       setInterval(this.fetchIm, 15000)
@@ -187,7 +182,7 @@ export default class IndexPage extends Component {
         <View className='title--wrapper'>
           <Text className='title'>{getDay()}好。</Text>
         </View>
-        <Banner banners={this.state.banners} />
+        <Banner/>
         <View className='service--wrapper'>
           <Text className='alias'>Service</Text>
           <Text className='title'>服务</Text>

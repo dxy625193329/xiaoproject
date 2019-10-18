@@ -67,6 +67,14 @@ export default class voteDetailPage extends Component {
 
   ticketIt = item => {
     const { vote, hasTicket } = this.state
+    if (Date.now() < vote.time[0]) {
+      toast(`投票还没有开始，开始时间 ${formatVoteTime(vote.time[0])}`)
+      return
+    }
+    if (Date.now() > vote.time[1]) {
+      toast('投票已经结束了')
+      return
+    }
     if (hasTicket) {
       toast('今日已投过票啦，明天再来吧!')
     } else {
