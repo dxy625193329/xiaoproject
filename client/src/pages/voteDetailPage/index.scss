@@ -65,10 +65,26 @@
   padding: 20px 40px;
 }
 
+.vote--input-wrapper {
+  background: #fff;
+  padding: 20px 32px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  font-size: 32px;
+  color: #303030;
+  margin: 40px;
+}
+
 .player-name {
   font-weight: 700;
   color: #313131;
   font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.player-index{
+  color: #313131;
+  font-size: 30px;
   margin-bottom: 12px;
 }
 

@@ -26,7 +26,9 @@ export default class voteDetailPage extends Component {
     user: {},
     poolPay: false,
     restPay: false,
-    voucherPay: false
+    voucherPay: false,
+    id: '',
+    searchPlayer: null
   }
 
   componentDidMount() {
@@ -39,7 +41,8 @@ export default class voteDetailPage extends Component {
         return
       }
     })
-    this.setState({ vote, user: get('user') })
+    this.sortPlayers(vote)
+    this.setState({ user: get('user') })
     const ticketObj = Taro.getStorageSync('dayTicket')
     if (ticketObj) {
       if (formatVoteTime(Date.now()) === ticketObj.date) {
@@ -65,6 +68,15 @@ export default class voteDetailPage extends Component {
     })
   }
 
+  sortPlayers = vote => {
+    vote.players = vote.players.sort((a, b) => {
+      if (a.count > b.count) return -1
+      if (a.count < b.count) return 1
+      return 0
+    })
+    this.setState({ vote })
+  }
+
   ticketIt = item => {
     const { vote, hasTicket } = this.state
     if (Date.now() < vote.time[0]) {
@@ -83,7 +95,8 @@ export default class voteDetailPage extends Component {
           if (player.openId === item.openId) {
             player.count++
             updateVoteInfo({ voteId: vote._id, player }).then(res => {
-              this.setState({ vote, hasTicket: true, ticketId: player.openId })
+              this.sortPlayers(vote)
+              this.setState({ hasTicket: true, ticketId: player.openId })
               return
             })
           }
@@ -145,6 +158,7 @@ export default class voteDetailPage extends Component {
                 voucherPay: false
               })
               updateVoteInfo({ voteId: vote._id, player }).then(res => {
+                this.sortPlayers(vote)
                 toast('🚀赠送成功')
               })
               updateUser({ user })
@@ -172,9 +186,13 @@ export default class voteDetailPage extends Component {
                 count: this.state.hotCount
               })
               updateVoteInfo({ voteId: vote._id, player }).then(res => {
+                this.sortPlayers(vote)
                 toast('🚀赠送成功')
                 this.setState({
-                  showHot: false, hotCount: 0, user, poolPay: false,
+                  showHot: false,
+                  hotCount: 0,
+                  user,
+                  poolPay: false,
                   restPay: false,
                   voucherPay: false
                 })
@@ -197,16 +215,20 @@ export default class voteDetailPage extends Component {
         if (vote.players) {
           vote.players.map(player => {
             if (player.openId === hotItem.openId) {
-              player.count += this.state.hotCount
-              player.giftCount += this.state.hotCount
+              player.count += this.state.hotCount * 100
+              player.giftCount += this.state.hotCount * 100
               player.gift.push({
                 openId: Taro.getStorageSync('openid'),
                 count: this.state.hotCount
               })
               updateVoteInfo({ voteId: vote._id, player }).then(res => {
                 toast('🚀赠送成功')
+                this.sortPlayers(vote)
                 this.setState({
-                  showHot: false, hotCount: 0, user, poolPay: false,
+                  showHot: false,
+                  hotCount: 0,
+                  user,
+                  poolPay: false,
                   restPay: false,
                   voucherPay: false
                 })
@@ -240,24 +262,58 @@ export default class voteDetailPage extends Component {
     }
   }
 
+  handleInputChange = e => {
+    const searchPlayer = this.state.vote.players.filter(item => item.playerId.toString() === e.target.value)
+    if (searchPlayer.length > 0) {
+      this.setState({ [e.target.id]: e.target.value, searchPlayer: searchPlayer[0] })
+    } else {
+      this.setState({ [e.target.id]: e.target.value, searchPlayer: null })
+    }
+  }
+
   render() {
-    const { vote, isJoined, hasTicket, ticketId, showHot, hotCount, user, poolPay, restPay, voucherPay } = this.state
+    const { vote, isJoined, hasTicket, ticketId, showHot, hotCount, user, poolPay, restPay, voucherPay, id, searchPlayer } = this.state
 
     return (
       <View className='vote-wrapper'>
         <View className='vote-subtitle'>{vote.subTitle}</View>
         <View className={['vote-join', isJoined ? 'has-joined' : '']} onClick={this.routeToJoinPage}>{isJoined ? '你已参加了本次投票活动' : '点击参加投票活动'}</View>
+        <View className='vote--input-wrapper'>
+          <Input
+            id="id"
+            value={id}
+            placeholder='输入参赛编号可快速筛选'
+            onInput={this.handleInputChange}
+          />
+        </View>
         <View className='vote-players-title'>参加投票的选手</View>
         <View className='vote-players'>
           {
             vote.players && vote.players.length === 0 && <View className='no-player'>还没有选手参加</View>
           }
           {
-            vote.players && vote.players.length > 0 && vote.players.map((item, index) =>
-              <View className='vote-item' key={index}>
+            vote.players && vote.players.length > 0 && id.length > 0 && searchPlayer && (
+              <View className='vote-item'>
+                <Image src={searchPlayer.image} className='vote-image' onClick={() => this.viewImage(searchPlayer.image)} />
+                <View className='vote-info'>
+                  <View className='player-name'>{searchPlayer.name}</View>
+                  <View className='player-index'>参赛编号：{searchPlayer.playerId} 号</View>
+                  <View className='player-count'>{searchPlayer.count} 票</View>
+                  <View className={['ticket', ticketId === searchPlayer.openId ? 'has-ticket' : '']} onClick={() => this.ticketIt(searchPlayer)}>{ticketId === searchPlayer.openId ? '👍 已投票' : '👍 给他投票'}</View>
+                  {
+                    hasTicket && <View className='hot' onClick={() => this.openHot(searchPlayer)}>🚀 点击开启热度小助手</View>
+                  }
+                </View>
+              </View>
+            )
+          }
+          {
+            vote.players && vote.players.length > 0 && id === '' && vote.players.map(item =>
+              <View className='vote-item' key={item.playerId}>
                 <Image src={item.image} className='vote-image' onClick={() => this.viewImage(item.image)} />
                 <View className='vote-info'>
                   <View className='player-name'>{item.name}</View>
+                  <View className='player-index'>参赛编号：{item.playerId} 号</View>
                   <View className='player-count'>{item.count} 票</View>
                   <View className={['ticket', ticketId === item.openId ? 'has-ticket' : '']} onClick={() => this.ticketIt(item)}>{ticketId === item.openId ? '👍 已投票' : '👍 给他投票'}</View>
                   {

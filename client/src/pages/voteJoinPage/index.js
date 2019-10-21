@@ -49,8 +49,8 @@ export default class VoteJoinPage extends Component {
           openId,
           name,
           image: res[0].data,
-          voteId:get('voteId'),
-          voteName:get('voteName')
+          voteId: get('voteId'),
+          voteName: get('voteName')
         }
         addPlayer({ player }).then(res => {
           if (res.data.code === 200) {
