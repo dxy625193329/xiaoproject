@@ -15,13 +15,29 @@ const typeList = [
     type: 2,
     name: '影分身',
     desc: '在光明中前行 亦需有影相随'
+  }, {
+    cover: 'http://cdn.xwuyou.com/order_3.jpg',
+    type: 3,
+    name: '快递类需求',
+    desc: '你的快递 有我守护'
   },
 ]
 
 export class OrderTypePage extends Component {
 
   routeToOrderBranchPage = type => {
-    const path = type === 1 ? 'orderNormalPage' : 'orderShadowPage'
+    let path
+    switch (type) {
+      case 1:
+        path = 'orderNormalPage'
+        break
+      case 2:
+        path = 'orderShadowPage'
+        break
+      case 3:
+        path = 'expressPage'
+        break
+    }
     Taro.navigateTo({
       url: `/pages/${path}/index?type=${type}`
     })

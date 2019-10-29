@@ -16,6 +16,13 @@ export const getTypeInfo = type => {
         title: '影分身',
         desc: '让影子出现在你应该出现的地方，而你出现在更重要的地方。'
       }
+    case '3':
+      return {
+        type: 3,
+        rank: true,
+        title: '快递类需求',
+        desc: '你的快递，有我守护，以最快的速度满足你拆快递的心情。'
+      }
   }
 }
 
@@ -110,7 +117,7 @@ export const calcLevel = (type, count, userLevel) => {
   }
 }
 
-export const toast = (title, icon='none', duration = 2000) => {
+export const toast = (title, icon = 'none', duration = 2000) => {
   Taro.showToast({
     title,
     icon,

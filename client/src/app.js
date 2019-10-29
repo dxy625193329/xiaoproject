@@ -28,7 +28,8 @@ class App extends Component {
       'pages/aboutHunterPage/index',
       'pages/voteListPage/index',
       'pages/voteDetailPage/index',
-      'pages/voteJoinPage/index'
+      'pages/voteJoinPage/index',
+      'pages/expressPage/index'
     ],
     window: {
       backgroundTextStyle: 'light',
