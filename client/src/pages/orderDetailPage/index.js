@@ -91,6 +91,23 @@ export class OrderDetailPage extends Component {
     }
   }
 
+  handleImageChoose = e => {
+    Taro.chooseImage({
+      count: 1,
+      sizeType: ['original', 'compressed'],
+      sourceType: ['album', 'camera']
+    }).then(res => {
+      switch (e.currentTarget.id) {
+        case 'image1':
+          this.setState({ tempImageUrl1: res.tempFilePaths[0] })
+          break
+        case 'image2':
+          this.setState({ tempImageUrl2: res.tempFilePaths[0] })
+          break
+      }
+    })
+  }
+
   handleOrderPay = () => {
     const order = { ...this.state.orderInfo }
     const user = { ...this.state.userInfo }
@@ -111,23 +128,55 @@ export class OrderDetailPage extends Component {
         order.status = 'wait'
         user.voucher = voucher
         this.setState({ fromOrder: false }, () => {
-          createOrder({ order, user: { openId: user.openId, voucher: user.voucher, pool: user.pool } }).then(res => {
-            if (res.data.code === 200) {
-              set('user', user)
-              this.setState({ showMask: false, showDontTouch: true })
-              toast('发单成功', 'success')
-              Taro.removeStorageSync('tempOrder')
-              setTimeout(() => {
-                Taro.switchTab({
-                  url: '/pages/orderPage/index'
-                })
-              }, 1000)
-            } else {
+          if (order.type === 3) {
+            let uploadList = [order.expressInfoImage, order.authInfoImage].map(path => {
+              return Taro.uploadFile({
+                url: 'https://xwuyou.com/api/upload',
+                filePath: path,
+                name: 'himg'
+              })
+            })
+
+            this.setState({ showMask: false, showDontTouch: true })
+            Promise.all(uploadList).then(res => {
+              order.expressInfoImage = res[0].data
+              order.authInfoImage = res[1].data
+              createOrder({ order, user: { openId: user.openId, voucher: user.voucher, pool: user.pool } }).then(res => {
+                if (res.data.code === 200) {
+                  set('user', user)
+                  toast('发单成功', 'success')
+                  Taro.removeStorageSync('tempOrder')
+                  setTimeout(() => {
+                    Taro.switchTab({
+                      url: '/pages/orderPage/index'
+                    })
+                  }, 1000)
+                } else {
+                  toast('创建订单失败，请检查您的网络状态后重试')
+                }
+              }).catch(err => {
+                toast('创建订单失败，请检查您的网络状态后重试')
+              })
+            })
+          } else {
+            createOrder({ order, user: { openId: user.openId, voucher: user.voucher, pool: user.pool } }).then(res => {
+              if (res.data.code === 200) {
+                set('user', user)
+
+                toast('发单成功', 'success')
+                Taro.removeStorageSync('tempOrder')
+                setTimeout(() => {
+                  Taro.switchTab({
+                    url: '/pages/orderPage/index'
+                  })
+                }, 1000)
+              } else {
+                toast('创建订单失败，请检查您的网络状态后重试')
+              }
+            }).catch(err => {
               toast('创建订单失败，请检查您的网络状态后重试')
-            }
-          }).catch(err => {
-            toast('创建订单失败，请检查您的网络状态后重试')
-          })
+            })
+          }
         })
       } else {
         toast('代金不足，请选择其他支付方式')
@@ -150,23 +199,55 @@ export class OrderDetailPage extends Component {
         order.status = 'wait'
         user.wallet = wallet
         this.setState({ fromOrder: false }, () => {
-          createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
-            if (res.data.code === 200) {
-              set('user', user)
-              this.setState({ showMask: false, showDontTouch: true })
-              toast('发单成功', 'success')
-              Taro.removeStorageSync('tempOrder')
-              setTimeout(() => {
-                Taro.switchTab({
-                  url: '/pages/orderPage/index'
-                })
-              }, 1000)
-            } else {
+          if (order.type === 3) {
+            let uploadList = [order.expressInfoImage, order.authInfoImage].map(path => {
+              return Taro.uploadFile({
+                url: 'https://xwuyou.com/api/upload',
+                filePath: path,
+                name: 'himg'
+              })
+            })
+
+            this.setState({ showMask: false, showDontTouch: true })
+            Promise.all(uploadList).then(res => {
+              order.expressInfoImage = res[0].data
+              order.authInfoImage = res[1].data
+              createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
+                if (res.data.code === 200) {
+                  set('user', user)
+                  toast('发单成功', 'success')
+                  Taro.removeStorageSync('tempOrder')
+                  setTimeout(() => {
+                    Taro.switchTab({
+                      url: '/pages/orderPage/index'
+                    })
+                  }, 1000)
+                } else {
+                  toast('创建订单失败，请检查您的网络状态后重试', 'none')
+                }
+              }).catch(err => {
+                toast('创建订单失败，请检查您的网络状态后重试', 'none')
+              })
+            })
+          } else {
+            createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
+              if (res.data.code === 200) {
+                set('user', user)
+                this.setState({ showMask: false, showDontTouch: true })
+                toast('发单成功', 'success')
+                Taro.removeStorageSync('tempOrder')
+                setTimeout(() => {
+                  Taro.switchTab({
+                    url: '/pages/orderPage/index'
+                  })
+                }, 1000)
+              } else {
+                toast('创建订单失败，请检查您的网络状态后重试', 'none')
+              }
+            }).catch(err => {
               toast('创建订单失败，请检查您的网络状态后重试', 'none')
-            }
-          }).catch(err => {
-            toast('创建订单失败，请检查您的网络状态后重试', 'none')
-          })
+            })
+          }
         })
       } else {
         toast('余额不足，请前往钱包充值')
@@ -353,9 +434,13 @@ export class OrderDetailPage extends Component {
 
   makeUserPhoneCall = () => {
     const { phoneNumber } = this.state.orderInfo
-    Taro.makePhoneCall({
-      phoneNumber
-    })
+    if (this.state.userInfo.phoneNumber === phoneNumber) {
+      toast('无法拨打电话给自己')
+    } else {
+      Taro.makePhoneCall({
+        phoneNumber
+      })
+    }
   }
 
   makeMessageToHunter = () => {
@@ -501,6 +586,13 @@ export class OrderDetailPage extends Component {
     }
   }
 
+  viewImage = image => {
+    Taro.previewImage({
+      current: image,
+      urls: [image],
+    })
+  }
+
   render() {
     const {
       openId,
@@ -519,7 +611,14 @@ export class OrderDetailPage extends Component {
       pay,
       hunterOpenId,
       privateText,
-      sexText
+      sexText,
+      typeText,
+      siteText,
+      sizeText,
+      needSpeed,
+      speed,
+      expressInfoImage,
+      authInfoImage
     } = this.state.orderInfo
     const { wallet, voucher } = this.state.userInfo
     const {
@@ -560,7 +659,7 @@ export class OrderDetailPage extends Component {
                         />
                         <View>代金支付</View>
                       </View>
-                      <View className='right'>¥ {voucher}</View>
+                      <View className='right'>¥ {voucher.toFixed(2)}</View>
                     </View>
                     <View
                       className={['item', restPay ? 'payment' : null]}
@@ -573,7 +672,7 @@ export class OrderDetailPage extends Component {
                         />
                         <View>余额支付</View>
                       </View>
-                      <View className='right'>¥ {wallet}</View>
+                      <View className='right'>¥ {wallet.toFixed(2)}</View>
                     </View>
                   </View>
                   <View className='check' onClick={this.handleOrderPay}>支付</View>
@@ -635,18 +734,25 @@ export class OrderDetailPage extends Component {
             : null
         }
         {
-          ['process', 'confirm', 'complete'].includes(status) && <View className={['middle', hunter === {} || hunter === undefined ? 'mg-t' : null]}>
+          ['process', 'confirm', 'complete', 'waitpay'].includes(status) && <View className={['middle', hunter === {} || hunter === undefined ? 'mg-t' : null]}>
             <View className='title'>用户信息</View>
             <View className='info--type'>
               <View className='info--title'>联系人</View>
               <View className='info--text'>{userName}</View>
             </View>
             {
-              type === 1 ?
-                <View className='info--desc'>
-                  <View className='title'>联系地址</View>
-                  <View className='text'>{addressText}</View>
-                </View> : null
+              type === 1 &&
+              <View className='info--desc'>
+                <View className='title'>联系地址</View>
+                <View className='text'>{addressText}</View>
+              </View>
+            }
+            {
+              type === 3 &&
+              <View className='info--desc'>
+                <View className='title'>收货地址</View>
+                <View className='text'>{addressText}</View>
+              </View>
             }
             <View className='info--desc'>
               <View className='title'>联系方式</View>
@@ -673,22 +779,50 @@ export class OrderDetailPage extends Component {
           <View className='title'>需求信息</View>
           <View className='info--type'>
             <View className='info--title'>需求类别</View>
-            <View className='info--text'>{type === 1 ? '大众类需求' : '影分身'}</View>
+            <View className='info--text'>{typeText}</View>
           </View>
-          <View className='info--desc'>
-            <View className='title'>需求信息</View>
-            <View className='text'>{needText}</View>
-          </View>
+          {
+            (type === 1 || type === 2) && <View className='info--desc'>
+              <View className='title'>需求信息</View>
+              <View className='text'>{needText}</View>
+            </View>
+          }
+          {
+            type === 3 && <View className='info--desc'>
+              <View className='title'>快递点</View>
+              <View className='text'>{siteText}</View>
+            </View>
+          }
           {
             ['process', 'confirm', 'complete'].includes(status) && privateText != undefined && <View className='info--desc'>
               <View className='title'>隐私信息</View>
               <View className='text'>{privateText}</View>
             </View>
           }
-          <View className='info--desc'>
-            <View className='title'>猎人性别要求</View>
-            <View className='text'>{sexText}</View>
-          </View>
+          {
+            (type === 1 || type === 2) && <View className='info--desc'>
+              <View className='title'>猎人性别要求</View>
+              <View className='text'>{sexText}</View>
+            </View>
+          }
+          {
+            type === 3 && <View className='info--desc'>
+              <View className='title'>快递大小</View>
+              <View className='text'>{sizeText}</View>
+            </View>
+          }
+          {
+            type === 3 && <View className='info--desc'>
+              <View className='title'>是否加急</View>
+              <View className='text'>{needSpeed ? '是' : '否'}</View>
+            </View>
+          }
+          {
+            (type === 3 && needSpeed) && <View className='info--desc'>
+              <View className='title'>加急金额</View>
+              <View className='text'>{speed}</View>
+            </View>
+          }
           {
             date != '' &&
             <View className='info--desc'>
@@ -704,6 +838,19 @@ export class OrderDetailPage extends Component {
             </View>
           }
         </View>
+        {
+          (type === 3 && ['process', 'confirm', 'complete'].includes(status)) && <View className='bottom'>
+            <View className='title'>快递信息</View>
+            <View className='bottom--express-item'>
+              <View className='bottom--title'>快递基本信息</View>
+              <Image src={expressInfoImage} className='image' onClick={() => this.viewImage(expressInfoImage)} />
+            </View>
+            <View className='bottom--express-item'>
+              <View className='bottom--title'>用户认证信息</View>
+              <Image src={authInfoImage} className='image' onClick={() => this.viewImage(authInfoImage)} />
+            </View>
+          </View>
+        }
         <View className='bottom'>
           <View className='title'>费用信息</View>
           <View className='bottom--item'>

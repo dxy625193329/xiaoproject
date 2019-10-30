@@ -1,5 +1,5 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View, Textarea, Input, Picker } from '@tarojs/components'
+import { View, Input, Picker, Switch } from '@tarojs/components'
 import './index.scss'
 import { get, set } from '../../lib/global'
 import { getFullTime } from '../../lib/time'
@@ -10,29 +10,75 @@ export class expressPage extends Component {
   state = {
     typeInfo: {},
     user: {},
-    username: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').userName : '',
+    username: '',
     siteSelector: ['顺丰', '邮政', '圆通', '中通', '申通', '韵达', '百世', '天天', '四食堂快递点', '其他(需自行联系代取点)'],
     siteSelectorChecked: '顺丰',
     sizeSelector: ['小', '中', '大'],
     sizeSelectorChecked: '小',
-    price: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').price : 0,
-    totalPrice: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').price - Taro.getStorageSync('tempOrder').pool : 3,
-    addressText: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').addressText : '',
-    needText: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').needText : '',
-    privateText: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').privateText : '',
+    price: 0,
+    totalPrice: 3,
+    addressText: '',
+    needText: '',
+    privateText: '',
     date: '',
     time: '',
-    pool: Taro.getStorageSync('tempOrder') ? Taro.getStorageSync('tempOrder').pool : 0,
+    pool: 0,
     checkUsername: false,
     checkAddress: false,
-    checkNeed: false,
-    checkPrice: false,
+    checkSpeed: false,
+    checkImage1: false,
+    checkImage2: false,
     checkPool: false,
-    tempOrder: {}
+    tempOrder: {},
+    tempImageUrl1: '',
+    tempImageUrl2: '',
+    needSpeed: false,
+    speed: 0
   }
 
   componentWillMount() {
-    this.setState({ typeInfo: getTypeInfo(this.$router.params.type), user: get('user'), tempOrder: Taro.getStorageSync('tempOrder') })
+    const user = get('user')
+    this.setState({
+      typeInfo: getTypeInfo(this.$router.params.type),
+      user,
+      tempOrder: Taro.getStorageSync('tempOrder')
+    })
+    if (user.voucher > 0 || user.wallet > 0) {
+      return
+    } else {
+      Taro.showModal({
+        title: '提示',
+        content: '检测到你的钱包支付额度为0，该平台无法直接微信支付，建议充值后再继续操作，以免为您带来不必要的麻烦。',
+        confirmText: '前往充值',
+      }).then(res => {
+        if (res.confirm) {
+          Taro.switchTab({
+            url: '/pages/mePage/index'
+          })
+        }
+      })
+    }
+  }
+
+  handleImageChoose = e => {
+    Taro.chooseImage({
+      count: 1,
+      sizeType: ['original', 'compressed'],
+      sourceType: ['album', 'camera']
+    }).then(res => {
+      switch (e.currentTarget.id) {
+        case 'image1':
+          this.setState({ tempImageUrl1: res.tempFilePaths[0] })
+          break
+        case 'image2':
+          this.setState({ tempImageUrl2: res.tempFilePaths[0] })
+          break
+      }
+    })
+  }
+
+  handleNeedSpeed = e => {
+    this.setState({ needSpeed: e.detail.value })
   }
 
   handleSizeSelectorChange = e => {
@@ -56,6 +102,15 @@ export class expressPage extends Component {
   }
 
   handleInputChange = e => {
+    if (e.target.id === 'speed') {
+      if (isNaN(e.target.value) || e.target.value === '') {
+        this.setState({ speed: 0 })
+        return
+      } else {
+        this.setState({ speed: parseFloat(parseFloat(e.target.value).toFixed(2)) })
+        return
+      }
+    }
     if (e.target.id === 'pool') {
       if (isNaN(e.target.value) || e.target.value === '') {
         this.setState({ pool: 0 })
@@ -72,9 +127,12 @@ export class expressPage extends Component {
       typeInfo,
       username,
       addressText,
-      needText,
-      selectorChecked,
-      privateText,
+      siteSelectorChecked,
+      sizeSelectorChecked,
+      needSpeed,
+      speed,
+      tempImageUrl1,
+      tempImageUrl2,
       date,
       time,
       pool,
@@ -89,14 +147,17 @@ export class expressPage extends Component {
       wxName: user.userName,
       userName: username,
       type: typeInfo.type,
-      typeText: typeInfo.type === 1 ? '大众类需求' : '影分身',
+      typeText: '快递类需求',
       rank: typeInfo.rank,
       phoneNumber: user.phoneNumber,
       addressText,
-      sexText: selectorChecked,
-      needText: needText.replace(/代课/g, '无忧课'),
-      privateText,
-      price: totalPrice,
+      price: needSpeed ? totalPrice + speed : totalPrice,
+      siteText: siteSelectorChecked,
+      sizeText: sizeSelectorChecked,
+      needSpeed,
+      speed,
+      expressInfoImage: tempImageUrl1,
+      authInfoImage: tempImageUrl2,
       date,
       time,
       pool,
@@ -117,22 +178,27 @@ export class expressPage extends Component {
     } else {
       this.setState({ checkAddress: false })
     }
-    if (!needText) {
-      this.setState({ checkNeed: true })
+    if (!tempImageUrl1) {
+      this.setState({ checkImage1: true })
     } else {
-      this.setState({ checkNeed: false })
+      this.setState({ checkImage1: false })
     }
-    if (isNaN(totalPrice) || totalPrice < 2 || totalPrice === '') {
-      this.setState({ checkPrice: true })
+    if (!tempImageUrl2) {
+      this.setState({ checkImage2: true })
     } else {
-      this.setState({ checkPrice: false })
+      this.setState({ checkImage2: false })
     }
-    if (isNaN(pool) || pool < 0 || pool === '' || pool > (totalPrice / 10) || pool >= 50 || pool > totalPrice || pool > user.pool) {
+    if (isNaN(speed) || speed < 1 || speed === '') {
+      this.setState({ checkSpeed: true })
+    } else {
+      this.setState({ checkSpeed: false })
+    }
+    if (isNaN(pool) || pool < 0 || pool === '' || pool > ((totalPrice+speed) / 10) || pool >= 50 || pool > (totalPrice+speed) || pool > user.pool) {
       this.setState({ checkPool: true })
     } else {
       this.setState({ checkPool: false })
     }
-    if (!isNaN(totalPrice) && totalPrice >= 2 && !!username && !!addressText && !!needText && pool >= 0 && pool <= totalPrice && pool <= 50 && pool <= (totalPrice / 10) && pool <= user.pool) {
+    if ((needSpeed ? !isNaN(speed) && speed >= 1 : true) && !!username && !!tempImageUrl1 && !!tempImageUrl2 && !!addressText && pool >= 0 && pool <= (totalPrice+speed) && pool <= 50 && pool <= ((totalPrice+speed) / 10) && pool <= user.pool) {
       set('order', order)
       Taro.navigateTo({
         url: '/pages/orderDetailPage/index?fromOrder=true'
@@ -148,17 +214,20 @@ export class expressPage extends Component {
       sizeSelector,
       sizeSelectorChecked,
       addressText,
-      needText,
-      privateText,
       checkUsername,
       checkAddress,
-      checkNeed,
-      checkPrice,
+      checkSpeed,
+      checkImage1,
+      checkImage2,
       checkPool,
       user,
       totalPrice,
       siteSelectorChecked,
-      siteSelector
+      siteSelector,
+      tempImageUrl1,
+      tempImageUrl2,
+      needSpeed,
+      speed
     } = this.state
 
     return (
@@ -207,7 +276,7 @@ export class expressPage extends Component {
             />
           </View>
           {
-            checkAddress && <View className='error-info'>请输入联系地址</View>
+            checkAddress && <View className='error-info'>请输入收货地址</View>
           }
         </View>
         <View className='order--locate'>
@@ -258,37 +327,64 @@ export class expressPage extends Component {
           </View>
           <View className='info'>请严格按照实际情况选择快递规格和快递点，若猎人发现实物与任务信息不同，猎人有权拒绝执行任务。</View>
         </View>
-        <View className='order--info'>
-          <View className='title'>填写你的需求</View>
-          <Textarea
-            className='content'
-            id='needText'
-            value={needText}
-            onInput={this.handleInputChange}
-            placeholder='如：代拿快递，代买饭等。(如因需求信息有歧义或描述不清晰导致订单取消，发布方承担主要责任)'
-            cursor-spacing='100px'
-          />
+        <View className='order--locate'>
+          <View className='locate--top' style={{ marginBottom: '6px ' }}>
+            <View className='title'>是否加急</View>
+            <Switch color="#72C9AA" onChange={this.handleNeedSpeed} />
+          </View>
           {
-            checkNeed && <View className='error-info'>请输您的需求</View>
+            needSpeed &&
+            <View className='local--bottom'>
+              <View className='title'>
+                加急金额
+              </View>
+              <Input
+                id='speed'
+                onInput={this.handleInputChange}
+                type='digit'
+                value={speed}
+                placeholder='最低1元起'
+                cursor-spacing='100px'
+                maxLength='5'
+                className='input' />
+            </View>
           }
         </View>
-        <View className='order--info'>
-          <View className='title'>填写隐私信息</View>
-          <Textarea
-            className='content'
-            id='privateText'
-            value={privateText}
-            onInput={this.handleInputChange}
-            placeholder='如：快递单号、教室门牌号等'
-            cursor-spacing='100px'
-          />
+        {
+          (needSpeed && checkSpeed) && <View className='error-info' style={{ margin: '0 20px' }}>请正确输入加急金额，最低1元起</View>
+        }
+        <View
+          id="image1"
+          className='be__hunter--upload'
+          onClick={this.handleImageChoose}
+        >
+          {
+            tempImageUrl1 === '' ? <View className='text'>点击此处上传您的快递信息(手机号码、快递柜密码截图)</View> :
+              <Image src={tempImageUrl1} className='image' />
+          }
         </View>
+        {
+          checkImage1 && <View className='error-info' style={{ margin: '0 20px' }}>请上传您的快递信息</View>
+        }
+        <View
+          id="image2"
+          className='be__hunter--upload'
+          onClick={this.handleImageChoose}
+        >
+          {
+            tempImageUrl2 === '' ? <View className='text'>点击此处上传您的身份信息(校卡、学生证、支付宝实名认证等)</View> :
+              <Image src={tempImageUrl2} className='image' />
+          }
+        </View>
+        {
+          checkImage2 && <View className='error-info' style={{ margin: '0 20px' }}>请上传您的身份信息</View>
+        }
         <View className='bottom'>
           <View className='bottom--item'>
             <View className='bottom--title'>费用</View>
             <View className='bottom--text'>
               <View className='singal'>¥</View>
-              <View className='price'>{totalPrice}</View>
+              <View className='price'>{totalPrice + speed}</View>
             </View>
           </View>
           {
@@ -309,7 +405,7 @@ export class expressPage extends Component {
                 <View className='info'>奖金池 {user.pool.toFixed(2)} 元，每次最高可折扣订单10%</View>
                 <View className='info'>折扣金额不可超过订单金额，最高可折扣50元</View>
                 {
-                  checkPool && <View className='error-info'>本次折扣最多{(totalPrice * 0.1).toFixed(1)}元，当前可用奖金池{user.pool}元</View>
+                  checkPool && <View className='error-info'>本次折扣最多{((totalPrice+speed) * 0.1).toFixed(1)}元，当前可用奖金池{user.pool}元</View>
                 }
               </View>
               : <View className='bottom--item'>
@@ -323,7 +419,7 @@ export class expressPage extends Component {
           <View className='order--comfirm'>确认订单</View>
           <View className='right'>
             <View className='singal'>¥</View>
-            <View className='price'>{totalPrice}</View>
+            <View className='price'>{totalPrice+speed}</View>
           </View>
         </View>
       </View>

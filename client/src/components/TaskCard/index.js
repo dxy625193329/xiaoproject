@@ -36,6 +36,8 @@ export default class TaskCard extends Component {
         return 'type--normal'
       case 2:
         return 'type--shadow'
+      case 3:
+        return 'type--express'
     }
   }
 
@@ -59,8 +61,26 @@ export default class TaskCard extends Component {
         <View className="middle">
           <Text className='desc'>订单类别</Text>
           <Text className={['type', this.checkType(taskInfo.type)]}>{taskInfo.typeText}</Text>
-          <Text className='desc'>需求简介</Text>
-          <Text className='need'>{taskInfo.needText}</Text>
+          {
+            (taskInfo.type === 3 && taskInfo.needSpeed) && (
+              <block>
+                <Text className='desc'>加急状态</Text>
+                <Text className='speed-type'>急</Text>
+              </block>
+            )
+          }
+          {
+            taskInfo.type === 3 ? (<block>
+              <Text className='desc'>快递点</Text>
+              <Text className='need'>{taskInfo.siteText}</Text>
+              <Text className='desc'>快递大小</Text>
+              <Text className='need'>{taskInfo.sizeText}</Text>
+            </block>) : (<block>
+              <Text className='desc'>需求简介</Text>
+              <Text className='need'>{taskInfo.needText}</Text>
+            </block>)
+          }
+
           <Text className='text'>点击查看详情</Text>
           <View className='bottom'>
             <View className='total'>总计</View>

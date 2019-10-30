@@ -34,7 +34,7 @@ export default class TaskHallPage extends Component {
     getOrderListForHunt().then(res => {
       if (res.data.code === 200) {
         this.setState({
-          taskList: res.data.data.orderList.reverse(),
+          taskList: this.sortList(res.data.data.orderList.reverse(), 'speed'),
           sortedPriceList: this.sortList(res.data.data.orderList, 'price'),
           sortedTimeList: this.sortList(res.data.data.orderList, 'orderStamp'),
           sortedTypeList: this.sortList(res.data.data.orderList, 'type')

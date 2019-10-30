@@ -52,6 +52,16 @@
       margin: 12px 0 20px;
     }
 
+    .speed-type{
+      width: fit-content;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 24px;
+      background:  hsl(9, 100%, 61%);
+      color: #fff;
+      margin: 12px 0 20px;
+    }
+
     .need {
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -68,6 +78,10 @@
 
     .type--shadow {
       background: hsl(9, 100%, 61%);
+    }
+
+    .type--express {
+      background: hsl(266, 100%, 52%);
     }
 
     .text {
