@@ -159,10 +159,10 @@ export class OrderDetailPage extends Component {
               })
             })
           } else {
+            this.setState({ showMask: false, showDontTouch: true })
             createOrder({ order, user: { openId: user.openId, voucher: user.voucher, pool: user.pool } }).then(res => {
               if (res.data.code === 200) {
                 set('user', user)
-
                 toast('发单成功', 'success')
                 Taro.removeStorageSync('tempOrder')
                 setTimeout(() => {
@@ -230,6 +230,7 @@ export class OrderDetailPage extends Component {
               })
             })
           } else {
+            this.setState({ showMask: false, showDontTouch: true })
             createOrder({ order, user: { openId: user.openId, wallet: user.wallet, pool: user.pool } }).then(res => {
               if (res.data.code === 200) {
                 set('user', user)
@@ -278,10 +279,10 @@ export class OrderDetailPage extends Component {
           user: { openId: user.openId, wallet: user.wallet, pool: user.pool }, orderId: order.orderId
         }
       }
+      this.setState({ showDontTouch: true })
       cancelOrder(data).then(res => {
         if (res.data.code === 200) {
           set('user', user)
-          this.setState({ showDontTouch: true })
           toast('订单取消成功', 'success')
           setTimeout(() => {
             Taro.switchTab({
@@ -313,10 +314,10 @@ export class OrderDetailPage extends Component {
           user: { openId: user.openId, voucher: user.voucher, pool: user.pool }, orderId: order.orderId
         }
       }
+      this.setState({ showDontTouch: true })
       cancelOrderForVoucher(data).then(res => {
         if (res.data.code === 200) {
           set('user', user)
-          this.setState({ showDontTouch: true })
           toast('订单取消成功', 'success')
           setTimeout(() => {
             Taro.switchTab({
@@ -358,9 +359,9 @@ export class OrderDetailPage extends Component {
       phoneNumber: user.phoneNumber,
       getTime: Date.now()
     }
+    this.setState({ showMask: false, showDontTouch: true })
     hunterGetOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status, hunterOpenId: order.hunterOpenId, hunter: order.hunter } }).then(res => {
       if (res.data.code === 200) {
-        this.setState({ showMask: false, showDontTouch: true })
         toast('接单成功', 'success')
         setTimeout(() => {
           Taro.switchTab({
@@ -384,9 +385,9 @@ export class OrderDetailPage extends Component {
       const order = { ...this.state.orderInfo }
       order.statusText = '订单等待确认完成'
       order.status = 'confirm'
+      this.setState({ showDontTouch: true })
       hunterCompleteOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status } }).then(res => {
         if (res.data.code === 200) {
-          this.setState({ showDontTouch: true })
           toast('完成订单成功', 'success')
           setTimeout(() => {
             Taro.switchTab({
@@ -408,9 +409,9 @@ export class OrderDetailPage extends Component {
     const order = { ...this.state.orderInfo }
     order.statusText = '订单已完成'
     order.status = 'complete'
+    this.setState({ showDontTouch: true })
     userConfirmOrder({ order: { id: order.orderId, statusText: order.statusText, status: order.status, price: order.price }, nowTime: getNowDay() }).then(res => {
       if (res.data.code === 200) {
-        this.setState({ showDontTouch: true })
         toast('确认订单成功', 'success')
         setTimeout(() => {
           Taro.switchTab({

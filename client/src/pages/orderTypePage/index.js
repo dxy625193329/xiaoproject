@@ -16,7 +16,7 @@ const typeList = [
     name: '影分身',
     desc: '在光明中前行 亦需有影相随'
   }, {
-    cover: 'http://cdn.xwuyou.com/order_3.jpg',
+    cover: 'http://cdn.xwuyou.com/order__3.jpg',
     type: 3,
     name: '快递类需求',
     desc: '你的快递 有我守护'
