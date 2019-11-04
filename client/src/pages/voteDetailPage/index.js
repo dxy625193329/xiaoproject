@@ -185,17 +185,17 @@ export default class voteDetailPage extends Component {
                 openId: Taro.getStorageSync('openid'),
                 count: this.state.hotCount
               })
+              this.setState({
+                showHot: false,
+                hotCount: 0,
+                user,
+                poolPay: false,
+                restPay: false,
+                voucherPay: false
+              })
               updateVoteInfo({ voteId: vote._id, player }).then(res => {
                 this.sortPlayers(vote)
                 toast('🚀赠送成功')
-                this.setState({
-                  showHot: false,
-                  hotCount: 0,
-                  user,
-                  poolPay: false,
-                  restPay: false,
-                  voucherPay: false
-                })
               })
               updateUser({ user })
               set('user', user)
@@ -221,17 +221,17 @@ export default class voteDetailPage extends Component {
                 openId: Taro.getStorageSync('openid'),
                 count: this.state.hotCount
               })
+              this.setState({
+                showHot: false,
+                hotCount: 0,
+                poolPay: false,
+                restPay: false,
+                voucherPay: false,
+                user
+              })
               updateVoteInfo({ voteId: vote._id, player }).then(res => {
                 toast('🚀赠送成功')
                 this.sortPlayers(vote)
-                this.setState({
-                  showHot: false,
-                  hotCount: 0,
-                  user,
-                  poolPay: false,
-                  restPay: false,
-                  voucherPay: false
-                })
               })
               updateUser({ user })
               set('user', user)
