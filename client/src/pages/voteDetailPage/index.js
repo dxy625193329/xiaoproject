@@ -215,8 +215,8 @@ export default class voteDetailPage extends Component {
         if (vote.players) {
           vote.players.map(player => {
             if (player.openId === hotItem.openId) {
-              player.count += this.state.hotCount * 100
-              player.giftCount += this.state.hotCount * 100
+              player.count += this.state.hotCount
+              player.giftCount += this.state.hotCount
               player.gift.push({
                 openId: Taro.getStorageSync('openid'),
                 count: this.state.hotCount
