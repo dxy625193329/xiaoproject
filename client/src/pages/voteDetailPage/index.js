@@ -134,6 +134,9 @@ export default class voteDetailPage extends Component {
       toast('请输入正确的数量')
       return
     }
+    if (this.state.hotCount === 0) {
+      return
+    }
     if (this.state.poolPay) {
       if (user.pool - this.state.hotCount * 0.9 >= 0) {
         let { pool } = user
