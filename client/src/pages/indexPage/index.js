@@ -50,6 +50,7 @@ export default class IndexPage extends Component {
     getBanner().then(res => this.setState({
       banners: res.data.data.eventList
     })).catch(err => {
+      console.log(err)
       toast('请检查您的网络状态', 'none')
     })
     const openId = Taro.getStorageSync('openid')
@@ -140,22 +141,24 @@ export default class IndexPage extends Component {
     const openId = Taro.getStorageSync('openid')
     getUserByOpenId({ openId }).then(res => {
       const { user } = res.data.data
-      const { isHunter, dayQuest } = res.data.data.user
+      const { isHunter, dayQuest } = user
       set('user', user)
       set('isHunter', isHunter)
-      if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
-        dayQuest.push({
-          date: getNowDay(),
-          order: [],
-          quest1: false,
-          quest2: false,
-          quest3: false
-        })
-        user.dayQuest = dayQuest
-        updateUser({ user })
+      if(dayQuest.length){
+        if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
+          dayQuest.push({
+            date: getNowDay(),
+            order: [],
+            quest1: false,
+            quest2: false,
+            quest3: false
+          })
+          user.dayQuest = dayQuest
+          updateUser({ user })
+        }
       }
     }).catch(err => {
-      toast('请检查您的网络状态', 'none')
+      toast('请检查您的网络状态')
     })
   }
 
