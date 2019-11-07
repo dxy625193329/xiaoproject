@@ -18,7 +18,7 @@ export default class TaskHallPage extends Component {
     this.setState({
       timer: setInterval(() => {
         this.fetchData()
-      }, 15000)
+      }, 20000)
     })
   }
 

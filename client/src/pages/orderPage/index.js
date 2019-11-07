@@ -17,25 +17,16 @@ export default class OrderPage extends Component {
     currentIndex: 0,
     userOrderList: [],
     hunterOrderList: [],
-    timer: null,
     showOrderType: 1,
     showHunterType: 1
   }
 
   componentDidMount() {
-    this.setState({
-      timer: setInterval(() => {
-        this.fetchData()
-      }, 30000)
-    })
+    this.fetchData()
   }
 
   componentDidShow() {
     this.fetchData()
-  }
-
-  componentDidHide() {
-    clearInterval(this.state.timer)
   }
 
   handleSelectTab = index => {
@@ -45,14 +36,16 @@ export default class OrderPage extends Component {
 
   fetchData = () => {
     const openId = Taro.getStorageSync('openid')
-    getOrderListByOpenId({ openId: openId }).then(res => {
-      if (res.data.code === 200) {
-        this.setState({
-          userOrderList: res.data.data.userOrderList.reverse(),
-          hunterOrderList: res.data.data.hunterOrderList.reverse()
-        })
-      }
-    })
+    if (openId) {
+      getOrderListByOpenId({ openId }).then(res => {
+        if (res.data.code === 200) {
+          this.setState({
+            userOrderList: res.data.data.userOrderList.reverse(),
+            hunterOrderList: res.data.data.hunterOrderList.reverse()
+          })
+        }
+      })
+    }
   }
 
   showOrder = flag => {

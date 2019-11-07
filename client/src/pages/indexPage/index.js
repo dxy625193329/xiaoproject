@@ -34,7 +34,6 @@ export default class IndexPage extends Component {
     banners: [],
     phoneNumber: '',
     showEvent: false,
-    timer: null,
     messageLength: 0,
   }
 
@@ -50,28 +49,20 @@ export default class IndexPage extends Component {
     getBanner().then(res => this.setState({
       banners: res.data.data.eventList
     })).catch(err => {
-      console.log(err)
-      toast('请检查您的网络状态', 'none')
+      toast('请检查您的网络状态')
     })
-    const openId = Taro.getStorageSync('openid')
-    if (openId) {
-      setInterval(this.fetchIm, 15000)
-    }
   }
 
   componentDidShow() {
-    if (Taro.getStorageSync('openid')) {
-      this.fetchData()
-      this.fetchIm()
+    const openId = Taro.getStorageSync('openid')
+    if (openId) {
+      this.fetchData(openId)
+      this.fetchIm(openId)
     }
   }
 
-  componentDidHide() {
-    clearInterval(this.state.timer)
-  }
-
-  fetchIm = () => {
-    getMessageList({ openId: Taro.getStorageSync('openid') }).then(res => {
+  fetchIm = openId => {
+    getMessageList({ openId }).then(res => {
       if (res.data.code === 200) {
         const { messageList } = res.data
         let length = 0
@@ -137,14 +128,13 @@ export default class IndexPage extends Component {
     })
   }
 
-  fetchData = () => {
-    const openId = Taro.getStorageSync('openid')
+  fetchData = openId => {
     getUserByOpenId({ openId }).then(res => {
       const { user } = res.data.data
       const { isHunter, dayQuest } = user
       set('user', user)
       set('isHunter', isHunter)
-      if(dayQuest.length){
+      if (dayQuest.length) {
         if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
           dayQuest.push({
             date: getNowDay(),
