@@ -17,24 +17,10 @@ export default class RankPage extends Component {
     currentIndex: 0,
     userList: [],
     hunterList: [],
-    timer: null
-  }
-
-  componentDidMount() {
-    this.setState({
-      timer: setInterval(() => {
-        this.fetchData()
-      }, 30000)
-    })
   }
 
   componentDidShow() {
     this.fetchData()
-
-  }
-
-  componentDidHide() {
-    clearInterval(this.state.timer)
   }
 
   handleSelectTab = index => {
