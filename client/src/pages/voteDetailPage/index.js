@@ -93,11 +93,14 @@ export default class voteDetailPage extends Component {
       if (vote.players) {
         vote.players.map(player => {
           if (player.openId === item.openId) {
-            player.count++
-            updateVoteInfo({ voteId: vote._id, player }).then(res => {
-              this.sortPlayers(vote)
-              this.setState({ hasTicket: true, ticketId: player.openId })
-              return
+            this.setState({ hasTicket: true, ticketId: player.openId }, () => {
+              if (this.state.hasTicket) {
+                player.count++
+                updateVoteInfo({ voteId: vote._id, player }).then(res => {
+                  this.sortPlayers(vote)
+                  return
+                })
+              }
             })
           }
         })

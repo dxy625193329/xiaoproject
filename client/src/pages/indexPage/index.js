@@ -144,7 +144,7 @@ export default class IndexPage extends Component {
       const { isHunter, dayQuest } = user
       set('user', user)
       set('isHunter', isHunter)
-      if(dayQuest.length){
+      if (dayQuest.length) {
         if (dayQuest[dayQuest.length - 1].date !== getNowDay()) {
           dayQuest.push({
             date: getNowDay(),
@@ -156,6 +156,16 @@ export default class IndexPage extends Component {
           user.dayQuest = dayQuest
           updateUser({ user })
         }
+      } else {
+        const dayQuest = {
+          date: getNowDay(),
+          order: [],
+          quest1: false,
+          quest2: false,
+          quest3: false
+        }
+        user.dayQuest = dayQuest
+        updateUser({ user })
       }
     }).catch(err => {
       toast('请检查您的网络状态')
